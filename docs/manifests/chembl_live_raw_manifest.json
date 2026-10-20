@@ -1,0 +1,28 @@
+{
+  "kind": "exploratory_live_api_snapshot",
+  "warning": "The REST API is live; use pinned SQLite for confirmatory results.",
+  "requested_release": 35,
+  "retrieved_at": "2026-10-20T13:38:42.659266+00:00",
+  "api_root": "https://www.ebi.ac.uk/chembl/api/data/",
+  "config_sha256": "f44c8fd6cfd43e6dc4a5aa5660cffa4276f633fe0d09dce5c28bff349c64c8f9",
+  "targets": {
+    "CHEMBL284": {
+      "name": "Dipeptidyl peptidase 4",
+      "records": 6390,
+      "file": "CHEMBL284.jsonl",
+      "sha256": "811cea4e32886910d18a097d62fb09b10de112cdf4d3a6791ab0b5f028393a8d"
+    },
+    "CHEMBL220": {
+      "name": "Acetylcholinesterase",
+      "records": 9701,
+      "file": "CHEMBL220.jsonl",
+      "sha256": "1fd36748b4ab42bd0fcb97f551340ba02987d7c759c23dd8f91e5ddf19f48629"
+    },
+    "CHEMBL230": {
+      "name": "Prostaglandin G/H synthase 2",
+      "records": 7511,
+      "file": "CHEMBL230.jsonl",
+      "sha256": "63a317719cce644fc6e47be2c6b50a02270a329680e7a245aadc6c2460a8105f"
+    }
+  }
+}

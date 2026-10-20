@@ -1,0 +1,36 @@
+{
+  "audited_at": "2026-10-20T19:04:53.143352+00:00",
+  "dataset": "data\\processed\\chembl_live_20261020",
+  "rows": 14029,
+  "split_counts": {
+    "train": 9820,
+    "validation": 2105,
+    "test": 2104
+  },
+  "unique_scaffolds": 5433,
+  "overlaps": {
+    "molecule_id": {"test__train": 0, "test__validation": 0, "train__validation": 0},
+    "inchikey": {"test__train": 0, "test__validation": 0, "train__validation": 0},
+    "murcko_scaffold": {"test__train": 0, "test__validation": 0, "train__validation": 0},
+    "component_id": {"test__train": 0, "test__validation": 0, "train__validation": 0}
+  },
+  "targets": {
+    "test": {
+      "activity_ACHE": {"measured": 873, "positive": 431, "negative": 442},
+      "activity_PTGS2": {"measured": 587, "positive": 344, "negative": 243},
+      "activity_DPP4": {"measured": 649, "positive": 522, "negative": 127}
+    },
+    "train": {
+      "activity_ACHE": {"measured": 3999, "positive": 2010, "negative": 1989},
+      "activity_PTGS2": {"measured": 2944, "positive": 1605, "negative": 1339},
+      "activity_DPP4": {"measured": 2890, "positive": 2436, "negative": 454}
+    },
+    "validation": {
+      "activity_ACHE": {"measured": 912, "positive": 431, "negative": 481},
+      "activity_PTGS2": {"measured": 580, "positive": 344, "negative": 236},
+      "activity_DPP4": {"measured": 617, "positive": 522, "negative": 95}
+    }
+  },
+  "bags": {"bags": 0, "membership_edges": 0, "cross_split_bags": 0},
+  "passed": true
+}

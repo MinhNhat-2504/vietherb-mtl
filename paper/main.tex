@@ -1,0 +1,343 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=2.4cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage{natbib}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xcolor}
+\usepackage{enumitem}
+
+\newcommand{\todoresult}[1]{\textcolor{red}{[RESULT PENDING: #1]}}
+\newcommand{\methodname}{VietHerb-MIL}
+
+\title{From Plant-Level Traditional Use to Compound-Level Target Activity:\
+Leakage-Controlled Multiple-Instance Learning for Vietnamese Medicinal Plants}
+\author{Minh Nhat et al.\\
+\small Corresponding author: \texttt{[email pending]}}
+\date{Working draft --- 20 October 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\textbf{Background:}
+Traditional-medicine databases connect plants to reported uses and plants to
+constituent metabolites, whereas modern bioactivity databases measure activity
+at the compound--target level. Naively assigning every plant-level use to every
+reported metabolite creates false labels and obscures which chemical evidence,
+if any, supports the use. We study whether Vietnamese ethnopharmacological
+annotations can improve molecular-target ranking without making this
+cross-granularity assumption.
+
+\textbf{Methods:}
+We link an authorized, versioned VietHerb snapshot to measured activities from
+ChEMBL 37 for human DPP4, acetylcholinesterase, and COX-2. Each medicinal plant
+is represented as a bag of standardized metabolite instances. A shared
+molecular encoder is trained with masked compound-level activity objectives and
+an attention multiple-instance objective for curated plant-level therapeutic
+concepts. Missing traditional-use annotations are handled as unlabelled rather
+than confirmed negative. Evaluation uses globally deduplicated chemical
+out-of-distribution and botanical cold-start splits, five training seeds, early
+recognition metrics, and dependence-aware paired bootstrap intervals. Controls
+include activity-only multi-task learning, naive label broadcasting, shuffled
+bag labels, random auxiliary labels, and natural-product importance weighting.
+
+\textbf{Results:}
+\todoresult{Insert frozen cohort counts, primary paired PR-AUC difference,
+confidence interval, per-target effects, early-recognition metrics, and
+falsification-control outcomes.}
+
+\textbf{Conclusions:}
+\todoresult{State a conclusion only after the locked test analysis. A null result
+must be reported as such.}
+\end{abstract}
+
+\section{Introduction}
+
+Natural products remain an important source of chemical diversity for drug
+discovery, but their biological evidence is heterogeneous and frequently
+recorded at a different level from the molecule being screened. VietHerb was
+created to organize Vietnamese medicinal plants together with metabolites,
+therapeutic effects, morphology, and geography. Its original release reported
+2,881 species, 10,887 metabolites, and many-to-many species--metabolite and
+species--effect relations \citep{nguyenvo2019vietherb}. This local resource is
+scientifically valuable, but a reported use of a plant is neither evidence that
+every constituent is active nor proof of clinical efficacy.
+
+Prior computational ethnopharmacology already links traditional symptoms,
+efficacies, herbs, ingredients, and molecular targets. HTINet and HTINet2 use
+heterogeneous networks and knowledge graphs for herb--target prediction
+\citep{wang2019htinet,duan2024htinet2}; other systems use clinical symptom
+profiles or multimodal ingredient--target information
+\citep{cheung2026novelhti,liang2025multiiti}. Consequently, the broad claim that
+traditional knowledge has not been used for target prediction is untenable.
+The unresolved issue addressed here is narrower: VietHerb annotations are
+plant-level labels, while ChEMBL observations are compound-level measurements.
+This is naturally a multiple-instance learning (MIL) problem, in which a plant
+is a bag and its reported metabolites are instances
+\citep{ilse2018attention,doran2012mil}.
+
+Reliable evaluation is equally important. Ligand benchmarks can reward
+memorization when close analogues cross partitions \citep{wallach2018memorization},
+and conventional scaffold splitting does not eliminate every form of chemical
+redundancy. Traditional-medicine data add botanical leakage because the same
+metabolite can occur in several species. Missing compound--target and
+plant--use edges also cannot automatically be interpreted as negatives, making
+positive--unlabelled (PU) learning a relevant sensitivity analysis
+\citep{kiryo2017nnpu,wang2026prodti}.
+
+We therefore make four contributions. First, we define an auditable data model
+that preserves compound, plant, therapeutic-concept, assay, and provenance
+relations. Second, we formulate cross-granularity supervision with attention
+MIL instead of label broadcasting. Third, we introduce split manifests that
+keep identical structures, related chemistry, and plant components disjoint.
+Fourth, we isolate the value of ethnopharmacological information with matched
+architectures and falsification controls. The preregistered primary question is
+whether plant-bag supervision improves compound-level out-of-distribution
+PR-AUC beyond activity-only multi-task learning.
+
+\section{Materials and methods}
+
+\subsection{Data sources and governance}
+
+VietHerb provides plant--metabolite and plant--therapeutic-effect relations
+\citep{nguyenvo2019vietherb}. Because no explicit database redistribution
+licence was found during our audit, the confirmatory analysis requires a
+maintainer-authorized export. Raw rows will not be redistributed without
+written permission. Published artifacts will otherwise contain code, schemas,
+source identifiers, checksums, aggregate counts, and split-generation logic.
+Traditional-use records are treated as hypothesis-generating cultural and
+historical evidence, not as validated biomedical claims.
+
+Measured activities are extracted from the versioned ChEMBL 37 SQLite release;
+the live REST service is used only for exploratory engineering. ChEMBL is a
+manually curated, large-scale bioactivity resource with explicit assay and
+document provenance \citep{zdrazil2024chembl}. LOTUS may be used only for an
+optional occurrence/provenance sensitivity analysis
+\citep{rutz2022lotus}. Aggregated natural-product databases are not assumed to
+provide independent activity ground truth \citep{chandrasekhar2025coconut}.
+
+\subsection{Target-activity cohort}
+
+The pilot targets are human dipeptidyl peptidase 4 (DPP4, CHEMBL284),
+acetylcholinesterase (AChE, CHEMBL220), and prostaglandin G/H synthase 2
+(COX-2/PTGS2, CHEMBL230). The primary cohort contains high-confidence,
+single-protein biochemical binding assays with standardized IC$_{50}$ or
+$K_i$ values in nM. Functional assays form a separate sensitivity cohort.
+Records with data-validity warnings, duplicate flags, unresolved structures, or
+ambiguous target assignments are excluded. Exact standardized
+structure--target replicates are aggregated by median pChEMBL; pairs spanning
+at least one log unit are flagged as contradictory and excluded from the
+primary analysis.
+
+The prespecified binary endpoint is active at pChEMBL $\geq 6$. Thresholds 5
+and 7 and continuous pActivity models are sensitivity analyses. Unmeasured
+compound--target pairs remain masked. All stereochemistry and structure
+standardization decisions, rejected rows, release metadata, and SHA-256 hashes
+are retained in a machine-readable manifest.
+
+\subsection{Therapeutic-use normalization}
+
+Original text is preserved. Candidate mappings are retrieved from frozen
+MeSH/Mondo releases, after which a language model may rank candidates but may
+not accept a label automatically. The stored record includes source span,
+ontology version, candidate list, confidence, model/prompt hash, abstention,
+and reviewer decisions. Two pharmacognosy or pharmacy reviewers independently
+annotate a prespecified stratified sample before adjudication. We report exact
+and ancestor-aware precision, recall, F1, raw agreement, and Cohen's $\kappa$;
+sample size is selected for a target confidence-interval width rather than fixed
+solely by convenience.
+
+The first model uses three coarse, clinically interpretable families:
+metabolic/diabetes, cognition/neurological use, and pain/inflammation. ATC is
+not used as the primary disease ontology because it classifies active drug
+substances rather than diseases or symptoms.
+
+\subsection{Molecular and botanical split construction}
+
+Molecules are standardized globally and assigned once across all targets and
+plants. Two locked regimes answer different questions. The chemical-OOD regime
+groups molecules by a prespecified fingerprint clustering rule and reports
+train--test nearest-neighbour Tanimoto distributions. A scaffold component split
+is retained as a reproducible secondary regime. The botanical cold-start regime
+holds out plant taxa and explicitly handles metabolites shared between taxa.
+
+For the strict joint split, molecule nodes are joined when they share a chemical
+group or occur in the same plant. Entire transitive connected components are
+assigned to train, validation, or test. Thus, if compound A is chemically linked
+to B and B occurs with C in one species, all three remain in one partition. No
+feature transformation, loss weight, class prior, or hyperparameter is fitted
+using test data.
+
+\subsection{Multiple-instance multi-task model}
+
+Let $x_{ij}$ denote metabolite $j$ reported in plant $i$, and let
+$h_{ij}=f_\theta(x_{ij})$ be its shared molecular representation. The primary
+heads predict measured compound--target activities with masked, class-weighted
+binary cross entropy. For each plant bag, gated attention computes
+\begin{align}
+e_{ij} &= w^\top\left[\tanh(Vh_{ij}) \odot \sigma(Uh_{ij})\right],\\
+a_{ij} &= \frac{\exp(e_{ij})}{\sum_k \exp(e_{ik})},\\
+z_i &= \sum_j a_{ij}h_{ij},
+\end{align}
+followed by one plant-use head per therapeutic family
+\citep{ilse2018attention}. Attention weights provide instance attribution but
+are not interpreted as causal explanations.
+
+An observed plant use is positive and absence is unlabelled. Auxiliary heads
+therefore use non-negative PU risk \citep{kiryo2017nnpu}. For class prior
+$\pi$, positive risk $R_p^+$, positive-as-negative risk $R_p^-$, and unlabelled
+negative risk $R_u^-$, the unbiased estimate is
+\begin{equation}
+R_{\mathrm{PU}}=\pi R_p^+ + R_u^- - \pi R_p^- ,
+\end{equation}
+with the non-negative correction applied when the empirical negative component
+falls below zero. Priors are frozen from training-only estimation and varied in
+sensitivity analyses. The total objective is
+\begin{equation}
+\mathcal{L}=\mathcal{L}_{\mathrm{activity}}+
+\lambda\mathcal{L}_{\mathrm{plant\text{-}MIL}}.
+\end{equation}
+
+The compute-feasible confirmatory encoder is a radius-2, 2,048-bit chiral Morgan
+fingerprint followed by a two-layer MLP. This deliberately separates the
+scientific contribution from an expensive foundation model. A D-MPNN/Chemprop
+baseline \citep{yang2019chemprop} and one pretrained molecular encoder are
+secondary comparisons using identical split IDs.
+
+\subsection{Baselines and falsification controls}
+
+Required models are: per-target fingerprint logistic regression; random forest
+or gradient boosting; separate neural target models; shared activity-only
+multi-task learning; naive plant-label broadcasting; the proposed MIL model;
+and optional domain importance weighting. Controls shuffle use labels among
+training plants while preserving prevalence, replace uses with equally sized
+random auxiliary labels, compare expert-verified with confidence-weighted
+mappings, and equalize parameter counts and update counts. The primary
+comparison is MIL versus the architecture-matched activity-only model. Naive
+broadcasting is an ablation, not the proposed method.
+
+\subsection{Training and statistical analysis}
+
+The MLP uses hidden dimensions 1,024 and 512, dropout 0.25, AdamW with learning
+rate $3\times10^{-4}$ and weight decay $10^{-4}$, batch size 256, and early
+stopping patience 12 on validation macro PR-AUC. Auxiliary weights
+$\{0.1,0.3,1.0\}$ are selected on validation data. Seeds are 13, 37, 71, 101,
+and 137.
+
+The primary endpoint is the paired change in macro test PR-AUC. We additionally
+report target-wise PR-AUC and prevalence, BEDROC ($\alpha=20$), EF1\% and EF5\%,
+precision/recall at fixed experimental budgets, AUROC, Brier score, and
+calibration. PR-AUC is emphasized for imbalanced screening
+\citep{saito2015pr}, while BEDROC measures early recognition
+\citep{truchon2007bedroc}. Paired 95\% intervals use 1,000 bootstrap replicates
+with structure cluster as the resampling unit for compound endpoints and plant
+as the unit for bag endpoints. Target-level secondary tests use
+Benjamini--Hochberg correction.
+
+\section{Results}
+
+\subsection{Cohort and shift audit}
+
+\todoresult{Insert the full data-flow diagram and counts after each exclusion.}
+
+\begin{table}[ht]
+\centering
+\caption{Frozen cohort summary. Values remain blank until the confirmatory
+ChEMBL 37 and authorized VietHerb build passes every acceptance gate.}
+\begin{tabular}{lrrrr}
+\toprule
+Endpoint & Measurements & Molecules & Active (\%) & Test positives\\
+\midrule
+DPP4 & -- & -- & -- & --\\
+AChE & -- & -- & -- & --\\
+COX-2 & -- & -- & -- & --\\
+Plant-use bags & -- & -- & -- & --\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Report structural overlap, nearest-neighbour similarity, bag sizes, metabolites
+per plant, plants per metabolite, label prevalence, and the number/size of
+connected components. Reconcile the live VietHerb counts with the historical
+database paper rather than assuming that they are identical.
+
+\subsection{Primary predictive comparison}
+
+\todoresult{Insert all five seeds and the paired, cluster-bootstrap confidence
+interval for MIL minus activity-only macro PR-AUC.}
+
+\begin{table}[ht]
+\centering
+\caption{Locked chemical-OOD test performance. Report mean across seeds with a
+paired 95\% confidence interval; never report the best seed alone.}
+\begin{tabular}{lcccc}
+\toprule
+Model & Macro PR-AUC & BEDROC20 & EF1\% & Brier\\
+\midrule
+Single-task fingerprint & -- & -- & -- & --\\
+Activity-only MTL & -- & -- & -- & --\\
+Naive broadcast & -- & -- & -- & --\\
+\methodname{} & -- & -- & -- & --\\
+Shuffled-bag control & -- & -- & -- & --\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Ablations, cold starts, and interpretation}
+
+\todoresult{Report per-target negative transfer, botanical cold-start results,
+PU-prior sensitivity, auxiliary-weight sensitivity, and learning curves.}
+Attention examples may be used to generate hypotheses only after checking their
+stability across seeds and chemically similar instances.
+
+\section{Discussion}
+
+The principal result must be interpreted as incremental predictive value under
+the locked evaluation, not validation of traditional medicine. If MIL improves
+over activity-only learning but not over shuffled labels, the gain is consistent
+with generic regularization rather than semantic ethnopharmacological signal. If
+naive broadcasting performs similarly to MIL, chemical or botanical leakage and
+label granularity require further investigation. If all ethnomedical variants
+underperform, negative transfer is an informative result and should not be
+hidden by selecting favorable targets.
+
+Docking or short molecular dynamics may provide a later structure-based
+plausibility assessment, but neither constitutes biological validation.
+Docking scores have well-known limitations for affinity ranking
+\citep{warren2006docking}. Prospective biochemical assays with positive,
+negative, interference, and purity controls are required to claim target
+inhibition.
+
+Limitations include incomplete or changing plant databases, uncertain
+traditional-use normalization, incomplete chemical inventories for each plant,
+assay heterogeneity, class-prior uncertainty in PU learning, and the possibility
+that attention is not a faithful explanation. Written data permission and a
+domain collaborator are release gates rather than administrative afterthoughts.
+
+\section{Conclusion}
+
+\todoresult{Write after the confirmatory analysis. The allowed conclusion is
+bounded to molecular prioritization under the evaluated shifts.}
+
+\section*{Data and code availability}
+
+Code, configurations, schemas, tests, source locks, and derived manifests are
+available at \url{https://github.com/MinhNhat-2504/vietherb-mtl}. ChEMBL-derived
+artifacts follow CC BY-SA 3.0. VietHerb row-level data will be released only if
+the maintainers provide explicit permission; otherwise the repository will
+publish acquisition instructions, hashes, identifiers, and reproducible
+transformation code without redistributing restricted rows.
+
+\section*{Author contributions, funding, and competing interests}
+
+\todoresult{Complete before submission, including the pharmacy/pharmacognosy
+reviewers and any experimental collaborators.}
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}
+

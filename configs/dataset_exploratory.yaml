@@ -1,0 +1,27 @@
+schema_version: 1
+seed: 20261020
+inputs:
+  chembl_dir: data/raw/chembl
+  vietherb_dir: data/interim/vietherb/not_available
+  term_mapping: data/annotations/therapeutic_use_mapping.csv
+output_dir: data/processed/chembl_live_20261020
+structure:
+  neutralize: true
+  remove_stereochemistry: false
+  largest_fragment: true
+  tautomer_canonicalization: true
+activity:
+  active_threshold_pchembl: 6.0
+  replicate_aggregation: median
+  contradictory_margin: 1.0
+split:
+  method: scaffold_species_components
+  fractions: [0.70, 0.15, 0.15]
+  seed: 20261020
+  stratify_targets: true
+features:
+  kind: morgan
+  radius: 2
+  n_bits: 2048
+  use_chirality: true
+

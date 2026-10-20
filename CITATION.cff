@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the repository and the associated paper."
+title: "VietHerb-MTL"
+type: software
+authors:
+  - family-names: "Nhat"
+    given-names: "Minh"
+version: 0.1.0
+date-released: 2026-10-20
+license: MIT
+repository-code: "https://github.com/MinhNhat-2504/vietherb-mtl"
+

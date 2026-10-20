@@ -1,0 +1,11 @@
+{
+  "experiment": "chembl_live_exploratory_baselines_classical",
+  "finished_at": "2026-10-20T19:10:22.692214+00:00",
+  "config_sha256": "5320d812f97d2e4b8e7cb01590a22f70e84846f2cdaadb6106ed11d47742b0a3",
+  "python": "3.11.9",
+  "sklearn": "1.8.0",
+  "fingerprint_backend": "rdkit",
+  "rows": 14029,
+  "synthetic": false,
+  "confirmatory_eligible": false
+}

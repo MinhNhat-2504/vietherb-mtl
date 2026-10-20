@@ -1,0 +1,33 @@
+experiment_name: demo_smoke_v1
+dataset_dir: data/processed/demo
+output_dir: outputs/demo_smoke_v1
+seeds: [13]
+model:
+  input_dim: 256
+  hidden_dims: [64, 32]
+  dropout: 0.15
+  attention_dim: 16
+tasks:
+  primary: [activity_DPP4, activity_ACHE, activity_PTGS2]
+  auxiliary: [ethno_diabetes, ethno_neuro, ethno_inflammation]
+  pu_priors:
+    ethno_diabetes: 0.20
+    ethno_neuro: 0.15
+    ethno_inflammation: 0.20
+training:
+  epochs: 4
+  batch_size: 64
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  early_stopping_patience: 3
+  aux_loss_weights: [0.0, 0.3]
+  importance_weighting: [false]
+  model_families: [shared_primary, naive_broadcast, mil_aux, permuted_mil]
+  pu_batch_size: 64
+evaluation:
+  primary_metric: pr_auc
+  metrics: [pr_auc, bedroc20, ef1, roc_auc, brier]
+  bootstrap_replicates: 100
+  bootstrap_seed: 20261020
+  report_per_target: true
+

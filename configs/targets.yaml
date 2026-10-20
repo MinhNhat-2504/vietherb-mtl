@@ -1,0 +1,27 @@
+chembl_release: 37
+retrieval:
+  standard_types: [IC50, Ki]
+  standard_units: nM
+  target_type: SINGLE PROTEIN
+  assay_confidence_min: 8
+  assay_types: [B]
+  pchembl_min: 5.0
+  active_threshold_pchembl: 6.0
+  allowed_relations: ["=", "<", "<="]
+targets:
+  - id: CHEMBL284
+    symbol: DPP4
+    name: Dipeptidyl peptidase 4
+    organism: Homo sapiens
+    context: type_2_diabetes
+  - id: CHEMBL220
+    symbol: ACHE
+    name: Acetylcholinesterase
+    organism: Homo sapiens
+    context: alzheimers_disease
+  - id: CHEMBL230
+    symbol: PTGS2
+    name: Prostaglandin G/H synthase 2
+    organism: Homo sapiens
+    context: inflammation
+

@@ -1,0 +1,33 @@
+experiment_name: chembl_live_exploratory_baselines
+dataset_dir: data/processed/chembl_live_20261020
+output_dir: outputs/chembl_live_exploratory_baselines
+seeds: [13, 37, 71, 101, 137]
+model:
+  input_dim: 2048
+  hidden_dims: [512, 256]
+  dropout: 0.25
+  attention_dim: 64
+tasks:
+  primary: [activity_DPP4, activity_ACHE, activity_PTGS2]
+  auxiliary: [ethno_diabetes, ethno_neuro, ethno_inflammation]
+  pu_priors:
+    ethno_diabetes: 0.10
+    ethno_neuro: 0.10
+    ethno_inflammation: 0.15
+training:
+  epochs: 30
+  batch_size: 512
+  learning_rate: 0.0003
+  weight_decay: 0.0001
+  early_stopping_patience: 6
+  aux_loss_weights: [0.0]
+  importance_weighting: [false]
+  model_families: [single_task, shared_primary]
+  pu_batch_size: 128
+evaluation:
+  primary_metric: pr_auc
+  metrics: [pr_auc, bedroc20, ef1, roc_auc, brier]
+  bootstrap_replicates: 200
+  bootstrap_seed: 20261020
+  report_per_target: true
+

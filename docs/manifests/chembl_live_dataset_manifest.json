@@ -1,0 +1,21 @@
+{
+  "built_at": "2026-10-20T13:55:39.259709+00:00",
+  "chembl_input_kind": "exploratory_live_api",
+  "confirmatory_eligible": false,
+  "rdkit_version": "2025.09.5",
+  "raw_activity_rows": 16941,
+  "curated_activity_pairs": 14051,
+  "molecules": 14029,
+  "herb_bags": 0,
+  "rejected_unique_smiles": 0,
+  "split_counts": {
+    "train": 9820,
+    "validation": 2105,
+    "test": 2104
+  },
+  "target_positive_counts": {
+    "activity_DPP4": 3480,
+    "activity_ACHE": 2872,
+    "activity_PTGS2": 2293
+  }
+}
