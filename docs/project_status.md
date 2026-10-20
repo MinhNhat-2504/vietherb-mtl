@@ -25,8 +25,9 @@ Updated: 2026-10-21 (Asia/Saigon)
   regression 0.8358. Shared minus single-task MLP was +0.0089 with a
   hierarchical bootstrap 95% CI [0.0034, 0.0154]. These are not confirmatory and
   do not test the ethnopharmacology hypothesis.
-- Drafted and compiled a seven-page English manuscript with explicit result
-  locks and primary/secondary analysis language.
+- Completed and compiled a seven-page English protocol-plus-exploratory
+  manuscript. All reported values trace to archived real-data manifests; no
+  synthetic performance or unsupported VietHerb/MIL result is presented.
 
 ## Release blockers
 

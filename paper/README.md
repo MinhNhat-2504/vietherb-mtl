@@ -1,8 +1,10 @@
 # Manuscript build
 
-`main.tex` is an English, Journal-of-Cheminformatics-oriented working draft.
-It deliberately contains labelled result placeholders; demo outputs must never
-be copied into those tables.
+`main.tex` is an English, Journal-of-Cheminformatics-oriented manuscript of the
+registered MIL protocol and its real-data, activity-only exploratory
+validation. It contains no synthetic performance values. Its claims are
+deliberately bounded: the VietHerb/MIL hypothesis remains prospective until an
+authorized VietHerb export is available.
 
 Build with:
 
@@ -22,7 +24,8 @@ pdflatex -interaction=nonstopmode main.tex
 pdflatex -interaction=nonstopmode main.tex
 ```
 
-Populate the Results section only from a frozen, non-synthetic experiment whose
-dataset and run manifests have been archived. Re-run the literature search and
-journal quartile/scope check immediately before submission.
+Any future confirmatory extension must populate results only from a frozen,
+non-synthetic experiment whose dataset and run manifests have been archived.
+Confirm author identity, funding/interest declarations, journal scope, and the
+current literature immediately before submission.
 
