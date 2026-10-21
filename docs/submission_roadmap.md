@@ -58,7 +58,8 @@ Status: **COMPLETE (2026-10-21)**
   bins, MAE, RMSE, Spearman, per-target bootstrap, and BH correction.
 - [x] Validation-only configuration selection; the selector rejects test-metric
   columns and evaluates test only after selection/checkpoint restoration.
-- [x] 45 unit tests cover the new invariants.
+- [x] 49 unit tests cover the new invariants, archived evidence regeneration,
+  and cross-platform release hashes.
 
 ## 5 — Confirmatory five-seed matrix
 

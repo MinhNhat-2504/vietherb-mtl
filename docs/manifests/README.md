@@ -25,3 +25,13 @@ record `confirmatory_eligible: false`.
 Generated neural checkpoints and the full upstream SQLite database are omitted
 because they are large and regenerable. Synthetic smoke outputs are also
 omitted because they are not scientific results.
+
+All publication figures and tables can be regenerated directly from this flat
+archive and checked against the frozen evidence hashes:
+
+```powershell
+python scripts/generate_evidence_package.py `
+  --archive-dir docs/manifests `
+  --out artifacts/reproduced_evidence `
+  --verify-reference docs/evidence
+```

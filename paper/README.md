@@ -32,3 +32,13 @@ on Zenodo, insert the version DOI, and reproduce the evidence package from a
 clean clone. Any future VietHerb extension must populate results only from a
 frozen, non-synthetic experiment whose dataset and run manifests are archived.
 
+The compact release reproduces and verifies all publication figures and tables
+without the omitted checkpoints:
+
+```powershell
+python scripts/generate_evidence_package.py `
+  --archive-dir docs/manifests `
+  --out artifacts/reproduced_evidence `
+  --verify-reference docs/evidence
+```
+

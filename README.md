@@ -142,6 +142,12 @@ python scripts/generate_evidence_package.py `
   --temporal-classical outputs/chembl37_temporal_classical_v1 `
   --continuous outputs/chembl37_continuous_potency_v1 `
   --natural-product-mapping data/processed/chembl37_natural_product_mapping.parquet
+
+# Reproduce the publication evidence directly from the compact release archive.
+python scripts/generate_evidence_package.py `
+  --archive-dir docs/manifests `
+  --out artifacts/reproduced_evidence `
+  --verify-reference docs/evidence
 ```
 
 Until an authorized VietHerb export is available, a deterministic synthetic

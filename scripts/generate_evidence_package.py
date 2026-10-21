@@ -7,7 +7,12 @@ import argparse
 import hashlib
 import json
 import math
+import platform
+import sys
+import time
+from dataclasses import dataclass
 from datetime import UTC, datetime
+from importlib.metadata import version
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -19,7 +24,42 @@ from vietherb_mtl import benjamini_hochberg, reliability_bins
 
 
 def sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    payload = path.read_bytes()
+    try:
+        text = payload.decode("utf-8")
+    except UnicodeDecodeError:
+        pass
+    else:
+        if "\x00" not in text:
+            payload = text.replace("\r\n", "\n").replace("\r", "\n").encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
+
+
+@dataclass(frozen=True)
+class RunFiles:
+    metrics: Path
+    predictions: Path
+    manifest: Path
+
+    @property
+    def inputs(self) -> tuple[Path, Path, Path]:
+        return self.metrics, self.predictions, self.manifest
+
+
+def directory_run(path: Path) -> RunFiles:
+    return RunFiles(
+        metrics=path / "metrics.csv",
+        predictions=path / "predictions.parquet",
+        manifest=path / "manifest.json",
+    )
+
+
+def archived_run(path: Path, prefix: str) -> RunFiles:
+    return RunFiles(
+        metrics=path / f"{prefix}_metrics.csv",
+        predictions=path / f"{prefix}_predictions.parquet",
+        manifest=path / f"{prefix}_run_manifest.json",
+    )
 
 
 def normalized_family(value: str) -> str:
@@ -38,21 +78,38 @@ DISPLAY = {
 }
 
 
-def load_run(path: Path) -> tuple[pd.DataFrame, pd.DataFrame, dict]:
-    metrics = pd.read_csv(path / "metrics.csv")
-    predictions = pd.read_parquet(path / "predictions.parquet")
+def load_run(files: RunFiles) -> tuple[pd.DataFrame, pd.DataFrame, dict]:
+    missing = [str(path) for path in files.inputs if not path.is_file()]
+    if missing:
+        raise FileNotFoundError(f"run artifacts are missing: {missing}")
+    metrics = pd.read_csv(files.metrics)
+    predictions = pd.read_parquet(files.predictions)
     metrics["family"] = metrics["family"].map(normalized_family)
     predictions["family"] = predictions["family"].map(normalized_family)
-    manifest = json.loads((path / "manifest.json").read_text(encoding="utf-8"))
+    manifest = json.loads(files.manifest.read_text(encoding="utf-8"))
     if manifest.get("synthetic") or not manifest.get("scientific_results", True):
-        raise RuntimeError(f"refusing scientific evidence from synthetic run: {path}")
+        raise RuntimeError(f"refusing scientific evidence from synthetic run: {files.manifest}")
     return metrics, predictions, manifest
 
 
 def save_figure(figure: plt.Figure, stem: Path) -> list[Path]:
     paths = [stem.with_suffix(".pdf"), stem.with_suffix(".png")]
-    figure.savefig(paths[0], bbox_inches="tight")
-    figure.savefig(paths[1], dpi=300, bbox_inches="tight")
+    fixed_date = datetime(2026, 10, 21, tzinfo=UTC)
+    figure.savefig(
+        paths[0],
+        bbox_inches="tight",
+        metadata={
+            "Creator": "VietHerb-MTL",
+            "CreationDate": fixed_date,
+            "ModDate": fixed_date,
+        },
+    )
+    figure.savefig(
+        paths[1],
+        dpi=300,
+        bbox_inches="tight",
+        metadata={"Software": "VietHerb-MTL"},
+    )
     plt.close(figure)
     return paths
 
@@ -61,8 +118,9 @@ def macro_by_seed(metrics: pd.DataFrame, metric: str) -> pd.DataFrame:
     return metrics.groupby(["family", "seed"], as_index=False)[metric].mean()
 
 
-def plot_data_flow(dataset_dir: Path, out: Path) -> list[Path]:
-    manifest = json.loads((dataset_dir / "manifest.json").read_text(encoding="utf-8"))
+def plot_data_flow(dataset_source: Path, out: Path) -> list[Path]:
+    manifest_path = dataset_source if dataset_source.is_file() else dataset_source / "manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     extraction = manifest["chembl_source_manifests"][0]
     boxes = [
         ("ChEMBL 37", f"{extraction['candidate_rows']:,} candidate rows"),
@@ -391,34 +449,88 @@ def plot_sensitivity(
 
 
 def main() -> None:
+    started_at = time.perf_counter()
     parser = argparse.ArgumentParser()
-    parser.add_argument("--primary-neural", type=Path, required=True)
-    parser.add_argument("--primary-classical", type=Path, required=True)
+    parser.add_argument(
+        "--archive-dir",
+        type=Path,
+        help="Regenerate all evidence directly from the flat docs/manifests archive.",
+    )
+    parser.add_argument("--primary-neural", type=Path)
+    parser.add_argument("--primary-classical", type=Path)
     parser.add_argument("--primary-extra", type=Path, nargs="*", default=[])
-    parser.add_argument("--dataset-dir", type=Path, required=True)
+    parser.add_argument("--dataset-dir", type=Path)
     parser.add_argument("--temporal-neural", type=Path)
     parser.add_argument("--temporal-classical", type=Path)
     parser.add_argument("--continuous", type=Path)
     parser.add_argument("--natural-product-mapping", type=Path)
     parser.add_argument("--out", type=Path, default=Path("docs/evidence"))
+    parser.add_argument(
+        "--verify-reference",
+        type=Path,
+        help="Fail unless regenerated artifacts match this evidence directory's manifest.",
+    )
     args = parser.parse_args()
+
+    if args.archive_dir:
+        conflicting = [
+            args.primary_neural,
+            args.primary_classical,
+            *args.primary_extra,
+            args.dataset_dir,
+            args.temporal_neural,
+            args.temporal_classical,
+            args.continuous,
+            args.natural_product_mapping,
+        ]
+        if any(item is not None for item in conflicting):
+            parser.error("--archive-dir cannot be combined with individual run paths")
+        archive = args.archive_dir
+        primary_neural = archived_run(archive, "chembl37_activity")
+        primary_classical = archived_run(archive, "chembl37_classical")
+        primary_extra = [archived_run(archive, "chembl37_dmpnn")]
+        temporal_neural = archived_run(archive, "chembl37_temporal_neural")
+        temporal_classical = archived_run(archive, "chembl37_temporal_classical")
+        continuous = archived_run(archive, "chembl37_continuous")
+        dataset_source = archive / "chembl37_dataset_manifest.json"
+        natural_product_mapping = archive / "chembl37_natural_product_mapping.parquet"
+    else:
+        required = {
+            "--primary-neural": args.primary_neural,
+            "--primary-classical": args.primary_classical,
+            "--dataset-dir": args.dataset_dir,
+        }
+        missing = [name for name, value in required.items() if value is None]
+        if missing:
+            parser.error(f"required without --archive-dir: {', '.join(missing)}")
+        primary_neural = directory_run(args.primary_neural)
+        primary_classical = directory_run(args.primary_classical)
+        primary_extra = [directory_run(path) for path in args.primary_extra]
+        temporal_neural = directory_run(args.temporal_neural) if args.temporal_neural else None
+        temporal_classical = (
+            directory_run(args.temporal_classical) if args.temporal_classical else None
+        )
+        continuous = directory_run(args.continuous) if args.continuous else None
+        dataset_source = args.dataset_dir
+        natural_product_mapping = args.natural_product_mapping
+
     figures_dir = args.out / "figures"
     tables_dir = args.out / "tables"
     figures_dir.mkdir(parents=True, exist_ok=True)
     tables_dir.mkdir(parents=True, exist_ok=True)
 
-    neural_metrics, neural_predictions, _ = load_run(args.primary_neural)
-    classical_metrics, classical_predictions, _ = load_run(args.primary_classical)
+    neural_metrics, neural_predictions, _ = load_run(primary_neural)
+    classical_metrics, classical_predictions, _ = load_run(primary_classical)
     metric_frames = [neural_metrics, classical_metrics]
     prediction_frames = [neural_predictions, classical_predictions]
-    for path in args.primary_extra:
-        extra_metrics, extra_predictions, _ = load_run(path)
+    for files in primary_extra:
+        extra_metrics, extra_predictions, _ = load_run(files)
         metric_frames.append(extra_metrics)
         prediction_frames.append(extra_predictions)
     primary_metrics = pd.concat(metric_frames, ignore_index=True)
     primary_predictions = pd.concat(prediction_frames, ignore_index=True)
     generated: list[Path] = []
-    generated.extend(plot_data_flow(args.dataset_dir, figures_dir))
+    generated.extend(plot_data_flow(dataset_source, figures_dir))
     generated.extend(plot_primary(primary_metrics, figures_dir))
     generated.extend(plot_targetwise(primary_metrics, figures_dir))
     reliability_paths, reliability = plot_reliability(primary_predictions, figures_dir)
@@ -446,49 +558,74 @@ def main() -> None:
     target_path = tables_dir / "table_target_bootstrap_bh.csv"
     target_statistics.to_csv(target_path, index=False)
     generated.append(target_path)
-    if args.natural_product_mapping:
-        natural = natural_product_summary(primary_predictions, args.natural_product_mapping)
+    if natural_product_mapping:
+        natural = natural_product_summary(primary_predictions, natural_product_mapping)
         natural_path = tables_dir / "table_natural_product_descriptive.csv"
         natural.to_csv(natural_path, index=False)
         generated.append(natural_path)
 
     temporal_metrics = None
-    if args.temporal_neural and args.temporal_classical:
-        temporal_neural, _, _ = load_run(args.temporal_neural)
-        temporal_classical, _, _ = load_run(args.temporal_classical)
-        temporal_metrics = pd.concat([temporal_neural, temporal_classical], ignore_index=True)
+    if temporal_neural and temporal_classical:
+        temporal_neural_metrics, _, _ = load_run(temporal_neural)
+        temporal_classical_metrics, _, _ = load_run(temporal_classical)
+        temporal_metrics = pd.concat(
+            [temporal_neural_metrics, temporal_classical_metrics], ignore_index=True
+        )
         temporal_path = tables_dir / "table_temporal_metrics.csv"
         temporal_metrics.to_csv(temporal_path, index=False)
         generated.append(temporal_path)
     continuous_metrics = None
-    if args.continuous:
-        continuous_metrics, _, _ = load_run(args.continuous)
+    if continuous:
+        continuous_metrics, _, _ = load_run(continuous)
         continuous_path = tables_dir / "table_continuous_metrics.csv"
         continuous_metrics.to_csv(continuous_path, index=False)
         generated.append(continuous_path)
     generated.extend(plot_sensitivity(temporal_metrics, continuous_metrics, figures_dir))
 
-    input_paths = [
-        args.primary_neural,
-        args.primary_classical,
-        *args.primary_extra,
-        args.temporal_neural,
-        args.temporal_classical,
-        args.continuous,
-        args.natural_product_mapping,
-    ]
+    run_inputs = [primary_neural, primary_classical, *primary_extra]
+    run_inputs.extend(files for files in (temporal_neural, temporal_classical, continuous) if files)
+    input_paths = [dataset_source]
+    for files in run_inputs:
+        input_paths.extend(files.inputs)
+    if natural_product_mapping:
+        input_paths.append(natural_product_mapping)
+    input_paths = list(dict.fromkeys(input_paths))
+    artifact_hashes = {path.relative_to(args.out).as_posix(): sha256(path) for path in generated}
     manifest = {
         "generated_at": datetime.now(UTC).isoformat(),
         "scientific_results": True,
-        "inputs": {
-            str(path): sha256(path if path.is_file() else path / "manifest.json")
-            for path in input_paths
-            if path is not None
+        "runtime": {
+            "wall_time_seconds": round(time.perf_counter() - started_at, 3),
+            "python": sys.version.split()[0],
+            "platform": platform.platform(),
+            "packages": {
+                package: version(package)
+                for package in ("matplotlib", "numpy", "pandas", "pyarrow", "scikit-learn")
+            },
         },
-        "artifacts": {str(path.relative_to(args.out)): sha256(path) for path in generated},
+        "inputs": {path.as_posix(): sha256(path) for path in input_paths},
+        "artifacts": artifact_hashes,
     }
     manifest_path = args.out / "manifest.json"
     manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    if args.verify_reference:
+        reference = json.loads(
+            (args.verify_reference / "manifest.json").read_text(encoding="utf-8")
+        )
+        expected = reference["artifacts"]
+        missing = sorted(set(expected) - set(artifact_hashes))
+        unexpected = sorted(set(artifact_hashes) - set(expected))
+        mismatched = sorted(
+            path
+            for path in set(expected) & set(artifact_hashes)
+            if expected[path] != artifact_hashes[path]
+        )
+        if missing or unexpected or mismatched:
+            raise SystemExit(
+                "Evidence verification failed: "
+                f"missing={missing}, unexpected={unexpected}, mismatched={mismatched}"
+            )
+        print(f"Verified {len(expected)} reproduced evidence artifacts")
     print(json.dumps(manifest, indent=2))
 
 

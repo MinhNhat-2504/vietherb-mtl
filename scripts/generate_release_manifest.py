@@ -42,12 +42,35 @@ DOC_FILES = (
 EXCLUDED_SUFFIXES = {".aux", ".bbl", ".blg", ".log", ".out", ".pyc"}
 
 
-def sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
+def hash_payload(path: Path, mode: str | None = None) -> tuple[bytes, str]:
+    """Return a cross-platform payload and the hashing mode used for it.
+
+    Git checkouts on Windows can contain CRLF while GitHub/Zenodo source
+    archives contain LF for the same tracked text blob. UTF-8 text is therefore
+    newline-normalized before hashing. Binary publication artifacts retain an
+    exact byte hash.
+    """
+
+    payload = path.read_bytes()
+    if mode == "raw":
+        return payload, mode
+    try:
+        text = payload.decode("utf-8")
+    except UnicodeDecodeError:
+        if mode == "utf8_lf":
+            raise ValueError(f"Expected UTF-8 text artifact: {path}") from None
+        return payload, "raw"
+    if "\x00" in text:
+        if mode == "utf8_lf":
+            raise ValueError(f"Expected UTF-8 text artifact without NUL bytes: {path}")
+        return payload, "raw"
+    normalized = text.replace("\r\n", "\n").replace("\r", "\n").encode("utf-8")
+    return normalized, "utf8_lf"
+
+
+def sha256(path: Path, mode: str | None = None) -> tuple[str, str]:
+    payload, resolved_mode = hash_payload(path, mode)
+    return hashlib.sha256(payload).hexdigest(), resolved_mode
 
 
 def collect(root: Path) -> list[Path]:
@@ -79,7 +102,11 @@ def main() -> None:
         failures = []
         for relative_path, expected in payload["artifacts"].items():
             path = root / relative_path
-            if not path.is_file() or sha256(path) != expected["sha256"]:
+            if not path.is_file():
+                failures.append(relative_path)
+                continue
+            digest, _ = sha256(path, expected.get("hash_mode", "raw"))
+            if digest != expected["sha256"]:
                 failures.append(relative_path)
         if failures:
             raise SystemExit(f"Release verification failed: {failures}")
@@ -87,13 +114,14 @@ def main() -> None:
         return
 
     files = [path for path in collect(root) if path != out.resolve()]
-    artifacts = {
-        path.relative_to(root).as_posix(): {
+    artifacts = {}
+    for path in files:
+        digest, hash_mode = sha256(path)
+        artifacts[path.relative_to(root).as_posix()] = {
             "bytes": path.stat().st_size,
-            "sha256": sha256(path),
+            "sha256": digest,
+            "hash_mode": hash_mode,
         }
-        for path in files
-    }
     payload = {
         "generated_at": datetime.now(UTC).isoformat(),
         "release": "v0.1.0",

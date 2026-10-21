@@ -6,11 +6,17 @@
     "numpy": "1.26.4",
     "pandas": "2.3.3",
     "pyarrow": "24.0.0",
+    "matplotlib": "3.10.8",
+    "Pillow": "11.3.0",
     "scikit-learn": "1.8.0",
     "scipy": "1.17.1",
     "rdkit": "2025.09.5",
     "torch": "2.5.1+cu121",
-    "chemprop": "2.2.1"
+    "chemprop": "2.2.1",
+    "PyYAML": "6.0.2",
+    "requests": "2.34.2",
+    "pytest": "7.4.4",
+    "ruff": "0.16.10"
   },
   "accelerator": {
     "cuda_runtime": "12.1",

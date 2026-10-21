@@ -28,9 +28,10 @@ Updated: 2026-10-21 (Asia/Saigon)
 - Six figures, six machine-readable tables, and a hash-bound evidence manifest
   have been generated. Main manuscript, supplement, cover letter, Zenodo
   metadata, and submission/release checklists are drafted.
-- Forty-five unit tests and a synthetic CUDA smoke workflow cover activity,
+- Forty-nine unit tests and a synthetic CUDA smoke workflow cover activity,
   broadcast, MIL, shuffled-MIL, selection, temporal split, metric, and leakage
-  invariants. Synthetic metrics are never reported as scientific results.
+  invariants, plus cross-platform release-manifest hashing. Synthetic metrics
+  are never reported as scientific results.
 
 ## Scientific blockers
 
