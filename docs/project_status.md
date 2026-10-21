@@ -35,7 +35,8 @@ Updated: 2026-10-21 (Asia/Saigon)
 - A clean release bundle passed the complete unit-test suite, Ruff,
   release-hash verification, and exact regeneration of all 18 evidence
   artifacts. Runtime, OS, Python, and package versions are archived, and the
-  same locked sequence is configured for clean-checkout GitHub Actions.
+  same locked sequence passed the clean-checkout GitHub Actions Ubuntu runner
+  for commit `4b2a80d` (run `39632670928`).
 - The complete unit-test suite and a synthetic CUDA smoke workflow cover activity,
   broadcast, MIL, shuffled-MIL, selection, temporal split, metric, and leakage
   invariants, plus cross-platform release-manifest hashing. Synthetic metrics
@@ -58,7 +59,6 @@ validation.
 
 - Both authors must confirm CRediT, funding, competing-interest, and approval
   statements.
-- Final PDFs and repository tests must pass from the final working tree.
 - GitHub release `v0.2.0` is archived in Zenodo as
   `10.5281/zenodo.23537107`; the version DOI is inserted into the manuscript
   and citation metadata before submission.

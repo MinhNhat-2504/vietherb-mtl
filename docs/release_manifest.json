@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-21T16:11:48.432193+00:00",
+  "generated_at": "2026-10-21T16:15:08.779685+00:00",
   "release": "v0.2.0",
   "artifact_count": 129,
   "artifacts": {
@@ -364,8 +364,8 @@
       "hash_mode": "utf8_lf"
     },
     "docs/project_status.md": {
-      "bytes": 3732,
-      "sha256": "ba02145e29c0763fd3afbfd60f6f2e285bddce9671cbcfd512759547b4f53c2b",
+      "bytes": 3709,
+      "sha256": "ff2a34d11af9fcff5a5039540a52bed8a8aea2896f76271a6871451ec295a8dd",
       "hash_mode": "utf8_lf"
     },
     "docs/reproducibility_report.json": {
@@ -374,8 +374,8 @@
       "hash_mode": "utf8_lf"
     },
     "docs/submission_checklist.md": {
-      "bytes": 4389,
-      "sha256": "a6c6e2e2bead6a6efabf6a29ae7c1548ea502dceb0beb34fbd5b23c00896aeff",
+      "bytes": 4527,
+      "sha256": "371374dd0f7d7ecb1bc67a03f5ff91aa02fea35bfcf2e64e359f6f6e22c38822",
       "hash_mode": "utf8_lf"
     },
     "docs/submission_roadmap.md": {
