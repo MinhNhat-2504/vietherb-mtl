@@ -3,6 +3,13 @@
 Reproducible research code for **ethnopharmacology-informed multi-task learning
 for multi-target screening of Vietnamese medicinal-plant metabolites**.
 
+## Archived release
+
+Version `0.2.0` is archived on Zenodo:
+[10.5281/zenodo.23537107](https://doi.org/10.5281/zenodo.23537107).
+The archive corresponds to the GitHub release
+[v0.2.0](https://github.com/MinhNhat-2504/vietherb-mtl/releases/tag/v0.2.0).
+
 The central hypothesis is testable: a molecular encoder trained jointly on
 measured target activity and **plant-level** traditional-use bags will rank
 held-out natural products better than the same encoder trained on activity
@@ -206,4 +213,3 @@ See [the experiment protocol](docs/experiment_protocol.md) and
 Code is released under the MIT License. Dataset licenses and access conditions
 remain those of their original providers; do not redistribute VietHerb or other
 source exports unless their terms explicitly permit it.
-

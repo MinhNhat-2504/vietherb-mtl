@@ -44,8 +44,9 @@ Verified against the official Research and general submission guidance on
   hashes exactly.
 - [x] Record evidence-replay wall time, Python, OS, and package versions in the
   generated evidence and environment manifests.
-- [ ] Enable the GitHub repository in Zenodo, create a GitHub release, verify
-  archive processing, and insert the version DOI into the manuscript.
+- [x] Enable the GitHub repository in Zenodo, create the `v0.2.0` GitHub
+  release, verify archive processing, and insert version DOI
+  `10.5281/zenodo.23537107` into the manuscript.
 - [ ] Optional before final DOI: re-run full model training, rather than the
   archived-evidence replay, in a clean Python 3.11 CI runner.
 - [x] Confirm that all files needed to reproduce each current manuscript
@@ -60,7 +61,7 @@ Verified against the official Research and general submission guidance on
 - [ ] Upload editable TeX/Bib sources and all figure source files; do not upload
   only the compiled PDF.
 - [ ] Upload Additional file 1 and six evidence CSV tables in citation order.
-- [ ] Add the final Zenodo DOI as a data/software reference and in Availability
+- [x] Add the final Zenodo DOI as a data/software reference and in Availability
   of data and materials.
 - [ ] Confirm the manuscript is not published or under consideration elsewhere.
 - [ ] Confirm APC/funding arrangements before submission.

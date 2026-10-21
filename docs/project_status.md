@@ -59,8 +59,9 @@ validation.
 - Both authors must confirm CRediT, funding, competing-interest, and approval
   statements.
 - Final PDFs and repository tests must pass from the final working tree.
-- The GitHub release must be archived in Zenodo and its version DOI inserted
-  into the manuscript before submission.
+- GitHub release `v0.2.0` is archived in Zenodo as
+  `10.5281/zenodo.23537107`; the version DOI is inserted into the manuscript
+  and citation metadata before submission.
 - The final GitHub/Zenodo archive must be rechecked after the DOI is inserted.
 
 See `docs/submission_roadmap.md` for the gate-by-gate checklist.

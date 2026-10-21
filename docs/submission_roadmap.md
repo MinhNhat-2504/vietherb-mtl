@@ -123,7 +123,7 @@ Status: **COMPLETE (2026-10-21)**
 
 ## 8 — Zenodo, Springer submission package, and cover letter
 
-Status: **PREPARED LOCALLY; DOI AND SUBMISSION REQUIRE AUTHOR ACCOUNT ACTION**
+Status: **ZENODO v0.2.0 ARCHIVED; SUBMISSION REQUIRE AUTHOR ACCOUNT ACTION**
 
 - [x] `CITATION.cff` and `.zenodo.json` metadata prepared.
 - [x] Environment manifest, release procedure, submission checklist, and cover
@@ -133,9 +133,9 @@ Status: **PREPARED LOCALLY; DOI AND SUBMISSION REQUIRE AUTHOR ACCOUNT ACTION**
 - [x] Manuscript uses accepted TeX/LaTeX source with double spacing and line/page
   numbering; vector figures and editable sources are retained.
 - [ ] Both authors approve declarations and cover letter.
-- [ ] Create `v0.1.0` GitHub release after final verification.
-- [ ] Enable the repository in Zenodo, archive the release, verify it from a
-  clean download, and insert the version DOI into manuscript/CITATION files.
+- [x] Create and publish the `v0.2.0` GitHub release after final verification.
+- [x] Enable the repository in Zenodo, archive the release, and insert the
+  version DOI `10.5281/zenodo.23537107` into manuscript/CITATION files.
 - [ ] Upload through the journal account and confirm APC/funding arrangements.
 
 Exit criterion: clean-clone reproduction succeeds, the DOI resolves to the exact
