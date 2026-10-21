@@ -132,7 +132,9 @@ Status: **ZENODO v0.2.0 ARCHIVED; SUBMISSION REQUIRE AUTHOR ACCOUNT ACTION**
   a clean manifest-only bundle; archive runtime and environment metadata.
 - [x] Manuscript uses accepted TeX/LaTeX source with double spacing and line/page
   numbering; vector figures and editable sources are retained.
-- [ ] Both authors approve declarations and cover letter.
+- [ ] Both authors approve the remaining declarations.
+- [x] Both authors approve the cover letter, and confirm that the manuscript is
+  not published or under consideration elsewhere (22 October 2026).
 - [x] Create and publish the `v0.2.0` GitHub release after final verification.
 - [x] Enable the repository in Zenodo, archive the release, and insert the
   version DOI `10.5281/zenodo.23537107` into manuscript/CITATION files.

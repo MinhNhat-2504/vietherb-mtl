@@ -63,13 +63,15 @@ Verified against the official Research and general submission guidance on
 
 - [x] Cover-letter draft explains journal fit, policy boundary, originality,
   competing interests, and author approval.
-- [ ] Both authors approve and sign off the cover letter.
+- [x] Both authors approve and sign off the cover letter (confirmed 22 October
+  2026).
 - [ ] Upload editable TeX/Bib sources and all figure source files; do not upload
   only the compiled PDF.
 - [ ] Upload Additional file 1 and six evidence CSV tables in citation order.
 - [x] Add the final Zenodo DOI as a data/software reference and in Availability
   of data and materials.
-- [ ] Confirm the manuscript is not published or under consideration elsewhere.
+- [x] Confirm the manuscript is not published or under consideration elsewhere
+  (confirmed 22 October 2026).
 - [ ] Confirm APC/funding arrangements before submission.
 
 ## Scientific blockers for the later VietHerb/MIL paper

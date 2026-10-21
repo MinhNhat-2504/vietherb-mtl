@@ -1,6 +1,6 @@
 # Cover letter — Journal of Cheminformatics
 
-**Draft dated 21 October 2026 — both authors must approve before submission.**
+**Author-approved version dated 22 October 2026.**
 
 Dear Editors,
 
@@ -34,7 +34,7 @@ tables, figures, and SHA-256 manifests will be archived in Zenodo before
 submission. The manuscript is not published and is not under consideration
 elsewhere. The authors declare no competing interests and no external funding
 for the reported computation. Both authors have approved the manuscript and
-its submission. [Confirm these statements before upload.]
+its submission.
 
 Correspondence should be addressed to:
 

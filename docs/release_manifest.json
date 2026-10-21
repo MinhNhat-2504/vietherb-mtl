@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-21T16:15:08.779685+00:00",
+  "generated_at": "2026-10-21T17:05:30.313217+00:00",
   "release": "v0.2.0",
   "artifact_count": 129,
   "artifacts": {
@@ -69,8 +69,8 @@
       "hash_mode": "utf8_lf"
     },
     "docs/cover_letter.md": {
-      "bytes": 2625,
-      "sha256": "e59b6e29f50107257c8f1cb77bd66f294c746b438218dc62aaaa3543f8dce044",
+      "bytes": 2553,
+      "sha256": "2705b86c41b0dcd8504b8b1992778d41d66bfea57a3e0ff5adeadb35867246bc",
       "hash_mode": "utf8_lf"
     },
     "docs/environment_manifest.json": {
@@ -374,13 +374,13 @@
       "hash_mode": "utf8_lf"
     },
     "docs/submission_checklist.md": {
-      "bytes": 4527,
-      "sha256": "371374dd0f7d7ecb1bc67a03f5ff91aa02fea35bfcf2e64e359f6f6e22c38822",
+      "bytes": 4587,
+      "sha256": "e313ed2749932a0d512d884e682034293c9119b9a8ec49c904acaac585b0a5e4",
       "hash_mode": "utf8_lf"
     },
     "docs/submission_roadmap.md": {
-      "bytes": 6950,
-      "sha256": "9a0f45a6404f323f7f8fb3c29f8f55d6103f88d7ae6ee91a526d9c3a72f5b339",
+      "bytes": 7095,
+      "sha256": "8d152e4dc473f6607f891c7bac0904d578756ffe7cd6b7f74f9349c933c068fe",
       "hash_mode": "utf8_lf"
     },
     "docs/zenodo_release_checklist.md": {
