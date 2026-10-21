@@ -1,0 +1,13 @@
+{
+  "experiment": "chembl37_activity_baselines_v1",
+  "finished_at": "2026-10-20T20:49:44.760284+00:00",
+  "config_sha256": "8b14ad35586a382e5e0f66e0ae1a3d0be2c14275aa19c333cf5ba46192c42604",
+  "device": "cuda",
+  "python": "3.11.9",
+  "torch": "2.5.1+cu121",
+  "fingerprint_backend": "rdkit",
+  "rows": 10686,
+  "synthetic": false,
+  "confirmatory_eligible": true,
+  "scientific_results": true
+}

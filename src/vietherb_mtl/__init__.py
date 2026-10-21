@@ -3,7 +3,15 @@
 from .config import FingerprintConfig, ModelConfig, SplitConfig
 from .features import FingerprintEncoder
 from .losses import masked_bce_with_logits, multitask_masked_bce, nnpu_loss
-from .metrics import bedroc_score, ef1_score, enrichment_factor, pr_auc_score
+from .metrics import (
+    bedroc_score,
+    ef1_score,
+    ef5_score,
+    enrichment_factor,
+    expected_calibration_error,
+    pr_auc_score,
+    precision_recall_at_fraction,
+)
 from .mil import AttentionMILAggregator, bag_masked_bce_with_logits, bag_nnpu_loss
 from .model import MultiTaskMLP
 from .splits import (
@@ -39,6 +47,9 @@ __all__ = [
     "bedroc_score",
     "enrichment_factor",
     "ef1_score",
+    "ef5_score",
+    "precision_recall_at_fraction",
+    "expected_calibration_error",
 ]
 
 __version__ = "0.1.0"

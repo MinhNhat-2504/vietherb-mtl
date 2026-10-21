@@ -13,7 +13,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import yaml
-from rdkit import Chem, rdBase
+from rdkit import Chem, DataStructs, rdBase
+from rdkit.Chem import rdFingerprintGenerator
 from rdkit.Chem.MolStandardize import rdMolStandardize
 from rdkit.Chem.Scaffolds import MurckoScaffold
 
@@ -45,10 +46,26 @@ def standardize(smiles: str) -> tuple[str, str, str] | None:
     return smiles_out, inchikey, scaffold
 
 
-def read_chembl(path: Path) -> tuple[pd.DataFrame, str]:
+def read_chembl(path: Path) -> tuple[pd.DataFrame, str, list[dict]]:
     parquet_files = sorted(path.glob("*.parquet"))
     if parquet_files:
-        return pd.concat([pd.read_parquet(item) for item in parquet_files]), "pinned_sqlite"
+        manifests = []
+        for item in parquet_files:
+            manifest_path = item.with_suffix(".manifest.json")
+            if not manifest_path.is_file():
+                return (
+                    pd.concat([pd.read_parquet(file) for file in parquet_files]),
+                    "unverified_parquet",
+                    [],
+                )
+            manifests.append(json.loads(manifest_path.read_text(encoding="utf-8")))
+        kinds = {manifest.get("kind") for manifest in manifests}
+        kind = (
+            "pinned_sqlite_verified"
+            if kinds == {"pinned_chembl_sqlite_extract"}
+            else "unverified_parquet"
+        )
+        return pd.concat([pd.read_parquet(item) for item in parquet_files]), kind, manifests
     jsonl_files = sorted(path.glob("CHEMBL*.jsonl"))
     if not jsonl_files:
         raise FileNotFoundError(f"no ChEMBL parquet or target JSONL files found in {path}")
@@ -56,7 +73,7 @@ def read_chembl(path: Path) -> tuple[pd.DataFrame, str]:
     for filename in jsonl_files:
         with filename.open(encoding="utf-8") as stream:
             records.extend(json.loads(line) for line in stream if line.strip())
-    return pd.DataFrame(records), "exploratory_live_api"
+    return pd.DataFrame(records), "exploratory_live_api", []
 
 
 class DisjointSet:
@@ -79,13 +96,34 @@ class DisjointSet:
             self.parent[right_root] = left_root
 
 
-def component_ids(molecules: pd.DataFrame, species_edges: pd.DataFrame | None) -> dict[str, str]:
+def component_ids(
+    molecules: pd.DataFrame,
+    species_edges: pd.DataFrame | None,
+    *,
+    similarity_threshold: float | None = None,
+    fingerprint_radius: int = 2,
+    fingerprint_bits: int = 2048,
+) -> dict[str, str]:
     ids = molecules["molecule_id"].tolist()
     dsu = DisjointSet(ids)
     for _, group in molecules.groupby("murcko_scaffold", sort=False):
         members = group["molecule_id"].tolist()
         for member in members[1:]:
             dsu.union(members[0], member)
+    if similarity_threshold is not None:
+        if not 0 < similarity_threshold <= 1:
+            raise ValueError("chemical_cluster_tanimoto must be in (0, 1]")
+        generator = rdFingerprintGenerator.GetMorganGenerator(
+            radius=fingerprint_radius, fpSize=fingerprint_bits, includeChirality=True
+        )
+        fps = [
+            generator.GetFingerprint(Chem.MolFromSmiles(smiles))
+            for smiles in molecules["canonical_smiles"]
+        ]
+        for index, fingerprint in enumerate(fps):
+            similarities = DataStructs.BulkTanimotoSimilarity(fingerprint, fps[:index])
+            for neighbor in np.flatnonzero(np.asarray(similarities) >= similarity_threshold):
+                dsu.union(ids[index], ids[int(neighbor)])
     if species_edges is not None and not species_edges.empty:
         allowed = set(ids)
         for _, group in species_edges.groupby("species_id", sort=False):
@@ -126,6 +164,29 @@ def assign_components(frame: pd.DataFrame, fractions: list[float], seed: int) ->
     return assignments
 
 
+def label_activity_pairs(
+    aggregate: pd.DataFrame, activity_config: dict
+) -> tuple[pd.DataFrame, int]:
+    """Assign only prespecified active/inactive labels; never coerce gray rows."""
+    active_threshold = float(activity_config["active_threshold_pchembl"])
+    inactive_threshold = float(activity_config["inactive_threshold_pchembl"])
+    if inactive_threshold >= active_threshold:
+        raise ValueError("inactive_threshold_pchembl must be below active_threshold_pchembl")
+    result = aggregate.copy()
+    result["active"] = np.select(
+        [
+            result["pchembl_value"] >= active_threshold,
+            result["pchembl_value"] <= inactive_threshold,
+        ],
+        [1.0, 0.0],
+        default=np.nan,
+    )
+    gray_zone_pairs = int(result["active"].isna().sum())
+    if activity_config.get("exclude_gray_zone", True):
+        result = result[result["active"].notna()].copy()
+    return result, gray_zone_pairs
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=Path, required=True)
@@ -138,7 +199,7 @@ def main() -> None:
     if output_path.exists() and not args.overwrite:
         raise FileExistsError(f"{output_path} exists; pass --overwrite explicitly")
 
-    raw, chembl_kind = read_chembl(Path(inputs["chembl_dir"]))
+    raw, chembl_kind, chembl_manifests = read_chembl(Path(inputs["chembl_dir"]))
     required = {"target_chembl_id", "canonical_smiles", "pchembl_value"}
     missing = required - set(raw.columns)
     if missing:
@@ -154,8 +215,9 @@ def main() -> None:
         raw = raw[~duplicate]
     if "data_validity_comment" in raw:
         raw = raw[raw["data_validity_comment"].isna() | (raw["data_validity_comment"] == "")]
+    allowed_relations = set(config["activity"].get("allowed_relations", ["="]))
     if "standard_relation" in raw:
-        raw = raw[raw["standard_relation"].fillna("=").isin({"=", "<", "<=", None})]
+        raw = raw[raw["standard_relation"].isin(allowed_relations)]
 
     standardized = {}
     rejected = 0
@@ -183,10 +245,11 @@ def main() -> None:
         aggregate["pchembl_max"] - aggregate["pchembl_min"]
         >= config["activity"]["contradictory_margin"]
     )
+    contradictory_pairs = int(aggregate["contradictory"].sum())
     aggregate = aggregate[~aggregate["contradictory"]].copy()
-    aggregate["active"] = (
-        aggregate["pchembl_value"] >= config["activity"]["active_threshold_pchembl"]
-    ).astype(float)
+    aggregate, gray_zone_pairs = label_activity_pairs(aggregate, config["activity"])
+    active_threshold = float(config["activity"]["active_threshold_pchembl"])
+    inactive_threshold = float(config["activity"]["inactive_threshold_pchembl"])
     identity = aggregate.groupby("molecule_id", as_index=False).agg(
         canonical_smiles=("canonical_smiles", "first"),
         inchikey=("inchikey", "first"),
@@ -280,9 +343,18 @@ def main() -> None:
         }
         molecules = molecules.groupby("molecule_id", as_index=False).agg(aggregations)
 
-    components = component_ids(molecules, species_edges)
-    molecules["component_id"] = molecules["molecule_id"].map(components)
     split_config = config["split"]
+    similarity_threshold = split_config.get("chemical_cluster_tanimoto")
+    components = component_ids(
+        molecules,
+        species_edges,
+        similarity_threshold=None
+        if similarity_threshold is None
+        else float(similarity_threshold),
+        fingerprint_radius=int(config["features"]["radius"]),
+        fingerprint_bits=int(config["features"]["n_bits"]),
+    )
+    molecules["component_id"] = molecules["molecule_id"].map(components)
     assignments = assign_components(
         molecules, list(split_config["fractions"]), int(split_config["seed"])
     )
@@ -303,10 +375,25 @@ def main() -> None:
     summary = {
         "built_at": datetime.now(UTC).isoformat(),
         "chembl_input_kind": chembl_kind,
-        "confirmatory_eligible": chembl_kind == "pinned_sqlite",
+        "chembl_source_manifests": chembl_manifests,
+        "confirmatory_eligible": chembl_kind == "pinned_sqlite_verified",
         "rdkit_version": rdBase.rdkitVersion,
         "raw_activity_rows": len(raw),
         "curated_activity_pairs": len(aggregate),
+        "contradictory_pairs_excluded": contradictory_pairs,
+        "gray_zone_pairs_excluded": gray_zone_pairs,
+        "activity_label_policy": {
+            "active_at_or_above": active_threshold,
+            "inactive_at_or_below": inactive_threshold,
+            "gray_zone_excluded": bool(config["activity"].get("exclude_gray_zone", True)),
+            "allowed_relations": sorted(allowed_relations),
+        },
+        "split_policy": {
+            "method": split_config["method"],
+            "chemical_cluster_tanimoto": similarity_threshold,
+            "fractions": split_config["fractions"],
+            "seed": split_config["seed"],
+        },
         "molecules": len(molecules),
         "herb_bags": 0 if bags is None else len(bags),
         "rejected_unique_smiles": rejected,

@@ -35,8 +35,10 @@ Targets are DPP4 (`CHEMBL284`), AChE (`CHEMBL220`), and COX-2/PTGS2
 `IC50`/`Ki` observations in nM for human single-protein targets, assay
 confidence at least 8, and a valid pChEMBL value. Functional assays are a
 separate sensitivity cohort, not silently pooled. Exclude invalid/duplicate-
-flagged measurements and records with ambiguous relations. Use pChEMBL >= 6 as
-active in the primary analysis, with 5 and 7 as sensitivity analyses.
+flagged measurements and records with ambiguous relations. The primary binary
+analysis uses exact (`=`) observations only: pChEMBL >= 6 is active, pChEMBL <=
+5 is inactive, and the open interval (5, 6) is excluded. Alternative cutoffs
+and explicit censored/continuous models are sensitivity analyses.
 
 Aggregate exact standardized structure/target replicates by median pChEMBL.
 Flag a structure-target pair as contradictory when its valid replicates span at
@@ -82,16 +84,19 @@ standardization and retain source-to-canonical provenance.
 
 ## Leakage-resistant split
 
-The split unit is a connected component of two constraints:
+The primary split unit is a connected component of three constraints:
 
-1. molecules with the same Bemis-Murcko scaffold are connected;
-2. metabolites reported for the same VietHerb species are connected.
+1. molecules with radius-2, 2048-bit chiral Morgan Tanimoto similarity at least
+   0.70 are connected;
+2. molecules with the same Bemis-Murcko scaffold are connected;
+3. metabolites reported for the same VietHerb species are connected.
 
 The transitive closure is essential: if molecule A shares a scaffold with B and
 B shares a species with C, all three belong to one component. Assign entire
 components to 70% train, 15% validation, and 15% test with seed 20261020 while
 approximately preserving per-target labels. Any target with fewer than 30 test
 positives after grouping is descriptive only and excluded from macro inference.
+The scaffold-only component split is retained as a secondary sensitivity regime.
 
 Fit activity thresholds, class weights, domain weights, label vocabularies, and
 all learned preprocessing using training data only. Verify by invariant tests

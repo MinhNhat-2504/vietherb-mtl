@@ -1,74 +1,152 @@
-# VietHerb data-permission request template
+# VietHerb data-permission request
 
-Send only after filling the bracketed identity/institution fields. Keep the
-maintainer's written reply in the private project records and cite its date/ID
-in the data manifest; do not commit private correspondence.
+**Verified recipient:** Prof. Ly Le, `ly.le@hcmiu.edu.vn`<br>
+**Verified from:** the current VietHerb website and the corresponding-author
+information for DOI `10.1021/acs.jcim.8b00399`<br>
+**Prepared:** 2026-10-21
 
-## English
+Before sending, replace only the bracketed role, institution, and ORCID fields.
+Keep the written reply in private project records and record its date and a
+non-sensitive permission identifier in the dataset manifest. Do not commit
+private correspondence.
 
-**Subject:** Request for permission to use and derive a reproducible research
-benchmark from VietHerb data
+## English email (recommended)
 
-Dear VietHerb team,
+**To:** ly.le@hcmiu.edu.vn<br>
+**Subject:** Permission and reproducible data export request for academic VietHerb research
 
-My name is [full name], [role] at [institution]. I am conducting an academic
-study provisionally titled “From Plant-Level Traditional Use to Compound-Level
-Target Activity: Leakage-Controlled Multiple-Instance Learning for Vietnamese
-Medicinal Plants.” The work treats VietHerb therapeutic-use records as noisy,
-plant-level historical annotations and does not claim that they establish
-clinical efficacy.
+Dear Professor Le and the VietHerb team,
 
-I would like to request written permission to:
+My name is Minh Nhat, [role] at [institution]. I am conducting a non-commercial
+academic study provisionally titled “From Plant-Level Traditional Use to
+Compound-Level Target Activity: Leakage-Controlled Multiple-Instance Learning
+for Vietnamese Medicinal Plants.” The study treats VietHerb therapeutic-use
+records as noisy plant-level historical annotations and does not interpret
+them as evidence of clinical efficacy.
 
-1. obtain an official snapshot/export of plant, metabolite,
-   plant–metabolite, and plant–therapeutic-effect records;
-2. use the snapshot for non-commercial academic research;
-3. standardize structures and terminology and link records to ChEMBL/LOTUS;
-4. publish aggregate statistics, source identifiers, transformation code,
-   checksums, and reproducible split manifests; and
-5. [choose one] redistribute the transformed row-level benchmark under
-   [proposed licence] / publish only identifiers and code while requiring users
-   to obtain VietHerb data separately.
+I am writing to request an official, versioned export of the following VietHerb
+relations:
 
-Could you also confirm the applicable data licence, required attribution, the
-preferred citation, whether automated access to the public REST endpoints is
-permitted, and whether the current live database supersedes the 2019 release?
-We would be pleased to discuss domain review or collaboration if useful.
+1. plant identifier, scientific name, family, and genus;
+2. metabolite identifier, name, SMILES, InChIKey, and source identifiers;
+3. plant–metabolite edges; and
+4. plant–therapeutic-effect edges with the original effect text.
 
-Sincerely,  
-[name, institution, ORCID, email]
+I also request written permission to:
 
-## Vietnamese
+1. use the export for non-commercial academic research;
+2. standardize structures and terminology and link records to ChEMBL and open
+   reference resources;
+3. publish aggregate statistics, transformation code, source identifiers,
+   checksums, and leakage-controlled split manifests; and
+4. deposit the normalized row-level benchmark and split assignments in a
+   persistent public repository so that third parties can reproduce the paper.
 
-**Tiêu đề:** Xin phép sử dụng dữ liệu VietHerb và xây dựng bộ benchmark nghiên
-cứu có thể tái lập
+For item 4, would the VietHerb team permit redistribution under **CC BY 4.0**,
+or another explicit open-data licence that you prefer? If row-level
+redistribution is not permitted, could you specify exactly which derived
+fields, identifiers, aggregate statistics, or access mechanism may be shared?
+This point is important because the intended journal requires third parties to
+be able to reproduce the reported conclusions.
 
-Kính gửi nhóm phát triển VietHerb,
+Could you additionally confirm:
 
-Tôi là [họ tên], [vai trò] tại [đơn vị]. Tôi đang thực hiện nghiên cứu học thuật
-dự kiến có tiêu đề “From Plant-Level Traditional Use to Compound-Level Target
-Activity: Leakage-Controlled Multiple-Instance Learning for Vietnamese
-Medicinal Plants”. Nghiên cứu xem thông tin công dụng trong VietHerb là tri thức
-lịch sử ở cấp loài cây có nhiễu, không xem đó là bằng chứng xác nhận hiệu quả
-lâm sàng.
+- the applicable database licence and required attribution/citation;
+- whether an official export is preferred over the current public REST
+  endpoints;
+- whether automated, cached, rate-limited access to those endpoints is allowed;
+- the snapshot/release date and whether the current live database supersedes
+  the 2019 release; and
+- whether your team would be interested in reviewing the data interpretation
+  or collaborating on the study, subject to normal authorship criteria.
 
-Tôi kính đề nghị nhóm cho phép bằng văn bản đối với các nội dung sau:
+The project code and data schema are available at
+https://github.com/MinhNhat-2504/vietherb-mtl. I would be happy to send the
+full protocol or adapt the release plan to VietHerb’s preferred attribution and
+governance requirements.
 
-1. nhận một bản snapshot/export chính thức gồm cây, chất chuyển hóa, quan hệ
-   cây–chất và cây–tác dụng trị liệu;
-2. sử dụng dữ liệu cho nghiên cứu học thuật phi thương mại;
-3. chuẩn hóa cấu trúc/thuật ngữ và liên kết với ChEMBL/LOTUS;
-4. công bố thống kê tổng hợp, mã định danh nguồn, mã xử lý, checksum và split
-   manifest có thể tái lập; và
-5. [chọn một] phân phối bộ dữ liệu dẫn xuất ở mức từng dòng theo giấy phép
-   [đề xuất] / chỉ công bố mã định danh và mã nguồn, người dùng phải tự xin dữ
-   liệu VietHerb.
+Sincerely,
 
-Xin nhóm cho biết thêm giấy phép dữ liệu áp dụng, cách ghi công/citation bắt
-buộc, việc truy cập tự động các REST endpoint công khai có được phép hay không,
-và dữ liệu trực tuyến hiện tại có thay thế bản công bố năm 2019 hay không. Tôi
-rất sẵn lòng trao đổi về việc kiểm duyệt chuyên môn hoặc hợp tác đồng tác giả.
+Minh Nhat<br>
+[role and institution]<br>
+[ORCID, if available]<br>
+minhnhatpro2504@gmail.com
 
-Trân trọng,  
-[họ tên, đơn vị, ORCID, email]
+## Vietnamese email
 
+**Đến:** ly.le@hcmiu.edu.vn<br>
+**Tiêu đề:** Xin phép sử dụng và nhận bản xuất dữ liệu VietHerb phục vụ nghiên cứu tái lập
+
+Kính gửi PGS.TS. Lê Thị Lý và nhóm phát triển VietHerb,
+
+Em là Minh Nhật, [vai trò] tại [đơn vị]. Em đang thực hiện một nghiên cứu học
+thuật phi thương mại với tiêu đề dự kiến “From Plant-Level Traditional Use to
+Compound-Level Target Activity: Leakage-Controlled Multiple-Instance Learning
+for Vietnamese Medicinal Plants”. Nghiên cứu xem thông tin công dụng trong
+VietHerb là dữ liệu lịch sử có nhiễu ở cấp loài cây, không xem đây là bằng chứng
+xác nhận hiệu quả lâm sàng.
+
+Em kính đề nghị nhóm cung cấp một bản xuất dữ liệu chính thức, có ngày hoặc mã
+phiên bản, gồm các quan hệ sau:
+
+1. mã cây, tên khoa học, họ và chi;
+2. mã chất chuyển hóa, tên, SMILES, InChIKey và mã nguồn liên quan;
+3. quan hệ cây–chất chuyển hóa; và
+4. quan hệ cây–tác dụng trị liệu, giữ nguyên văn bản tác dụng gốc.
+
+Em đồng thời xin phép bằng văn bản cho các nội dung:
+
+1. sử dụng bản xuất cho nghiên cứu học thuật phi thương mại;
+2. chuẩn hóa cấu trúc và thuật ngữ, liên kết dữ liệu với ChEMBL và các nguồn
+   tham chiếu mở;
+3. công bố thống kê tổng hợp, mã xử lý, mã định danh nguồn, checksum và split
+   manifest kiểm soát rò rỉ; và
+4. lưu bộ benchmark chuẩn hóa ở mức từng dòng cùng split trên một kho dữ liệu
+   công khai, bền vững để bên thứ ba có thể tái lập kết quả bài báo.
+
+Đối với mục 4, nhóm có cho phép phân phối lại theo giấy phép **CC BY 4.0** hoặc
+một giấy phép dữ liệu mở khác do nhóm lựa chọn không? Nếu không thể phân phối
+lại từng dòng, xin nhóm cho biết cụ thể trường dữ liệu, mã định danh, thống kê
+tổng hợp hoặc cơ chế truy cập nào được phép công bố. Nội dung này quan trọng vì
+tạp chí dự kiến yêu cầu bên thứ ba tái lập được các kết luận nghiên cứu.
+
+Xin nhóm vui lòng xác nhận thêm:
+
+- giấy phép dữ liệu áp dụng và cách ghi công/citation bắt buộc;
+- nhóm ưu tiên bản export chính thức hay sử dụng các REST endpoint công khai;
+- có cho phép truy cập tự động với cache, giới hạn tốc độ và retry lịch sự hay
+  không;
+- ngày/phiên bản snapshot và dữ liệu trực tuyến hiện tại có thay thế bản công
+  bố năm 2019 hay không; và
+- nhóm có quan tâm đến việc kiểm duyệt cách diễn giải dữ liệu hoặc hợp tác
+  nghiên cứu theo tiêu chí tác giả thông thường hay không.
+
+Mã nguồn và schema dự kiến được công khai tại
+https://github.com/MinhNhat-2504/vietherb-mtl. Em sẵn sàng gửi protocol đầy đủ
+hoặc điều chỉnh phương án phát hành theo yêu cầu ghi công và quản trị dữ liệu
+của nhóm VietHerb.
+
+Trân trọng,
+
+Minh Nhật<br>
+[vai trò và đơn vị]<br>
+[ORCID, nếu có]<br>
+minhnhatpro2504@gmail.com
+
+## Minimum acceptable written reply
+
+A usable reply must unambiguously cover all of the following:
+
+- identity of the dataset/snapshot and its date or version;
+- permission for academic use and automated or export-based acquisition;
+- permission or prohibition for transformed row-level redistribution;
+- the exact licence or written reuse conditions;
+- required attribution and citation; and
+- whether public source identifiers, hashes, derived splits, and aggregates may
+  be published.
+
+A reply granting internal use but prohibiting reproducible public access is not
+sufficient for a Journal of Cheminformatics Research/Methodology article whose
+main conclusion depends on those rows. In that case the project must either
+negotiate a public release, move the primary benchmark to an openly licensed
+source, or select a journal with a compatible controlled-access policy.

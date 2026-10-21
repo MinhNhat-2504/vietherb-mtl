@@ -12,10 +12,14 @@ structure:
   tautomer_canonicalization: true
 activity:
   active_threshold_pchembl: 6.0
+  inactive_threshold_pchembl: 5.0
+  exclude_gray_zone: true
+  allowed_relations: ["="]
   replicate_aggregation: median
   contradictory_margin: 1.0
 split:
-  method: scaffold_species_components
+  method: chemical_cluster_species_components
+  chemical_cluster_tanimoto: 0.70
   fractions: [0.70, 0.15, 0.15]
   seed: 20261020
   stratify_targets: true

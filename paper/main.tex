@@ -35,25 +35,28 @@ VietHerb snapshot to ChEMBL 37 activities for human DPP4,
 acetylcholinesterase, and COX-2. Each plant is represented as a bag of
 standardized metabolites, with gated-attention multiple-instance learning and
 positive--unlabelled treatment of absent use annotations. Before restricted
-VietHerb data were available, we validated the activity branch on a hashed live
-ChEMBL snapshot using connected-component scaffold splits, five seeds, four
-fingerprint baselines, and dependence-aware paired bootstrap intervals.
+VietHerb data were available, we validated the activity branch on frozen
+ChEMBL 37 using a 0.70 Tanimoto connected-component split, five seeds, separate
+and shared fingerprint MLPs, and dependence-aware paired bootstrap intervals.
 
 \textbf{Results:}
-The exploratory snapshot contained 23,602 retrieved records, 16,941 records
-after assay filtering, 14,051 aggregated compound--target pairs, and 14,029
-unique molecules. No molecule, InChIKey, Murcko scaffold, or connected
-component crossed train, validation, and test partitions. Extra Trees achieved
-the highest macro PR-AUC (0.8842 $\pm$ 0.0010). Shared activity-only learning
-achieved 0.8635 $\pm$ 0.0019 versus 0.8546 $\pm$ 0.0045 for separate neural
-models; the paired difference was 0.0089 (hierarchical bootstrap 95\% CI,
-0.0034--0.0154). These results validate the activity pipeline but do not test
-the ethnopharmacological MIL hypothesis.
+The frozen ChEMBL 37 extraction contained 43,843 candidate records and 16,941
+eligible records, yielding 10,698 labelled compound--target pairs and 10,686
+unique molecules after replicate, contradiction, and gray-zone handling. No
+molecule, InChIKey, Murcko scaffold, or Tanimoto-connected component crossed
+train, validation, and test partitions; maximum test-to-train Tanimoto was
+0.698 under the locked 0.70 threshold. Separate target MLPs achieved macro
+PR-AUC $0.9281\pm0.0035$, versus $0.9203\pm0.0024$ for shared activity-only
+learning. The paired shared-minus-separate difference was $-0.0077$
+(hierarchical bootstrap 95\% CI, $-0.0141$ to $-0.0021$), although the shared
+model improved BEDROC20. These results reveal metric- and target-dependent
+negative transfer but do not test the ethnopharmacological MIL hypothesis.
 
 \textbf{Conclusions:}
 The implemented workflow provides a leakage-audited basis for testing whether
-plant-level knowledge adds compound-level ranking value. Exploratory ChEMBL
-results support the engineering validity of the activity branch, while the
+plant-level knowledge adds compound-level ranking value. Frozen ChEMBL 37
+results validate the activity branch and motivate explicit negative-transfer
+controls, while the
 central MIL comparison remains prospectively locked pending authorized
 VietHerb data and expert-audited therapeutic-use mappings.
 \end{abstract}
@@ -115,9 +118,10 @@ source identifiers, checksums, aggregate counts, and split-generation logic.
 Traditional-use records are treated as hypothesis-generating cultural and
 historical evidence, not as validated biomedical claims.
 
-For the confirmatory study, measured activities will be extracted from the
-versioned ChEMBL 37 SQLite release. The results reported here use a live REST
-snapshot only for exploratory engineering. ChEMBL is a
+For the confirmatory study, measured activities were extracted from the
+versioned ChEMBL 37 SQLite release; the archive, database, and output were
+bound by SHA-256 hashes. The earlier live REST snapshot is retained only as an
+exploratory engineering analysis. ChEMBL is a
 manually curated, large-scale bioactivity resource with explicit assay and
 document provenance \citep{zdrazil2024chembl}. LOTUS may be used only for an
 optional occurrence/provenance sensitivity analysis
@@ -137,8 +141,10 @@ structure--target replicates are aggregated by median pChEMBL; pairs spanning
 at least one log unit are flagged as contradictory and excluded from the
 primary analysis.
 
-The prespecified binary endpoint is active at pChEMBL $\geq 6$. Thresholds 5
-and 7 and continuous pActivity models are sensitivity analyses. Unmeasured
+The prespecified binary endpoint labels pChEMBL $\geq 6$ as active and
+pChEMBL $\leq 5$ as inactive; the interval $(5,6)$ is excluded as a gray zone.
+Only exact (equality) measurements enter the primary binary cohort. Alternative
+cutoffs and continuous pActivity models are sensitivity analyses. Unmeasured
 compound--target pairs remain masked. All stereochemistry and structure
 standardization decisions, rejected rows, release metadata, and SHA-256 hashes
 are retained in a machine-readable manifest.
@@ -242,84 +248,85 @@ with structure cluster as the resampling unit for compound endpoints and plant
 as the unit for bag endpoints. Target-level secondary tests use
 Benjamini--Hochberg correction.
 
-For the exploratory activity-only validation, the live snapshot was retrieved
-on 20 October 2026 and bound to the configuration by SHA-256. Logistic
-regression and Extra Trees were compared with separate target-specific MLPs and
-an architecture-matched shared MLP. Neural and Extra Trees estimates use the
-five prespecified seeds; deterministic logistic regression is repeated only to
-retain the same reporting schema. All exploratory manifests are marked
-\texttt{confirmatory\_eligible=false}. Runs used Python 3.11.9, RDKit
-2025.09.5, scikit-learn 1.8.0, and PyTorch 2.5.1 with CUDA 12.1 on an NVIDIA
+For the frozen activity-only comparison, target-specific MLPs and an
+architecture-matched shared MLP were trained with five prespecified seeds.
+Within each run, early stopping used validation macro PR-AUC and the test set
+was evaluated only after restoring the best validation checkpoint. The source,
+dataset, run, metric, and prediction artifacts are bound by SHA-256. Runs used
+Python 3.11.9, RDKit 2025.09.5, and PyTorch 2.5.1 with CUDA 12.1 on an NVIDIA
 RTX 4060 Laptop GPU with 8 GB memory.
 
 \section{Results}
 
 \subsection{Cohort and shift audit}
 
-The REST snapshot yielded 23,602 raw target records. Restriction to eligible
-binding measurements retained 16,941 rows, which became 14,051
-structure--target pairs after replicate aggregation and 14,029 globally unique
-molecules after standardization. Connected-component assignment produced
-9,820 training, 2,105 validation, and 2,104 test molecules spanning 5,433
-Murcko scaffolds. Pairwise overlap between every split was zero for molecule
-identifier, InChIKey, scaffold, and connected-component identifier. Table~1
-summarizes the target observations. No VietHerb row was used in this analysis.
+The frozen ChEMBL 37 database yielded 43,843 candidate records for the three
+targets. Prespecified assay, measurement, relation, validity, duplicate, and
+structure filters retained 16,941 rows. After standardization and replicate
+aggregation, 435 contradictory pairs and 3,353 gray-zone pairs were excluded,
+leaving 10,698 labelled structure--target pairs and 10,686 unique molecules.
+Chemical-component assignment produced 7,480 training, 1,603 validation, and
+1,603 test molecules spanning 4,417 Murcko scaffolds. Pairwise overlap between
+every split was zero for molecule identifier, InChIKey, scaffold, and connected
+component. Test-to-train nearest-neighbour Tanimoto had median 0.500, 95th
+percentile 0.673, and maximum 0.698, below the locked 0.70 clustering threshold.
+Table~1 summarizes the target observations. No VietHerb row was used.
 
 \begin{table}[ht]
 \centering
-\caption{Exploratory ChEMBL REST-snapshot cohort after curation. Active denotes
-pChEMBL $\geq 6$. This is not the confirmatory ChEMBL 37/VietHerb cohort.}
+\caption{Frozen ChEMBL 37 activity cohort after curation. Active denotes
+pChEMBL $\geq 6$; inactive denotes pChEMBL $\leq 5$. This table validates the
+confirmatory activity branch but contains no VietHerb supervision.}
 \begin{tabular}{lrrrr}
 \toprule
 Endpoint & Measurements & Molecules & Active (\%) & Test positives\\
 \midrule
-DPP4 & 4,156 & 4,156 & 83.7 & 522\\
-AChE & 5,784 & 5,784 & 49.7 & 431\\
-COX-2 & 4,111 & 4,111 & 55.8 & 344\\
-All targets & 14,051 & 14,029 & 61.5 & 1,297\\
+DPP4 & 3,725 & 3,725 & 93.4 & 522\\
+AChE & 4,026 & 4,026 & 71.3 & 431\\
+COX-2 & 2,947 & 2,947 & 77.8 & 344\\
+All targets & 10,698 & 10,686 & 80.8 & 1,297\\
 Plant-use bags & 0 & 0 & --- & 0\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The absence of split overlap satisfies the implemented identity and scaffold
-leakage gates. Nearest-neighbour shift, bag-size distributions, plants per
+The absence of identity, scaffold, and fingerprint-neighbour overlap satisfies
+the implemented chemical leakage gates. Bag-size distributions, plants per
 metabolite, and botanical component sizes cannot be estimated until the
-authorized VietHerb snapshot is frozen; these remain confirmatory diagnostics
-rather than unreported exploratory outcomes.
+authorized VietHerb snapshot is frozen; these remain locked diagnostics.
 
-\subsection{Exploratory activity-only comparison}
+\subsection{Frozen ChEMBL 37 activity-only comparison}
 
-Extra Trees ranked first on macro PR-AUC, BEDROC20, AUROC, and Brier score
-(Table~2). The shared MLP exceeded the separate neural models by 0.0089 macro
-PR-AUC. A hierarchical bootstrap resampling both seed and scaffold component
-gave a 95\% interval of 0.0034--0.0154. Mean target-wise differences for shared
-minus separate MLPs were 0.0102 for DPP4, 0.0027 for AChE, and 0.0139 for
-COX-2; their across-seed standard deviations were 0.0056, 0.0068, and 0.0134,
-respectively. This comparison measures activity-only parameter sharing and is
-not evidence for the proposed auxiliary plant supervision.
+Separate target MLPs exceeded the shared activity-only MLP on the primary macro
+PR-AUC endpoint (Table~2). The mean paired shared-minus-separate difference was
+$-0.0077$. A hierarchical bootstrap resampling model seed and chemical
+component gave a 95\% interval of $-0.0141$ to $-0.0021$. Target-wise PR-AUC
+differences were $+0.0045$ for DPP4, $-0.0272$ for AChE, and $-0.0005$ for
+COX-2, localizing most negative transfer to AChE. The shared model nevertheless
+improved BEDROC20 and EF1\%, so its earliest-ranked candidates were competitive
+despite worse global precision--recall and calibration. This comparison measures
+activity-only parameter sharing and is not evidence for auxiliary plant
+supervision.
 
 \begin{table}[ht]
 \centering
 \small
-\caption{Exploratory scaffold-component test performance, reported as mean
+\caption{Frozen ChEMBL 37 chemical-OOD test performance, reported as mean
 $\pm$ standard deviation across five seeds. EF1\% is an enrichment factor, not
 a percentage.}
 \begin{tabular}{lcccc}
 \toprule
 Model & Macro PR-AUC & BEDROC20 & EF1\% & Brier\\
 \midrule
-Logistic regression & $0.8358\pm0.0000$ & $0.9013\pm0.0000$ & $1.5992\pm0.0000$ & $0.1902\pm0.0000$\\
-Extra Trees & $0.8842\pm0.0010$ & $0.9532\pm0.0031$ & $1.6434\pm0.0335$ & $0.1505\pm0.0005$\\
-Separate target MLPs & $0.8546\pm0.0045$ & $0.9315\pm0.0128$ & $1.6584\pm0.0000$ & $0.1791\pm0.0037$\\
-Shared activity MLP & $0.8635\pm0.0019$ & $0.9460\pm0.0063$ & $1.6584\pm0.0000$ & $0.1777\pm0.0031$\\
+Separate target MLPs & $0.9281\pm0.0035$ & $0.9714\pm0.0066$ & $1.2334\pm0.0245$ & $0.1833\pm0.0132$\\
+Shared activity MLP & $0.9203\pm0.0024$ & $0.9803\pm0.0036$ & $1.2527\pm0.0000$ & $0.2253\pm0.0263$\\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \subsection{Implementation and confirmatory readiness}
 
-All 32 unit tests passed, including masked-loss, nnPU-risk, attention-MIL,
+All 39 unit tests passed, including masked-loss, nnPU-risk, attention-MIL,
 metric, and connected-component leakage invariants. A CUDA smoke run exercised
 the activity-only, naive-broadcast, MIL, and shuffled-MIL paths end to end on
 deterministic synthetic bags. Its manifest is explicitly marked
@@ -330,14 +337,13 @@ analyses.
 
 \section{Discussion}
 
-The exploratory results establish that the curation, splitting, training, and
-evaluation stack works on measured bioactivity. They also show that model
-selection remains consequential: Extra Trees outperformed both neural
-alternatives, while sharing the neural encoder gave a small, consistently
-positive macro PR-AUC change relative to separate target models. The confidence
-interval quantifies this snapshot-specific comparison; it does not remove bias
-from a live database snapshot or elevate an exploratory analysis to a
-confirmatory result.
+The frozen activity results establish that the version-pinned curation,
+chemical-OOD splitting, training, and evaluation stack works on measured
+bioactivity. They also demonstrate negative transfer: hard sharing reduced the
+primary macro PR-AUC, driven mainly by AChE, even while improving early-ranking
+metrics. This metric dependence argues against declaring one architecture
+superior from AUROC or enrichment alone and supports the prespecified reporting
+of ranking, calibration, and target-wise outcomes.
 
 The future principal result must be interpreted as incremental predictive value
 under the locked evaluation, not validation of traditional medicine. If MIL improves
@@ -365,14 +371,15 @@ domain collaborator are release gates rather than administrative afterthoughts.
 
 We present a reproducible, leakage-controlled formulation for learning from
 plant-level traditional-use labels and compound-level target measurements
-without broadcasting each use label to every constituent. A real-data
-activity-only benchmark of 14,029 compounds passed all implemented split audits
-and showed a modest benefit from shared neural learning, although Extra Trees
-remained the strongest exploratory baseline. The central claim---that
+without broadcasting each use label to every constituent. A version-pinned
+ChEMBL 37 activity benchmark of 10,686 compounds passed identity, scaffold, and
+fingerprint-neighbour split audits. Shared activity-only learning reduced macro
+PR-AUC relative to separate target MLPs, providing a concrete negative-transfer
+baseline for the later auxiliary experiment. The central claim---that
 ethnopharmacological bag supervision improves out-of-distribution molecular
 prioritization---is not yet supported or refuted. It will be tested only after
-an authorized VietHerb export, expert-audited mappings, and the version-pinned
-ChEMBL 37 cohort pass the prespecified release gates.
+an authorized VietHerb export and expert-audited mappings pass the remaining
+release gates.
 
 \section*{Data and code availability}
 

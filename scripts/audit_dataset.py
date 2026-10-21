@@ -8,7 +8,10 @@ import json
 from datetime import UTC, datetime
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
+from rdkit import Chem, DataStructs
+from rdkit.Chem import rdFingerprintGenerator
 
 
 def pairwise_overlaps(values: dict[str, set[str]]) -> dict[str, int]:
@@ -17,6 +20,26 @@ def pairwise_overlaps(values: dict[str, set[str]]) -> dict[str, int]:
         f"{left}__{right}": len(values[left] & values[right])
         for index, left in enumerate(names)
         for right in names[index + 1 :]
+    }
+
+
+def nearest_train_similarity(frame: pd.DataFrame) -> dict[str, float | int]:
+    generator = rdFingerprintGenerator.GetMorganGenerator(
+        radius=2, fpSize=2048, includeChirality=True
+    )
+    train = frame.loc[frame["split"] == "train", "canonical_smiles"]
+    test = frame.loc[frame["split"] == "test", "canonical_smiles"]
+    train_fps = [generator.GetFingerprint(Chem.MolFromSmiles(value)) for value in train]
+    maxima = []
+    for value in test:
+        fingerprint = generator.GetFingerprint(Chem.MolFromSmiles(value))
+        maxima.append(max(DataStructs.BulkTanimotoSimilarity(fingerprint, train_fps)))
+    values = np.asarray(maxima, dtype=float)
+    return {
+        "n_test": len(values),
+        "median": float(np.median(values)),
+        "p95": float(np.quantile(values, 0.95)),
+        "maximum": float(values.max()),
     }
 
 
@@ -53,6 +76,16 @@ def main() -> None:
     overlaps = {column: pairwise_overlaps(values) for column, values in split_sets.items()}
     if any(value for column in overlaps.values() for value in column.values()):
         raise RuntimeError(f"split leakage detected: {overlaps}")
+
+    similarity = nearest_train_similarity(frame)
+    manifest_path = args.dataset_dir / "manifest.json"
+    dataset_manifest = json.loads(manifest_path.read_text()) if manifest_path.exists() else {}
+    threshold = dataset_manifest.get("split_policy", {}).get("chemical_cluster_tanimoto")
+    if threshold is not None and similarity["maximum"] >= float(threshold) - 1e-12:
+        raise RuntimeError(
+            f"chemical-cluster leakage: maximum test-to-train similarity "
+            f"{similarity['maximum']:.4f} >= {threshold}"
+        )
 
     activity_columns = [column for column in frame if column.startswith("activity_")]
     target_counts = {}
@@ -94,6 +127,7 @@ def main() -> None:
         "rows": len(frame),
         "split_counts": frame["split"].value_counts().to_dict(),
         "unique_scaffolds": int(frame["murcko_scaffold"].nunique()),
+        "test_to_train_tanimoto": similarity,
         "overlaps": overlaps,
         "targets": target_counts,
         "bags": bag_summary,

@@ -27,7 +27,7 @@ training:
   pu_batch_size: 256
 evaluation:
   primary_metric: pr_auc
-  metrics: [pr_auc, bedroc20, ef1, roc_auc, brier]
+  metrics: [pr_auc, bedroc20, ef1, ef5, precision_at_1, recall_at_1, roc_auc, brier, ece10]
   bootstrap_replicates: 1000
   bootstrap_seed: 20261020
   report_per_target: true

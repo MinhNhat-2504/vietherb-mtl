@@ -119,7 +119,23 @@ def main() -> None:
     predictions = normalize_family(
         pd.concat([pd.read_parquet(path) for path in prediction_paths], ignore_index=True)
     )
-    metric_columns = ["pr_auc", "bedroc20", "ef1", "roc_auc", "brier"]
+    run_manifests = [json.loads((path / "manifest.json").read_text()) for path in args.runs]
+    confirmatory = all(manifest.get("confirmatory_eligible", False) for manifest in run_manifests)
+    metric_columns = [
+        column
+        for column in (
+            "pr_auc",
+            "bedroc20",
+            "ef1",
+            "ef5",
+            "precision_at_1",
+            "recall_at_1",
+            "roc_auc",
+            "brier",
+            "ece10",
+        )
+        if column in metrics
+    ]
     summary = metrics.groupby(["family", "task"])[metric_columns].agg(["mean", "std"]).reset_index()
     macro = (
         metrics.groupby(["family", "seed"])["pr_auc"]
@@ -139,10 +155,17 @@ def main() -> None:
     summary.to_csv(args.out.with_suffix(".csv"), index=False)
 
     lines = [
-        "# Exploratory baseline results",
+        "# ChEMBL 37 activity-only baseline results"
+        if confirmatory
+        else "# Exploratory baseline results",
         "",
-        "> **Not confirmatory.** These results use a live ChEMBL REST snapshot, "
-        "not the frozen ChEMBL 37 SQLite release, and contain no authorized VietHerb bags.",
+        (
+            "> **Confirmatory activity branch only.** These results use the frozen ChEMBL 37 "
+            "cohort, but contain no authorized VietHerb bags and do not test the central MIL claim."
+            if confirmatory
+            else "> **Not confirmatory.** These results use a live ChEMBL REST snapshot and "
+            "contain no authorized VietHerb bags."
+        ),
         "",
         f"Generated at {datetime.now(UTC).isoformat()} from five fixed seeds.",
         "",
@@ -173,11 +196,11 @@ def main() -> None:
             f"## Paired {args.candidate} minus {args.reference}",
             "",
             f"Observed macro PR-AUC difference: **{comparison['observed_macro_delta']:+.4f}**. "
-            f"Hierarchical seed + scaffold-component bootstrap 95% CI: "
+            f"Hierarchical seed + chemical-component bootstrap 95% CI: "
             f"**[{comparison['ci_low']:+.4f}, {comparison['ci_high']:+.4f}]** "
             f"({comparison['replicates']} replicates).",
             "",
-            "The comparison is an engineering validation of the activity-only pipeline. "
+            "The comparison evaluates the activity-only branch. "
             "It does not test the paper's ethnopharmacology/MIL hypothesis.",
             "",
             "## Input hashes",

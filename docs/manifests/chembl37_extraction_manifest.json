@@ -1,0 +1,181 @@
+{
+  "kind": "pinned_chembl_sqlite_extract",
+  "requested_release": 37,
+  "retrieved_at": "2026-10-20T20:36:25.055327+00:00",
+  "source": {
+    "archive_filename": "chembl_37_sqlite.tar.gz",
+    "archive_url": "https://ftp.ebi.ac.uk/pub/databases/chembl/ChEMBLdb/releases/chembl_37/chembl_37_sqlite.tar.gz",
+    "archive_sha256": "33c203740555f96067710cdfc1c3c55d890660e5908ec5cbf5817492c290d281",
+    "doi": "10.6019/CHEMBL.database.37",
+    "license": "CC BY-SA 3.0"
+  },
+  "archive": "D:\\chembl_dl\\chembl_37_sqlite.tar.gz",
+  "archive_sha256": "33c203740555f96067710cdfc1c3c55d890660e5908ec5cbf5817492c290d281",
+  "database_filename": "chembl_37.db",
+  "database_sha256": "4be13df3b68e25dcd0bff44bf094033b5aebe98f415acdc8c1cdf380e0c15142",
+  "database_release": "ChEMBL_37",
+  "database_version_rows": [
+    [
+      "Bioassay Ontology 2.0",
+      null,
+      "BAO version used for assays (http://bioassayontology.org/)"
+    ],
+    [
+      "COCONUT 2025-07",
+      null,
+      "COCONUT version used for natural product flagging (https://coconut.naturalproducts.net/)"
+    ],
+    [
+      "ChEMBL_37",
+      "2026-05-01 00:00:00.000000",
+      "ChEMBL Release 37 (https://www.ebi.ac.uk/chembl)"
+    ],
+    [
+      "ChEMBL_Structure_Pipeline 1.2.0",
+      null,
+      "ChEMBL_Structure_Pipeline version used for chemical structure curation (https://github.com/chembl/ChEMBL_Structure_Pipeline)"
+    ],
+    [
+      "EFO 3.74.0",
+      null,
+      "EFO version used for indication and warning data (https://www.ebi.ac.uk/efo/)"
+    ],
+    [
+      "Gene Ontology 2024-02-22",
+      null,
+      "GO version used for genes (https://www.ebi.ac.uk/QuickGO/)"
+    ],
+    [
+      "InChI v1.06",
+      null,
+      "InChI version used for compound registration (https://github.com/IUPAC-InChI/InChI)"
+    ],
+    [
+      "MeSH 2025",
+      null,
+      "MeSH version used for indication data (https://www.nlm.nih.gov/mesh/meshhome.html)"
+    ],
+    [
+      "RDKit 2022.09.4",
+      null,
+      "RDKit version used for standardisation and salt stripping of chemical structures (https://www.rdkit.org/)"
+    ],
+    [
+      "Swiss-Prot 2025_03",
+      null,
+      "UniProtKB version used for component_sequences data (https://www.expasy.org/resources/uniprotkb)"
+    ],
+    [
+      "UBERON 2024-03-22",
+      null,
+      "UBERON version used for tissues (http://obophenotype.github.io/uberon/)"
+    ]
+  ],
+  "validated_targets": {
+    "CHEMBL220": {
+      "chembl_id": "CHEMBL220",
+      "pref_name": "Acetylcholinesterase",
+      "target_type": "SINGLE PROTEIN",
+      "organism": "Homo sapiens",
+      "component_count": 1,
+      "target_uniprot": "P22303",
+      "target_sequence": "MRPPQCLLHTPSLASPLLLLLLWLLGGGVGAEGREDAELLVTVRGGRLRGIRLKTPGGPVSAFLGIPFAEPPMGPRRFLPPEPKQPWSGVVDATTFQSVCYQYVDTLYPGFEGTEMWNPNRELSEDCLYLNVWTPYPRPTSPTPVLVWIYGGGFYSGASSLDVYDGRFLVQAERTVLVSMNYRVGAFGFLALPGSREAPGNVGLLDQRLALQWVQENVAAFGGDPTSVTLFGESAGAASVGMHLLSPPSRGLFHRAVLQSGAPNGPWATVGMGEARRRATQLAHLVGCPPGGTGGNDTELVACLRTRPAQVLVNHEWHVLPQESVFRFSFVPVVDGDFLSDTPEALINAGDFHGLQVLVGVVKDEGSYFLVYGAPGFSKDNESLISRAEFLAGVRVGVPQVSDLAAEAVVLHYTDWLHPEDPARLREALSDVVGDHNVVCPVAQLAGRLAAQGARVYAYVFEHRASTLSWPLWMGVPHGYEIEFIFGIPLDPSRNYTAEEKIFAQRLMRYWANFARTGDPNEPRDPKAPQWPPYTAGAQQYVSLDLRPLEVRRGLRAQACAFWNRFLPKLLSATDTLDEAERQWKAEFHRWSSYMVHWKNQFDHYSKQDRCSDL"
+    },
+    "CHEMBL230": {
+      "chembl_id": "CHEMBL230",
+      "pref_name": "Prostaglandin G/H synthase 2",
+      "target_type": "SINGLE PROTEIN",
+      "organism": "Homo sapiens",
+      "component_count": 1,
+      "target_uniprot": "P35354",
+      "target_sequence": "MLARALLLCAVLALSHTANPCCSHPCQNRGVCMSVGFDQYKCDCTRTGFYGENCSTPEFLTRIKLFLKPTPNTVHYILTHFKGFWNVVNNIPFLRNAIMSYVLTSRSHLIDSPPTYNADYGYKSWEAFSNLSYYTRALPPVPDDCPTPLGVKGKKQLPDSNEIVEKLLLRRKFIPDPQGSNMMFAFFAQHFTHQFFKTDHKRGPAFTNGLGHGVDLNHIYGETLARQRKLRLFKDGKMKYQIIDGEMYPPTVKDTQAEMIYPPQVPEHLRFAVGQEVFGLVPGLMMYATIWLREHNRVCDVLKQEHPEWGDEQLFQTSRLILIGETIKIVIEDYVQHLSGYHFKLKFDPELLFNKQFQYQNRIAAEFNTLYHWHPLLPDTFQIHDQKYNYQQFIYNNSILLEHGITQFVESFTRQIAGRVAGGRNVPPAVQKVSQASIDQSRQMKYQSFNEYRKRFMLKPYESFEELTGEKEMSAELEALYGDIDAVELYPALLVEKPRPDAIFGETMVEVGAPFSLKGLMGNVICSPAYWKPSTFGGEVGFQIINTASIQSLICNNVKGCPFTSFSVPDPELIKTVTINASSSRSGLDDINPTVLLKERSTEL"
+    },
+    "CHEMBL284": {
+      "chembl_id": "CHEMBL284",
+      "pref_name": "Dipeptidyl peptidase 4",
+      "target_type": "SINGLE PROTEIN",
+      "organism": "Homo sapiens",
+      "component_count": 1,
+      "target_uniprot": "P27487",
+      "target_sequence": "MKTPWKVLLGLLGAAALVTIITVPVVLLNKGTDDATADSRKTYTLTDYLKNTYRLKLYSLRWISDHEYLYKQENNILVFNAEYGNSSVFLENSTFDEFGHSINDYSISPDGQFILLEYNYVKQWRHSYTASYDIYDLNKRQLITEERIPNNTQWVTWSPVGHKLAYVWNNDIYVKIEPNLPSYRITWTGKEDIIYNGITDWVYEEEVFSAYSALWWSPNGTFLAYAQFNDTEVPLIEYSFYSDESLQYPKTVRVPYPKAGAVNPTVKFFVVNTDSLSSVTNATSIQITAPASMLIGDHYLCDVTWATQERISLQWLRRIQNYSVMDICDYDESSGRWNCLVARQHIEMSTTGWVGRFRPSEPHFTLDGNSFYKIISNEEGYRHICYFQIDKKDCTFITKGTWEVIGIEALTSDYLYYISNEYKGMPGGRNLYKIQLSDYTKVTCLSCELNPERCQYYSVSFSKEAKYYQLRCSGPGLPLYTLHSSVNDKGLRVLEDNSALDKMLQNVQMPSKKLDFIILNETKFWYQMILPPHFDKSKKYPLLLDVYAGPCSQKADTVFRLNWATYLASTENIIVASFDGRGSGYQGDKIMHAINRRLGTFEVEDQIEAARQFSKMGFVDNKRIAIWGWSYGGYVTSMVLGSGSGVFKCGIAVAPVSRWEYYDSVYTERYMGLPTPEDNLDHYRNSTVMSRAENFKQVEYLLIHGTADDNVHFQQSAQISKALVDVGVDFQAMWYTDEDHGIASSTAHQHIYTHMSHFIKQCFSLP"
+    }
+  },
+  "candidate_rows": 43843,
+  "exclusion_flow": [
+    {
+      "step": "standard_type",
+      "before": 43843,
+      "after": 27980,
+      "excluded": 15863
+    },
+    {
+      "step": "assay_type",
+      "before": 27980,
+      "after": 27634,
+      "excluded": 346
+    },
+    {
+      "step": "standard_units",
+      "before": 27634,
+      "after": 23265,
+      "excluded": 4369
+    },
+    {
+      "step": "assay_confidence",
+      "before": 23265,
+      "after": 23265,
+      "excluded": 0
+    },
+    {
+      "step": "valid_positive_standard_value",
+      "before": 23265,
+      "after": 23210,
+      "excluded": 55
+    },
+    {
+      "step": "valid_pchembl",
+      "before": 23210,
+      "after": 19232,
+      "excluded": 3978
+    },
+    {
+      "step": "allowed_relation",
+      "before": 19232,
+      "after": 19232,
+      "excluded": 0
+    },
+    {
+      "step": "no_validity_warning",
+      "before": 19232,
+      "after": 19232,
+      "excluded": 0
+    },
+    {
+      "step": "not_potential_duplicate",
+      "before": 19232,
+      "after": 16947,
+      "excluded": 2285
+    },
+    {
+      "step": "resolved_structure",
+      "before": 16947,
+      "after": 16941,
+      "excluded": 6
+    }
+  ],
+  "rows": 16941,
+  "targets": {
+    "CHEMBL220": 7013,
+    "CHEMBL230": 5062,
+    "CHEMBL284": 4866
+  },
+  "activity_types": {
+    "IC50": 15657,
+    "Ki": 1284
+  },
+  "relations": {
+    "=": 16941
+  },
+  "output": "activities.parquet",
+  "output_sha256": "9c77f0ab6dbf6a93c7f10aab22c4cbfd0ba696b65c6a020e9ed570048e988a8e"
+}

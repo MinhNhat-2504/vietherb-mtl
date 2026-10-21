@@ -11,13 +11,13 @@ its reported metabolites without pretending that every metabolite explains the
 plant's use. The repository treats ethnomedical labels as noisy auxiliary
 supervision—not as evidence of efficacy.
 
-> **Project status:** the software pipeline is implemented and validated, and
-> an activity-only exploratory ChEMBL snapshot has been analysed. No result for
-> the central ethnopharmacology/MIL hypothesis is claimed until an authorized
-> VietHerb export and the frozen confirmatory ChEMBL release are available.
+> **Project status:** the software pipeline is implemented and validated, and a
+> checksum-locked ChEMBL 37 activity cohort has passed chemical-OOD split audits.
+> No result for the central ethnopharmacology/MIL hypothesis is claimed until an
+> authorized VietHerb export and audited therapeutic-use mappings are available.
 > Generated demo data are only for software smoke tests. See the
 > [current project status](docs/project_status.md) and
-> [exploratory results](docs/exploratory_results.md).
+> [confirmatory cohort](docs/confirmatory_chembl37_cohort.md).
 
 ## Study design
 
@@ -41,9 +41,11 @@ The confirmatory comparison is:
 4. shared encoder plus plant-bag multiple-instance supervision;
 5. shuffled-bag-label control and natural-product importance weighting.
 
-Primary evaluation uses scaffold-disjoint test compounds. VietHerb-derived
+Primary evaluation uses Morgan-Tanimoto-cluster-disjoint test compounds, with a
+scaffold-only split as sensitivity analysis. VietHerb-derived
 samples additionally enforce plant-species grouping. PR-AUC is the primary
-metric; BEDROC (alpha 20), EF1%, ROC-AUC, and calibration are secondary.
+metric; BEDROC (alpha 20), EF1%, EF5%, fixed-budget precision/recall, ROC-AUC,
+and calibration are secondary.
 Confidence intervals are compound-level stratified bootstrap intervals.
 
 ## Repository layout
@@ -85,8 +87,9 @@ python scripts/fetch_chembl.py --config configs/targets_exploratory_snapshot.yam
 # 2. Place an authorized VietHerb export under data/raw/vietherb, then validate it.
 python scripts/ingest_vietherb.py --input data/raw/vietherb --out data/interim/vietherb
 
-# For confirmatory results, use the version-pinned ChEMBL 37 SQLite release.
-python scripts/extract_chembl_sqlite.py --db data/raw/chembl/37/chembl_37.db `
+# For confirmatory results, use the version-pinned ChEMBL 37 SQLite archive.
+# Archive mode verifies SHA-256, extracts temporarily, and removes the ~30 GB DB.
+python scripts/extract_chembl_sqlite.py --tarball D:\chembl_dl\chembl_37_sqlite.tar.gz `
   --config configs/targets.yaml --out data/interim/chembl/37/activities.parquet
 
 # 3. Build a frozen modelling table.
@@ -106,11 +109,13 @@ python scripts/make_demo_data.py --out data/processed/demo --seed 20261020
 ## Scientific safeguards
 
 - Molecule structures are standardized before deduplication and splitting.
-- Replicate activities are aggregated only after unit/relation checks; ambiguous
-  contradictory measurements are retained as an explicit uncertainty flag.
+- Replicate activities are aggregated only after unit/relation checks;
+  contradictory pairs and the prespecified pChEMBL gray zone are excluded from
+  the primary cohort and counted in the manifest.
 - Split assignment is performed before fitting featurizers, thresholds, class
   weights, or domain weights.
-- Scaffolds and VietHerb plant species must not cross split boundaries.
+- Fingerprint clusters, scaffolds, and VietHerb plant species must not cross
+  split boundaries.
 - Hyperparameters are selected on validation data only; the test set remains
   sealed until the analysis plan is frozen.
 - LLM-assisted use-to-MeSH/Mondo mapping must be manually audited on a prespecified

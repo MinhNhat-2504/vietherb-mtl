@@ -132,3 +132,67 @@ def ef1_score(y_true: Sequence[int | float], y_score: Sequence[int | float]) -> 
     """Convenience alias for enrichment factor at 1%."""
 
     return enrichment_factor(y_true, y_score, fraction=0.01)
+
+
+def ef5_score(y_true: Sequence[int | float], y_score: Sequence[int | float]) -> float:
+    """Convenience alias for enrichment factor at 5%."""
+
+    return enrichment_factor(y_true, y_score, fraction=0.05)
+
+
+def precision_recall_at_fraction(
+    y_true: Sequence[int | float],
+    y_score: Sequence[int | float],
+    *,
+    fraction: float = 0.01,
+) -> tuple[float, float]:
+    """Expected precision and recall at a fixed screening budget.
+
+    Boundary ties contribute their expected positive count, matching the tie
+    policy used by :func:`enrichment_factor`.
+    """
+
+    if not 0 < fraction <= 1:
+        raise ValueError("fraction must be in (0, 1]")
+    pairs = _validated_pairs(y_true, y_score)
+    positives = sum(label for label, _ in pairs)
+    if positives == 0:
+        raise ValueError("precision/recall is undefined without positives")
+    pairs.sort(key=lambda item: item[1], reverse=True)
+    cutoff = max(1, math.ceil(len(pairs) * fraction))
+    threshold = pairs[cutoff - 1][1]
+    above = [label for label, score in pairs if score > threshold]
+    tied = [label for label, score in pairs if score == threshold]
+    expected_true_positives = sum(above) + (cutoff - len(above)) * (sum(tied) / len(tied))
+    return expected_true_positives / cutoff, expected_true_positives / positives
+
+
+def expected_calibration_error(
+    y_true: Sequence[int | float],
+    y_score: Sequence[int | float],
+    *,
+    n_bins: int = 10,
+) -> float:
+    """Equal-width expected calibration error for probability predictions."""
+
+    if n_bins < 2:
+        raise ValueError("n_bins must be at least 2")
+    pairs = _validated_pairs(y_true, y_score)
+    if any(score < 0 or score > 1 for _, score in pairs):
+        raise ValueError("calibration scores must be probabilities in [0, 1]")
+    total = len(pairs)
+    error = 0.0
+    for bin_index in range(n_bins):
+        lower = bin_index / n_bins
+        upper = (bin_index + 1) / n_bins
+        members = [
+            (label, score)
+            for label, score in pairs
+            if lower <= score < upper or (bin_index == n_bins - 1 and score == 1.0)
+        ]
+        if not members:
+            continue
+        accuracy = sum(label for label, _ in members) / len(members)
+        confidence = sum(score for _, score in members) / len(members)
+        error += len(members) / total * abs(accuracy - confidence)
+    return error

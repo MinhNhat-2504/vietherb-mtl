@@ -1,13 +1,17 @@
 chembl_release: 37
+source:
+  archive_filename: chembl_37_sqlite.tar.gz
+  archive_url: https://ftp.ebi.ac.uk/pub/databases/chembl/ChEMBLdb/releases/chembl_37/chembl_37_sqlite.tar.gz
+  archive_sha256: 33c203740555f96067710cdfc1c3c55d890660e5908ec5cbf5817492c290d281
+  doi: 10.6019/CHEMBL.database.37
+  license: CC BY-SA 3.0
 retrieval:
   standard_types: [IC50, Ki]
   standard_units: nM
   target_type: SINGLE PROTEIN
   assay_confidence_min: 8
   assay_types: [B]
-  pchembl_min: 5.0
-  active_threshold_pchembl: 6.0
-  allowed_relations: ["=", "<", "<="]
+  allowed_relations: ["="]
 targets:
   - id: CHEMBL284
     symbol: DPP4
