@@ -10,8 +10,7 @@
   },
   "checks": {
     "unit_tests": {
-      "status": "pass",
-      "count": 51
+      "status": "pass"
     },
     "ruff": "pass",
     "reference_evidence_artifacts": {
@@ -20,6 +19,7 @@
       "mismatches": 0,
       "wall_time_seconds": 15.445
     },
+    "cross_platform_ci_policy": "CSV tables and PNG figures are byte-exact gates. A vector PDF byte mismatch may be accepted only when its PNG companion is byte-exact and the regenerated PDF has valid PDF header/trailer markers.",
     "paper_build": {
       "status": "pass",
       "main_pages": 18,

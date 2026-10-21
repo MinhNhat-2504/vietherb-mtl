@@ -19,7 +19,7 @@ import pandas as pd
 from sklearn.metrics import average_precision_score, roc_auc_score
 
 from vietherb_mtl import benjamini_hochberg, reliability_bins
-from vietherb_mtl.evidence import RunFiles, archived_run, sha256
+from vietherb_mtl.evidence import RunFiles, archived_run, sha256, verify_artifact_hashes
 
 
 def directory_run(path: Path) -> RunFiles:
@@ -438,6 +438,14 @@ def main() -> None:
         type=Path,
         help="Fail unless regenerated artifacts match this evidence directory's manifest.",
     )
+    parser.add_argument(
+        "--allow-pdf-renderer-variance",
+        action="store_true",
+        help=(
+            "For cross-platform CI only: tolerate a PDF byte mismatch when its PNG "
+            "companion is byte-exact and the regenerated PDF passes an integrity check."
+        ),
+    )
     args = parser.parse_args()
 
     if args.archive_dir:
@@ -581,21 +589,29 @@ def main() -> None:
             (args.verify_reference / "manifest.json").read_text(encoding="utf-8")
         )
         expected = reference["artifacts"]
-        missing = sorted(set(expected) - set(artifact_hashes))
-        unexpected = sorted(set(artifact_hashes) - set(expected))
-        # Raster previews vary with platform font and image backends; PDFs and
-        # machine-readable artifacts remain exact hash gates.
-        mismatched = sorted(
-            path
-            for path in set(expected) & set(artifact_hashes)
-            if not path.endswith(".png") and expected[path] != artifact_hashes[path]
+        verification = verify_artifact_hashes(
+            expected,
+            artifact_hashes,
+            args.out,
+            allow_pdf_renderer_variance=args.allow_pdf_renderer_variance,
         )
-        if missing or unexpected or mismatched:
+        if not verification.passed:
             raise SystemExit(
                 "Evidence verification failed: "
-                f"missing={missing}, unexpected={unexpected}, mismatched={mismatched}"
+                f"missing={list(verification.missing)}, "
+                f"unexpected={list(verification.unexpected)}, "
+                f"mismatched={list(verification.mismatched)}"
             )
-        print(f"Verified {len(expected)} reproduced evidence artifacts")
+        print(
+            f"Verified {len(expected)} reproduced evidence artifacts "
+            f"({verification.exact_matches} byte-exact, "
+            f"{len(verification.tolerated_pdf_variance)} PDF renderer variance)"
+        )
+        if verification.tolerated_pdf_variance:
+            print(
+                "PDF byte variance accepted through byte-exact PNG companions: "
+                f"{list(verification.tolerated_pdf_variance)}"
+            )
     print(json.dumps(manifest, indent=2))
 
 

@@ -47,6 +47,10 @@ Verified against the official Research and general submission guidance on
 - [x] Enable the GitHub repository in Zenodo, create the `v0.2.0` GitHub
   release, verify archive processing, and insert version DOI
   `10.5281/zenodo.23537107` into the manuscript.
+- [x] Download the published Zenodo ZIP, match its MD5, and pass release-hash,
+  unit-test, Ruff, and evidence-replay checks from the extracted archive.
+- [ ] Correct the published Zenodo record-level rights from MIT-only to mixed
+  MIT code and CC BY-SA 3.0 ChEMBL-derived evidence.
 - [ ] Optional before final DOI: re-run full model training, rather than the
   archived-evidence replay, in a clean Python 3.11 CI runner.
 - [x] Confirm that all files needed to reproduce each current manuscript

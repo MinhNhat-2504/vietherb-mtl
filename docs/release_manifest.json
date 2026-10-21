@@ -1,16 +1,16 @@
 {
-  "generated_at": "2026-10-21T15:09:37.946508+00:00",
+  "generated_at": "2026-10-21T16:05:08.169106+00:00",
   "release": "v0.2.0",
   "artifact_count": 129,
   "artifacts": {
     ".github/workflows/reproducibility.yml": {
-      "bytes": 1009,
-      "sha256": "6e2219b8dfcfa6b2565275539d8f575ae066f52e3f10533fd32ed4c485d3f1c1",
+      "bytes": 1053,
+      "sha256": "daec5c356929bdd1723b07ab851c654b21348520a4589258b11fdf90c180d031",
       "hash_mode": "utf8_lf"
     },
     ".zenodo.json": {
-      "bytes": 1117,
-      "sha256": "e3e05c244504958f79dd4071b227afeb3033fae8a725b5e3578a165e9145e484",
+      "bytes": 1268,
+      "sha256": "56bd85255d0e7d5f6621daf884361338652d8eecb44fe1f038d5c43477d81bff",
       "hash_mode": "utf8_lf"
     },
     "CITATION.cff": {
@@ -364,18 +364,18 @@
       "hash_mode": "utf8_lf"
     },
     "docs/project_status.md": {
-      "bytes": 3595,
-      "sha256": "b852b0b79ecd1dd8428a75d8a7ec215f709ce18afb708b362e4f9effe3aba40e",
+      "bytes": 3732,
+      "sha256": "ba02145e29c0763fd3afbfd60f6f2e285bddce9671cbcfd512759547b4f53c2b",
       "hash_mode": "utf8_lf"
     },
     "docs/reproducibility_report.json": {
-      "bytes": 1471,
-      "sha256": "4b89aeb9e59135467750a99801360a3825900f7fb2059571c72c3bd428518733",
+      "bytes": 1683,
+      "sha256": "39088bedc8d33c7751092d3fd346925efdc98233f7391bd2d9e9c33a3efa682f",
       "hash_mode": "utf8_lf"
     },
     "docs/submission_checklist.md": {
-      "bytes": 4105,
-      "sha256": "8f45267c50732aab953fce7bfbbe8c53c24fe3eb6fd6f51edd66cb41c95b2ee6",
+      "bytes": 4389,
+      "sha256": "a6c6e2e2bead6a6efabf6a29ae7c1548ea502dceb0beb34fbd5b23c00896aeff",
       "hash_mode": "utf8_lf"
     },
     "docs/submission_roadmap.md": {
@@ -384,8 +384,8 @@
       "hash_mode": "utf8_lf"
     },
     "docs/zenodo_release_checklist.md": {
-      "bytes": 1640,
-      "sha256": "9c85ddf67fdd3f7b43922be976cf32b25fc88764ed0c00b0c3ddbba0757a871c",
+      "bytes": 2155,
+      "sha256": "fc92fd7e7e9ce5110c33335413cae84f1466a61222216d41f9c2f4a040ecf1d2",
       "hash_mode": "utf8_lf"
     },
     "LICENSE": {
@@ -484,8 +484,8 @@
       "hash_mode": "utf8_lf"
     },
     "scripts/generate_evidence_package.py": {
-      "bytes": 25143,
-      "sha256": "9fc405570a97e7157751aa517e6bf6f684a80b21d35de840e29657d6766040bb",
+      "bytes": 25672,
+      "sha256": "71d3efd0ebbed9d8324f4d53a39497a1d7ff82c376baa01c2c91e56b4dd982bf",
       "hash_mode": "utf8_lf"
     },
     "scripts/generate_release_manifest.py": {
@@ -544,8 +544,8 @@
       "hash_mode": "utf8_lf"
     },
     "src/vietherb_mtl/evidence.py": {
-      "bytes": 1147,
-      "sha256": "19d91f92941f90b6cb3eaa20ecaf82b1d0727f5223f525b5ececf9e07b956add",
+      "bytes": 3450,
+      "sha256": "427a564f8340fe82729013eb80d14ac0ca25b1fd2a29d4d38e791c01c736f623",
       "hash_mode": "utf8_lf"
     },
     "src/vietherb_mtl/external.py": {
@@ -599,8 +599,8 @@
       "hash_mode": "utf8_lf"
     },
     "tests/test_evidence_package.py": {
-      "bytes": 734,
-      "sha256": "708bf2df5e5904b6b8c3e3924b7ba62156851ca4f5aa321927022bfeda3bc924",
+      "bytes": 2280,
+      "sha256": "73d1560360f8223622040cc422072f3d7d4a61b576b17730a66a2bc84105160a",
       "hash_mode": "utf8_lf"
     },
     "tests/test_external_audit.py": {
