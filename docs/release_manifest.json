@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-21T17:05:30.313217+00:00",
+  "generated_at": "2026-10-21T23:40:14.353549+00:00",
   "release": "v0.2.0",
   "artifact_count": 129,
   "artifacts": {
@@ -400,7 +400,7 @@
     },
     "paper/main.pdf": {
       "bytes": 399812,
-      "sha256": "f7531b39070d7f5f3554729fb09a1c591896a73c63138d5fbe1179fbbea05c30",
+      "sha256": "59658ed31b5afd004227bad5764a3668001a238b23fc3bf52a070b902bc59c22",
       "hash_mode": "raw"
     },
     "paper/main.tex": {
@@ -420,7 +420,7 @@
     },
     "paper/supplement.pdf": {
       "bytes": 164112,
-      "sha256": "974cf523918933c72fb39bd49c31d364f5a8ed84ac5aca736f8257267cbc5783",
+      "sha256": "115d9c9d1416bc3a2457f75715f6dafc548a7bb8d7486630dbac2087f82f4b40",
       "hash_mode": "raw"
     },
     "paper/supplement.tex": {
