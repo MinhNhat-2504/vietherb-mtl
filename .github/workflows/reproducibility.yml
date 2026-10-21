@@ -1,0 +1,39 @@
+name: Reproducibility
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  clean-clone-replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install locked replay environment
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-repro.txt
+          python -m pip install --no-deps -e .
+
+      - name: Run unit and static checks
+        run: |
+          python -m pytest -q
+          python -m ruff check .
+
+      - name: Verify release manifest
+        run: python scripts/generate_release_manifest.py --verify
+
+      - name: Reproduce paper evidence from archived manifests
+        run: |
+          python scripts/generate_evidence_package.py \
+            --archive-dir docs/manifests \
+            --out artifacts/ci_evidence \
+            --verify-reference docs/evidence

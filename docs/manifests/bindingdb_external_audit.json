@@ -1,0 +1,58 @@
+{
+  "kind": "bindingdb_external_validation_eligibility_audit",
+  "created_at": "2026-10-21T12:43:38.966469+00:00",
+  "decision": "insufficient_for_three_target_confirmatory_external_validation",
+  "reason": "Every target must have the prespecified minimum active and inactive count after document, exact-molecule, and 0.70 chemical-similarity exclusion.",
+  "source": {
+    "name": "BindingDB article-curated subset",
+    "release": "2026-10",
+    "url": "https://www.bindingdb.org/rwd/bind/downloads/BindingDB_BindingDB_Articles_202610_tsv.zip",
+    "license": "CC BY 4.0",
+    "archive_md5": "4b1d2f7c90e83dc6fd13e7b106a1f545",
+    "archive_sha256": "727383bac35beed6bc5c55c40dfbd58ba023fa97a7f27dc1a61440c1ad54a2b7"
+  },
+  "selection": {
+    "targets": {
+      "P27487": "activity_DPP4",
+      "P22303": "activity_ACHE",
+      "P35354": "activity_PTGS2"
+    },
+    "organism": "Homo sapiens",
+    "single_protein_chain": true,
+    "endpoints": ["Ki", "IC50"],
+    "relations": ["="],
+    "active_at_or_above_pchembl": 6.0,
+    "inactive_at_or_below_pchembl": 5.0,
+    "document_disjoint_from_chembl37": true,
+    "exact_molecule_disjoint_from_chembl37": true,
+    "maximum_tanimoto_to_chembl37_exclusive": 0.7,
+    "minimum_active_and_inactive_per_target": 30
+  },
+  "stage_counts": {
+    "matched_target_rows": 1908,
+    "single_chain_human_article_rows": 1904,
+    "strict_binary_measurements": 1340,
+    "document_disjoint_measurements": 459,
+    "invalid_structure_measurements": 0,
+    "document_disjoint_pairs_before_contradictions": 408,
+    "contradictory_pairs_excluded": 4,
+    "exact_molecule_overlap_excluded": 93,
+    "similarity_overlap_excluded": 78,
+    "strict_external_pairs": 233
+  },
+  "class_counts": {
+    "activity_DPP4": {"inactive": 23, "active": 35, "total": 58},
+    "activity_ACHE": {"inactive": 87, "active": 32, "total": 119},
+    "activity_PTGS2": {"inactive": 39, "active": 17, "total": 56}
+  },
+  "target_inferential_eligibility": {
+    "activity_DPP4": false,
+    "activity_ACHE": true,
+    "activity_PTGS2": false
+  },
+  "all_targets_inferentially_eligible": false,
+  "candidate_rows_sha256": "eb6a43a6f5288a2d60fc30dec93382d642b89194605e2156c9cd40115e49d4ac",
+  "chembl_activities_sha256": "9c77f0ab6dbf6a93c7f10aab22c4cbfd0ba696b65c6a020e9ed570048e988a8e",
+  "chembl_model_table_sha256": "d914dcf7e77f416f9ea929d0cbcec9518b02eddadbc7936b93b182473845b51a",
+  "rdkit": "2025.09.5"
+}

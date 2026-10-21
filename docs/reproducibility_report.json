@@ -1,0 +1,49 @@
+{
+  "kind": "clean_release_reproducibility_report",
+  "verified_at": "2026-10-21",
+  "status": "pass",
+  "scope": "Tracked compact release; regeneration of publication figures and tables from docs/manifests without model retraining",
+  "bundle": {
+    "construction": "Only paths in docs/release_manifest.json copied to a new directory",
+    "expected_artifact_count": 129,
+    "text_hash_policy": "UTF-8 text normalized to LF; binary files hashed byte-for-byte"
+  },
+  "checks": {
+    "unit_tests": {
+      "status": "pass",
+      "count": 51
+    },
+    "ruff": "pass",
+    "reference_evidence_artifacts": {
+      "status": "pass",
+      "exact_sha256_matches": 18,
+      "mismatches": 0,
+      "wall_time_seconds": 15.445
+    },
+    "paper_build": {
+      "status": "pass",
+      "main_pages": 18,
+      "supplement_pages": 5,
+      "undefined_citations_or_references": 0,
+      "overfull_boxes": 0
+    },
+    "release_manifest": {
+      "status": "pass",
+      "verified_artifacts": 129
+    }
+  },
+  "environment": {
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "packages": {
+      "matplotlib": "3.10.8",
+      "numpy": "1.26.4",
+      "pandas": "2.3.3",
+      "pyarrow": "24.0.0",
+      "scikit-learn": "1.8.0",
+      "pytest": "9.1.1",
+      "ruff": "0.16.10"
+    }
+  },
+  "interpretation": "All reported numerical evidence is replayed from archived scientific outputs. This check does not claim that GPU model training was repeated."
+}

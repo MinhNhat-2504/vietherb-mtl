@@ -151,6 +151,41 @@ Inspect `rejected_structures.csv` and `manifest.json`. Do not use `--overwrite`
 on a frozen run. The manifest's licence note must be replaced or accompanied by
 the actual permission reference before release.
 
+## BindingDB external-candidate audit
+
+Download the October 2026 article-curated snapshot from the official BindingDB
+download page. Do not use the combined BindingDB export because it includes
+ChEMBL-sourced records. Place the provider bytes at:
+
+```text
+data/raw/bindingdb/BindingDB_BindingDB_Articles_202610_tsv.zip
+```
+
+Expected checksums:
+
+```text
+MD5     4b1d2f7c90e83dc6fd13e7b106a1f545
+SHA-256 727383bac35beed6bc5c55c40dfbd58ba023fa97a7f27dc1a61440c1ad54a2b7
+```
+
+After extracting the TSV without modifying it, run the locked eligibility
+audit:
+
+```powershell
+python scripts/audit_bindingdb_external.py `
+  --bindingdb-zip data/raw/bindingdb/BindingDB_BindingDB_Articles_202610_tsv.zip `
+  --bindingdb-tsv data/raw/bindingdb/BindingDB_BindingDB_Articles_202610_tsv/BindingDB_BindingDB_Articles.tsv `
+  --chembl-activities data/interim/chembl/37/activities.parquet `
+  --chembl-model-table data/processed/frozen_v1/model_table.parquet `
+  --out data/processed/bindingdb_external_v1
+```
+
+The script verifies the source checksums and excludes ChEMBL 37 documents,
+exact molecule overlap, contradictory pairs, and candidates with maximum
+Tanimoto at least 0.70 to the modelling cohort. The paper eligibility decision
+is frozen in `docs/manifests/bindingdb_external_audit.json`; candidate rows are
+not model-scored when the three-target class-count gate fails.
+
 ## LOTUS
 
 Pin version record `19360665` (2026-04-13), not only the moving concept DOI.

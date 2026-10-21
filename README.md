@@ -98,6 +98,23 @@ Morgan/MLP smoke experiment.
 
 ## Reproducible workflow
 
+For a clean checkout that replays the compact publication evidence with the
+recorded package versions:
+
+```powershell
+python -m pip install -r requirements-repro.txt
+python -m pip install --no-deps -e .
+python -m pytest -q
+python -m ruff check .
+python scripts/generate_release_manifest.py --verify
+python scripts/generate_evidence_package.py `
+  --archive-dir docs/manifests `
+  --out artifacts/reproduced_evidence `
+  --verify-reference docs/evidence
+```
+
+The same sequence runs from a clean checkout in GitHub Actions.
+
 ```powershell
 # 1. Download target activities from the ChEMBL API (exploratory path only).
 python scripts/fetch_chembl.py --config configs/targets_exploratory_snapshot.yaml `
@@ -149,6 +166,12 @@ python scripts/generate_evidence_package.py `
   --out artifacts/reproduced_evidence `
   --verify-reference docs/evidence
 ```
+
+The independent-source audit and the decision not to overstate it are recorded
+in [the external-validation decision](docs/external_validation_decision.md).
+After strict provenance and chemical-overlap filtering, DPP4 and PTGS2 did not
+meet the locked class-count gate, so this paper reports temporal validation and
+makes no independent-external-validation claim.
 
 Until an authorized VietHerb export is available, a deterministic synthetic
 dataset can exercise the whole software path:

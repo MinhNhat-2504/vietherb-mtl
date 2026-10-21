@@ -11,6 +11,7 @@ themselves, permission to redistribute a database.
 |---|---|---|---|---|
 | VietHerb | UTC-dated REST snapshot plus `VHO.owl` | Public, undocumented REST; public OWL | **No explicit data licence found. Permission required before redistributing rows or a derived benchmark.** | Vietnamese plant–metabolite graph and weak therapeutic-use labels |
 | ChEMBL | ChEMBL 37 (May 2026) | Versioned bulk DB and public REST API | CC BY-SA 3.0; attribution and share-alike apply | Primary measured target labels |
+| BindingDB | Article-curated subset, October 2026 | Versioned TSV download | CC BY 4.0 for BindingDB-curated data; preserve source separation | Audited external candidate; insufficient for all three targets |
 | LOTUS | Zenodo record `19360665`, 2026-04-13 | Versioned compressed CSV | Record metadata says CC BY 4.0; the live Wikidata/LOTUS layer is CC0 | Compound–organism provenance and references |
 | COCONUT | October 2026 | Monthly ZIP/SQL downloads; authenticated API | Download page says CC0, but Terms preserve upstream contributor rights; retain collection-level provenance | Optional natural-product structure/domain pool |
 | NPASS | NPASS 3.0 / NPASS-2026 | Bulk downloads; no documented public API | **No explicit database licence found. Do not redistribute without written permission.** | External NP activity/source audit, after leakage removal |
@@ -172,7 +173,34 @@ SHA-256 over the compressed archive and decompressed SQLite file, record exact
 filename/byte count/release notes, and store the SQL text and row-count report.
 Never use the `latest/` alias in a paper run.
 
-## 3. LOTUS
+## 3. BindingDB external-candidate audit
+
+Primary links: [downloads](https://ww.bindingdb.org/rwd/bind/chemsearch/marvin/Download.jsp)
+and [database paper](https://doi.org/10.1093/nar/gkae1075).
+
+BindingDB aggregates several source classes, including its own literature
+curation, ChEMBL, and selected PubChem BioAssays. The full aggregate must not be
+treated as independent of ChEMBL. The October 2026 article-curated TSV was used
+for an eligibility audit because it separates BindingDB literature curation
+from those imported subsets. BindingDB-curated data are described as CC BY 4.0
+in the database paper; source-specific terms still apply to imported records.
+
+The archive `BindingDB_BindingDB_Articles_202610_tsv.zip` had vendor MD5
+`4b1d2f7c90e83dc6fd13e7b106a1f545` and local SHA-256
+`727383bac35beed6bc5c55c40dfbd58ba023fa97a7f27dc1a61440c1ad54a2b7`.
+After exact target/species/endpoint selection, exclusion of ChEMBL 37 DOI/PMID
+provenance, exact standardized molecules, contradictions, and candidates with
+maximum Morgan Tanimoto at least 0.70 to the full modelling cohort, 233 pairs
+remained. The active/inactive counts were DPP4 35/23, AChE 32/87, and PTGS2
+17/39. Only AChE passed the prespecified 30/30 gate, so no three-target external
+score was calculated. See `docs/manifests/bindingdb_external_audit.json`.
+
+This audit establishes absence of known document and chemical overlap under the
+recorded identifiers; it does not prove laboratory independence. A future
+confirmatory dataset must also document assay provenance and pass the same
+power gate before model predictions are inspected.
+
+## 4. LOTUS
 
 Primary links: [LOTUS home](https://lotus.nprod.net/),
 [eLife paper](https://doi.org/10.7554/eLife.70780), and
@@ -203,7 +231,7 @@ MVP, use LOTUS for compound–organism–reference evidence, never as a molecula
 target activity label. Join on standardized full InChIKey while retaining the
 original structure and organism QID.
 
-## 4. COCONUT
+## 5. COCONUT
 
 Primary links: [October 2026 downloads](https://coconut.naturalproducts.net/download),
 [database schema](https://steinbeck-lab.github.io/coconut/db-schema.html),
@@ -237,7 +265,7 @@ filename (`*-10-2026.zip`), URL, HTTP metadata and bytes, and calculate SHA-256
 because the page does not publish a cryptographic manifest. Do not label
 “present in COCONUT” as active.
 
-## 5. NPASS
+## 6. NPASS
 
 Primary links: [NPASS home](https://bidd.group/NPASS/index.php),
 [NPASS-2026 downloads](https://bidd.group/NPASS/downloadnpass.html),
@@ -269,7 +297,7 @@ reference evidence against ChEMBL before any “external” evaluation. Prefer a
 strictly manual-literature subset if provenance permits; otherwise report NPASS
 only as a sensitivity analysis, not independent validation.
 
-## 6. Auxiliary ethnopharmacology resources
+## 7. Auxiliary ethnopharmacology resources
 
 The [Enveda ethnobotany repository](https://github.com/enveda/ethnobotany)
 accompanies [Domingo-Fernández et al.](https://doi.org/10.1016/j.isci.2023.107729)
@@ -306,7 +334,7 @@ mapping method/model/prompt hash, confidence, reviewer status and citation.
 ATC is a drug classification rather than a disease ontology and is excluded
 from MVP therapeutic-use mapping.
 
-## 7. Canonical MVP schema and leakage controls
+## 8. Canonical MVP schema and leakage controls
 
 Keep source-specific raw tables immutable, then materialize these normalized
 relations:

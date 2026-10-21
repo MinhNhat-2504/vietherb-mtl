@@ -199,6 +199,38 @@ Eligibility required at least 30 active and 30 inactive observations per target.
 Because no target passed, \texttt{table\_natural\_product\_descriptive.csv}
 contains descriptive scores only and no hypothesis test.
 
+\section{Independent-source eligibility audit}
+
+The October 2026 BindingDB article-curated subset was screened before any model
+score was calculated. Exact human UniProt target identity, a single protein
+chain, exact numeric Ki or IC50, and a DOI or PMID were required. Documents
+present in the ChEMBL 37 extraction, exact standardized-molecule overlaps, and
+candidates with maximum radius-2 Morgan Tanimoto at least 0.70 to any molecule
+in the ChEMBL modelling cohort were excluded.
+
+Of 1,908 target-matched rows, 1,340 strict binary measurements were available;
+document filtering left 459 measurements. Removing four contradictory pairs,
+93 exact molecule overlaps, and 78 similarity overlaps produced 233 pairs.
+
+\begin{table}[ht]
+\centering
+\caption{BindingDB external-candidate pairs after all disjointness filters.}
+\begin{tabular}{lrrrl}
+\toprule
+Target & Total & Active & Inactive & Inferentially eligible\\
+\midrule
+AChE & 119 & 32 & 87 & Yes\\
+DPP4 & 58 & 35 & 23 & No\\
+PTGS2 & 56 & 17 & 39 & No\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Eligibility required at least 30 active and 30 inactive pairs for every target.
+The three-target external cohort therefore failed its locked gate. No external
+model-performance estimate was calculated. The audit manifest, input hashes,
+and exact exclusion counts are distributed with the release.
+
 \section{Computational environment and quality control}
 
 \begin{table}[ht]
@@ -220,7 +252,7 @@ Operating system & Windows 10, build 26200\\
 \end{tabular}
 \end{table}
 
-Forty-nine unit tests covered configuration validation, masked losses, nnPU
+The unit-test suite covered configuration validation, masked losses, nnPU
 risk, gated attention, split invariants, temporal chronology, validation-only
 selection, ranking and calibration metrics, and ChEMBL extraction rules. Ruff
 static checks and \texttt{git diff --check} were run before release. Synthetic

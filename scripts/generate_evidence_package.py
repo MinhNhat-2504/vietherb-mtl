@@ -4,13 +4,11 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import math
 import platform
 import sys
 import time
-from dataclasses import dataclass
 from datetime import UTC, datetime
 from importlib.metadata import version
 from pathlib import Path
@@ -21,29 +19,7 @@ import pandas as pd
 from sklearn.metrics import average_precision_score, roc_auc_score
 
 from vietherb_mtl import benjamini_hochberg, reliability_bins
-
-
-def sha256(path: Path) -> str:
-    payload = path.read_bytes()
-    try:
-        text = payload.decode("utf-8")
-    except UnicodeDecodeError:
-        pass
-    else:
-        if "\x00" not in text:
-            payload = text.replace("\r\n", "\n").replace("\r", "\n").encode("utf-8")
-    return hashlib.sha256(payload).hexdigest()
-
-
-@dataclass(frozen=True)
-class RunFiles:
-    metrics: Path
-    predictions: Path
-    manifest: Path
-
-    @property
-    def inputs(self) -> tuple[Path, Path, Path]:
-        return self.metrics, self.predictions, self.manifest
+from vietherb_mtl.evidence import RunFiles, archived_run, sha256
 
 
 def directory_run(path: Path) -> RunFiles:
@@ -51,14 +27,6 @@ def directory_run(path: Path) -> RunFiles:
         metrics=path / "metrics.csv",
         predictions=path / "predictions.parquet",
         manifest=path / "manifest.json",
-    )
-
-
-def archived_run(path: Path, prefix: str) -> RunFiles:
-    return RunFiles(
-        metrics=path / f"{prefix}_metrics.csv",
-        predictions=path / f"{prefix}_predictions.parquet",
-        manifest=path / f"{prefix}_run_manifest.json",
     )
 
 

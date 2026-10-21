@@ -25,8 +25,8 @@ Verified against the official Research and general submission guidance on
 - [x] Generative-AI assistance is disclosed; authors retain responsibility.
 - [ ] Both authors confirm CRediT roles, funding, competing interests, and final
   approval language.
-- [ ] Optional: create a 920 × 300 px, white-background graphical abstract under
-  150 KB.
+- [x] Optional graphical abstract created at 920 × 300 px on a white background;
+  final JPEG is 54,960 bytes (53.67 KB), below the 150 KB limit.
 
 ## Reproducibility and archive
 
@@ -39,11 +39,15 @@ Verified against the official Research and general submission guidance on
 - [x] `CITATION.cff` and `.zenodo.json` contain both authors and ORCIDs.
 - [x] Copy every reported run manifest, metrics file, and prediction file into
   the release bundle.
-- [ ] Verify the evidence and release manifests from a clean clone.
+- [x] Verify the evidence and release manifests from an LF-normalized clean
+  release bundle; all 18 regenerated evidence artifacts match their reference
+  hashes exactly.
+- [x] Record evidence-replay wall time, Python, OS, and package versions in the
+  generated evidence and environment manifests.
 - [ ] Enable the GitHub repository in Zenodo, create a GitHub release, verify
   archive processing, and insert the version DOI into the manuscript.
-- [ ] Re-run the complete workflow in a clean Python 3.11 environment or CI
-  runner; record wall time and platform.
+- [ ] Optional before final DOI: re-run full model training, rather than the
+  archived-evidence replay, in a clean Python 3.11 CI runner.
 - [x] Confirm that all files needed to reproduce each current manuscript
   conclusion are distributable in the release bundle or accessible in public
   ChEMBL 37 under CC BY-SA 3.0. No VietHerb result is claimed.
@@ -67,7 +71,8 @@ Verified against the official Research and general submission guidance on
 - Frozen therapeutic-use mappings with two independent domain reviewers.
 - Five-seed botanical cold-start MIL, shuffled-label, random-label, broadcast,
   and importance-weighted runs.
-- A matched independent external dataset or prospective biochemical validation.
+- A matched independent external dataset or prospective biochemical validation
+  that passes the same locked power and disjointness gate.
 
 These blockers do not invalidate the ChEMBL-only benchmark results, but they
 prevent an empirical claim that VietHerb supervision improves target ranking.

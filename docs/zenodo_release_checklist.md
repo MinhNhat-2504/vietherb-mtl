@@ -14,7 +14,7 @@ published. Publishing requires the corresponding GitHub/Zenodo account holder.
 3. Run `pytest`, Ruff, `git diff --check`, dataset audits, and both LaTeX builds.
    Then run `python scripts/generate_release_manifest.py` and inspect
    `docs/release_manifest.json`.
-4. Tag the exact commit as `v0.1.0` and create a GitHub release with the same
+4. Tag the exact commit as `v0.2.0` and create a GitHub release with the same
    version.
 5. In Zenodo, link GitHub, enable `MinhNhat-2504/vietherb-mtl`, and archive the
    release. Wait for processing and inspect metadata and Software Heritage

@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from scripts.generate_evidence_package import archived_run, sha256
+from vietherb_mtl.evidence import archived_run, sha256
 
 
 def test_archived_run_resolves_flat_release_files(tmp_path: Path) -> None:

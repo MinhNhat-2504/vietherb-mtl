@@ -25,10 +25,18 @@ Updated: 2026-10-21 (Asia/Saigon)
 - A natural-product-flag sensitivity was executed; only 79 flagged test
   molecules were present and no target met the 30-positive/30-negative
   inferential threshold.
+- The October 2026 BindingDB article-curated subset was audited after ChEMBL 37
+  document, exact-molecule, and 0.70 similarity exclusion. The remaining 233
+  pairs met the 30-per-class gate only for AChE, not DPP4 or PTGS2; no
+  underpowered external performance was calculated or claimed.
 - Six figures, six machine-readable tables, and a hash-bound evidence manifest
   have been generated. Main manuscript, supplement, cover letter, Zenodo
   metadata, and submission/release checklists are drafted.
-- Forty-nine unit tests and a synthetic CUDA smoke workflow cover activity,
+- A clean release bundle passed the complete unit-test suite, Ruff,
+  release-hash verification, and exact regeneration of all 18 evidence
+  artifacts. Runtime, OS, Python, and package versions are archived, and the
+  same locked sequence is configured for clean-checkout GitHub Actions.
+- The complete unit-test suite and a synthetic CUDA smoke workflow cover activity,
   broadcast, MIL, shuffled-MIL, selection, temporal split, metric, and leakage
   invariants, plus cross-platform release-manifest hashing. Synthetic metrics
   are never reported as scientific results.
@@ -40,9 +48,11 @@ Updated: 2026-10-21 (Asia/Saigon)
    any empirical VietHerb/MIL conclusion can target Journal of Cheminformatics.
 2. **Domain annotation.** Two pharmacy/pharmacognosy reviewers must freeze and
    adjudicate therapeutic-use mappings.
-3. **True external validation.** MoleculeACE lacks CHEMBL220, CHEMBL230, and
-   CHEMBL284 and is ChEMBL-derived. The completed temporal holdout is not an
-   independent external biological dataset.
+
+True external biological validation remains a valuable future extension, not a
+completed result or a release blocker for the current ChEMBL-only paper. The
+manuscript explicitly distinguishes temporal validation from external
+validation.
 
 ## Release blockers
 
@@ -51,6 +61,6 @@ Updated: 2026-10-21 (Asia/Saigon)
 - Final PDFs and repository tests must pass from the final working tree.
 - The GitHub release must be archived in Zenodo and its version DOI inserted
   into the manuscript before submission.
-- A clean-clone reproduction of the archived artifact bundle remains required.
+- The final GitHub/Zenodo archive must be rechecked after the DOI is inserted.
 
 See `docs/submission_roadmap.md` for the gate-by-gate checklist.

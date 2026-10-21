@@ -15,8 +15,10 @@ ROOT_FILES = (
     Path("LICENSE"),
     Path("README.md"),
     Path("pyproject.toml"),
+    Path("requirements-repro.txt"),
 )
 TREE_ROOTS = (
+    Path(".github"),
     Path("configs"),
     Path("src"),
     Path("scripts"),
@@ -27,12 +29,15 @@ TREE_ROOTS = (
 DOC_FILES = (
     Path("docs/cover_letter.md"),
     Path("docs/environment_manifest.json"),
+    Path("docs/external_validation_decision.md"),
     Path("docs/experiment_protocol.md"),
     Path("docs/project_status.md"),
+    Path("docs/reproducibility_report.json"),
     Path("docs/submission_checklist.md"),
     Path("docs/submission_roadmap.md"),
     Path("docs/zenodo_release_checklist.md"),
     Path("paper/README.md"),
+    Path("paper/graphical_abstract.jpg"),
     Path("paper/main.tex"),
     Path("paper/main.pdf"),
     Path("paper/references.bib"),
@@ -124,7 +129,7 @@ def main() -> None:
         }
     payload = {
         "generated_at": datetime.now(UTC).isoformat(),
-        "release": "v0.1.0",
+        "release": "v0.2.0",
         "artifact_count": len(artifacts),
         "artifacts": artifacts,
     }

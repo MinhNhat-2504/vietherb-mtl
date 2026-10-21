@@ -32,6 +32,16 @@ on Zenodo, insert the version DOI, and reproduce the evidence package from a
 clean clone. Any future VietHerb extension must populate results only from a
 frozen, non-synthetic experiment whose dataset and run manifests are archived.
 
+The BindingDB eligibility audit is reported in the manuscript and supplement;
+because only one of three targets passed the locked class-count threshold, no
+underpowered external performance estimate is included.
+
+`graphical_abstract.jpg` is the optional submission-system graphical abstract.
+It is a separate 920 × 300 px, white-background JPEG (53.67 KB) and is not a
+numbered manuscript figure. Suggested alt text: “Three-target ChEMBL 37
+benchmark comparing chemical-OOD and temporal evaluation, with classical and
+graph models and a gated external-data audit.”
+
 The compact release reproduces and verifies all publication figures and tables
 without the omitted checkpoints:
 

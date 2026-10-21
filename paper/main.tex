@@ -488,16 +488,25 @@ seven DPP4 observations (five active, two inactive), and 19 PTGS2 observations
 and 30 negatives, so all subgroup scores are descriptive and no natural-product
 superiority claim is made.
 
-We also assessed MoleculeACE \citep{vanTilborg2022moleculeace} as a possible external benchmark. Its 30 ChEMBL
-29 activity-cliff datasets do not include CHEMBL220, CHEMBL230, or CHEMBL284
-and originate from the same database family. It was therefore not relabelled as
-independent external validation. The temporal holdout measures chronological
-transport, but genuinely external matched-target biological validation remains
-open.
+We also assessed MoleculeACE \citep{vanTilborg2022moleculeace} as a possible
+external benchmark. Its 30 ChEMBL activity-cliff datasets do not include
+CHEMBL220, CHEMBL230, or CHEMBL284 and originate from the same database family.
+It was therefore not relabelled as independent external validation.
+
+We then audited the October 2026 article-curated BindingDB snapshot
+\citep{liu2025bindingdb}. Eligibility required an exact human target accession,
+single-chain target, exact Ki or IC50, a DOI or PMID absent from the ChEMBL 37
+extract, no exact molecule overlap, and maximum Morgan Tanimoto below 0.70 to
+the entire ChEMBL modelling cohort. After these exclusions, 233 labelled pairs
+remained: DPP4 had 35 active and 23 inactive pairs, AChE had 32 and 87, and
+PTGS2 had 17 and 39. Only AChE met the prespecified minimum of 30 observations
+per class. We therefore computed no three-target external performance estimate
+and make no independent-external-validation claim. The temporal holdout measures
+chronological transport only.
 
 \subsection{Implementation and confirmatory readiness}
 
-All 49 unit tests passed, including masked-loss, nnPU-risk, attention-MIL,
+All unit tests passed, including masked-loss, nnPU-risk, attention-MIL,
 metric, temporal split, validation-only selection, and connected-component leakage invariants. A CUDA smoke run exercised
 the activity-only, naive-broadcast, MIL, and shuffled-MIL paths end to end on
 deterministic synthetic bags. Its manifest is explicitly marked
@@ -556,7 +565,8 @@ inhibition.
 This study has several limitations. Three targets cannot establish broad
 cross-target generality, and ChEMBL measurements retain inter-laboratory and
 assay heterogeneity after curation. The temporal holdout is not independent
-external validation, and the natural-product test subset was underpowered. The
+external validation; a source-separated BindingDB audit was underpowered for
+two of three targets, and the natural-product test subset was also underpowered. The
 D-MPNN used one official version and budget rather than an exhaustive graph-model
 search. Bootstrap intervals quantify sampling variation under the chosen
 component structure but do not correct dataset-level selection bias. Finally,

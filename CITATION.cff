@@ -13,8 +13,7 @@ authors:
     email: "linh.ntm@vlu.edu.vn"
     orcid: "https://orcid.org/0000-0003-3990-312X"
     affiliation: "Faculty of Information Technology, Van Lang School of Technology, Van Lang University, 69/68 Dang Thuy Tram Street, Binh Loi Trung Ward, Ho Chi Minh City, Vietnam"
-version: 0.1.0
+version: 0.2.0
 date-released: 2026-10-21
 license: MIT
 repository-code: "https://github.com/MinhNhat-2504/vietherb-mtl"
-
