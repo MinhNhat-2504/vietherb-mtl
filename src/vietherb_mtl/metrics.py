@@ -5,6 +5,8 @@ from __future__ import annotations
 import math
 from collections.abc import Sequence
 
+import numpy as np
+
 
 def _validated_pairs(
     y_true: Sequence[int | float], y_score: Sequence[int | float]
@@ -196,3 +198,122 @@ def expected_calibration_error(
         confidence = sum(score for _, score in members) / len(members)
         error += len(members) / total * abs(accuracy - confidence)
     return error
+
+
+def reliability_bins(
+    y_true: Sequence[int | float],
+    y_score: Sequence[int | float],
+    *,
+    n_bins: int = 10,
+) -> list[dict[str, float | int]]:
+    """Return equal-width reliability-diagram bins, including empty bins."""
+
+    if n_bins < 2:
+        raise ValueError("n_bins must be at least 2")
+    pairs = _validated_pairs(y_true, y_score)
+    if any(score < 0 or score > 1 for _, score in pairs):
+        raise ValueError("calibration scores must be probabilities in [0, 1]")
+    result: list[dict[str, float | int]] = []
+    for bin_index in range(n_bins):
+        lower = bin_index / n_bins
+        upper = (bin_index + 1) / n_bins
+        members = [
+            (label, score)
+            for label, score in pairs
+            if lower <= score < upper or (bin_index == n_bins - 1 and score == 1.0)
+        ]
+        result.append(
+            {
+                "bin": bin_index,
+                "lower": lower,
+                "upper": upper,
+                "count": len(members),
+                "mean_probability": (
+                    math.nan if not members else sum(score for _, score in members) / len(members)
+                ),
+                "observed_fraction": (
+                    math.nan if not members else sum(label for label, _ in members) / len(members)
+                ),
+            }
+        )
+    return result
+
+
+def mean_absolute_error(
+    y_true: Sequence[int | float], y_score: Sequence[int | float]
+) -> float:
+    """MAE after dropping non-finite pairs."""
+
+    pairs = _finite_numeric_pairs(y_true, y_score)
+    return float(np.mean([abs(truth - score) for truth, score in pairs]))
+
+
+def root_mean_squared_error(
+    y_true: Sequence[int | float], y_score: Sequence[int | float]
+) -> float:
+    """RMSE after dropping non-finite pairs."""
+
+    pairs = _finite_numeric_pairs(y_true, y_score)
+    return float(np.sqrt(np.mean([(truth - score) ** 2 for truth, score in pairs])))
+
+
+def spearman_correlation(
+    y_true: Sequence[int | float], y_score: Sequence[int | float]
+) -> float:
+    """Spearman correlation with average ranks for ties."""
+
+    pairs = _finite_numeric_pairs(y_true, y_score)
+    if len(pairs) < 2:
+        raise ValueError("Spearman correlation requires at least two pairs")
+    truth = np.asarray([item[0] for item in pairs], dtype=float)
+    score = np.asarray([item[1] for item in pairs], dtype=float)
+    truth_rank = _average_rank(truth)
+    score_rank = _average_rank(score)
+    if np.std(truth_rank) == 0 or np.std(score_rank) == 0:
+        raise ValueError("Spearman correlation is undefined for a constant input")
+    return float(np.corrcoef(truth_rank, score_rank)[0, 1])
+
+
+def benjamini_hochberg(p_values: Sequence[int | float]) -> list[float]:
+    """Benjamini--Hochberg adjusted p-values in original input order."""
+
+    values = np.asarray(p_values, dtype=float)
+    if values.ndim != 1 or len(values) == 0:
+        raise ValueError("p_values must be a non-empty one-dimensional sequence")
+    if np.any(~np.isfinite(values)) or np.any((values < 0) | (values > 1)):
+        raise ValueError("p-values must be finite and in [0, 1]")
+    order = np.argsort(values)
+    ranked = values[order]
+    adjusted_ranked = ranked * len(values) / np.arange(1, len(values) + 1)
+    adjusted_ranked = np.minimum.accumulate(adjusted_ranked[::-1])[::-1]
+    adjusted = np.empty_like(adjusted_ranked)
+    adjusted[order] = np.minimum(adjusted_ranked, 1.0)
+    return adjusted.tolist()
+
+
+def _finite_numeric_pairs(
+    y_true: Sequence[int | float], y_score: Sequence[int | float]
+) -> list[tuple[float, float]]:
+    if len(y_true) != len(y_score):
+        raise ValueError("y_true and y_score must have the same length")
+    pairs = [
+        (float(truth), float(score))
+        for truth, score in zip(y_true, y_score, strict=True)
+        if math.isfinite(float(truth)) and math.isfinite(float(score))
+    ]
+    if not pairs:
+        raise ValueError("no finite truth/score pairs")
+    return pairs
+
+
+def _average_rank(values: np.ndarray) -> np.ndarray:
+    order = np.argsort(values, kind="mergesort")
+    ranks = np.empty(len(values), dtype=float)
+    cursor = 0
+    while cursor < len(values):
+        end = cursor + 1
+        while end < len(values) and values[order[end]] == values[order[cursor]]:
+            end += 1
+        ranks[order[cursor:end]] = ((cursor + 1) + end) / 2.0
+        cursor = end
+    return ranks

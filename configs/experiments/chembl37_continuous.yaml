@@ -1,0 +1,19 @@
+experiment_name: chembl37_continuous_potency_v1
+dataset_dir: data/processed/continuous_v1
+output_dir: outputs/chembl37_continuous_potency_v1
+seeds: [13, 37, 71, 101, 137]
+model:
+  input_dim: 2048
+  hidden_dims: [1024, 512]
+  dropout: 0.25
+tasks:
+  primary: [potency_DPP4, potency_ACHE, potency_PTGS2]
+training:
+  epochs: 100
+  batch_size: 256
+  learning_rate: 0.0003
+  weight_decay: 0.0001
+  early_stopping_patience: 12
+  monitor: val_macro_mae
+evaluation:
+  metrics: [mae, rmse, spearman]

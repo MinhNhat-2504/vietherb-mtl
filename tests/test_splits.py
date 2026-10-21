@@ -4,6 +4,7 @@ from vietherb_mtl.splits import (
     scaffold_group_split,
     scaffold_species_group_split,
     species_group_split,
+    temporal_group_split,
 )
 
 
@@ -61,3 +62,16 @@ def test_joint_scaffold_species_split_enforces_both_constraints_without_rdkit():
     )
     partition = _partition_by_index(split)
     assert partition[0] == partition[1] == partition[2]
+
+
+def test_temporal_group_split_uses_earliest_group_year():
+    split = temporal_group_split(
+        [2018, 2010, 2023, 2020, 2024],
+        ["m1", "m1", "m2", "m3", "m4"],
+        train_end_year=2017,
+        validation_end_year=2021,
+    )
+    partition = _partition_by_index(split)
+    assert partition[0] == partition[1] == "train"
+    assert partition[3] == "validation"
+    assert partition[2] == partition[4] == "test"

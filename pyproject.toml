@@ -9,11 +9,14 @@ description = "Ethnopharmacology-informed multi-task learning for Vietnamese med
 readme = "README.md"
 requires-python = ">=3.11,<3.13"
 license = { text = "MIT" }
-authors = [{ name = "Minh Nhat" }]
+authors = [
+  { name = "Nhat Trinh Ngoc Minh", email = "nhat.2474802010280@vanlanguni.vn" },
+  { name = "Linh Nguyen Thi My", email = "linh.ntm@vlu.edu.vn" },
+]
 dependencies = [
   "numpy>=1.26,<3",
   "pandas>=2.2,<3",
-  "pyarrow>=15,<23",
+  "pyarrow>=15,<25",
   "PyYAML>=6,<7",
   "requests>=2.31,<3",
   "scikit-learn>=1.4,<2",
@@ -27,6 +30,12 @@ dev = [
   "pytest>=8,<10",
   "pytest-cov>=5,<8",
   "ruff>=0.6,<1",
+]
+chemprop = [
+  "chemprop==2.2.1",
+]
+paper = [
+  "matplotlib>=3.8,<4",
 ]
 
 [tool.setuptools.packages.find]

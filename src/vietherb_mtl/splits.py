@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 import random
 from collections import defaultdict
 from collections.abc import Callable, Hashable, Sequence
@@ -88,6 +89,57 @@ def species_group_split(species: Sequence[str], config: SplitConfig | None = Non
             raise ValueError(f"missing species at row {index}")
         normalized.append(" ".join(value.casefold().split()))
     return group_split(normalized, config)
+
+
+def temporal_group_split(
+    years: Sequence[int | float],
+    groups: Sequence[Group],
+    *,
+    train_end_year: int,
+    validation_end_year: int,
+) -> SplitIndices:
+    """Assign complete groups by their earliest observation year.
+
+    Groups first observed through ``train_end_year`` form training data, groups
+    first observed through ``validation_end_year`` form validation data, and
+    later groups form test data. Missing/non-finite years are rejected rather
+    than silently assigned. Using the earliest year prevents a molecule already
+    known historically from being presented as a prospective test molecule.
+    """
+
+    if len(years) != len(groups):
+        raise ValueError("years and groups must have the same length")
+    if not years:
+        raise ValueError("cannot split an empty dataset")
+    if validation_end_year <= train_end_year:
+        raise ValueError("validation_end_year must be later than train_end_year")
+
+    earliest: dict[Group, int] = {}
+    for index, (year, group) in enumerate(zip(years, groups, strict=True)):
+        numeric_year = float(year)
+        if not math.isfinite(numeric_year):
+            raise ValueError(f"missing/non-finite year at row {index}")
+        if group is None:
+            raise ValueError(f"missing group at row {index}")
+        integer_year = int(numeric_year)
+        earliest[group] = min(integer_year, earliest.get(group, integer_year))
+
+    assigned: dict[str, list[int]] = {"train": [], "validation": [], "test": []}
+    for index, group in enumerate(groups):
+        first_year = earliest[group]
+        if first_year <= train_end_year:
+            assigned["train"].append(index)
+        elif first_year <= validation_end_year:
+            assigned["validation"].append(index)
+        else:
+            assigned["test"].append(index)
+    if any(not assigned[name] for name in assigned):
+        raise ValueError("temporal cutoffs produced an empty partition")
+    return SplitIndices(
+        train=tuple(assigned["train"]),
+        validation=tuple(assigned["validation"]),
+        test=tuple(assigned["test"]),
+    )
 
 
 def connected_component_split(

@@ -1,0 +1,116 @@
+{
+  "audited_at": "2026-10-21T10:55:50.362308+00:00",
+  "dataset": "data\\processed\\temporal_v1",
+  "rows": 10697,
+  "split_counts": {
+    "train": 7896,
+    "validation": 1734,
+    "test": 1067
+  },
+  "unique_scaffolds": 4416,
+  "test_to_train_tanimoto": {
+    "n_test": 1067,
+    "median": 0.3709677419354839,
+    "p95": 0.7281586021505374,
+    "maximum": 1.0
+  },
+  "overlaps": {
+    "molecule_id": {
+      "test__train": 0,
+      "test__validation": 0,
+      "train__validation": 0
+    },
+    "inchikey": {
+      "test__train": 0,
+      "test__validation": 0,
+      "train__validation": 0
+    },
+    "murcko_scaffold": {
+      "test__train": 54,
+      "test__validation": 28,
+      "train__validation": 73
+    },
+    "component_id": {
+      "test__train": 50,
+      "test__validation": 38,
+      "train__validation": 73
+    }
+  },
+  "enforced_disjoint_columns": [
+    "molecule_id",
+    "inchikey"
+  ],
+  "temporal_ranges": {
+    "test": {
+      "minimum_first_document_year": 2022,
+      "maximum_first_document_year": 2025
+    },
+    "train": {
+      "minimum_first_document_year": 1986,
+      "maximum_first_document_year": 2017
+    },
+    "validation": {
+      "minimum_first_document_year": 2018,
+      "maximum_first_document_year": 2021
+    }
+  },
+  "targets": {
+    "test": {
+      "activity_ACHE": {
+        "measured": 566,
+        "positive": 400,
+        "negative": 166
+      },
+      "activity_PTGS2": {
+        "measured": 373,
+        "positive": 331,
+        "negative": 42
+      },
+      "activity_DPP4": {
+        "measured": 128,
+        "positive": 107,
+        "negative": 21
+      }
+    },
+    "train": {
+      "activity_ACHE": {
+        "measured": 2669,
+        "positive": 1912,
+        "negative": 757
+      },
+      "activity_PTGS2": {
+        "measured": 1962,
+        "positive": 1452,
+        "negative": 510
+      },
+      "activity_DPP4": {
+        "measured": 3276,
+        "positive": 3087,
+        "negative": 189
+      }
+    },
+    "validation": {
+      "activity_ACHE": {
+        "measured": 795,
+        "positive": 572,
+        "negative": 223
+      },
+      "activity_PTGS2": {
+        "measured": 609,
+        "positive": 510,
+        "negative": 99
+      },
+      "activity_DPP4": {
+        "measured": 330,
+        "positive": 291,
+        "negative": 39
+      }
+    }
+  },
+  "bags": {
+    "bags": 0,
+    "membership_edges": 0,
+    "cross_split_bags": 0
+  },
+  "passed": true
+}

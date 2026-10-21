@@ -19,3 +19,7 @@ def test_legacy_auxiliary_alias_maps_to_single_task():
 def test_primary_auxiliary_task_overlap_is_rejected():
     with pytest.raises(ValueError, match="overlap"):
         ModelConfig(primary_tasks=("diabetes",))
+
+
+def test_activity_only_model_allows_no_auxiliary_heads():
+    assert ModelConfig(auxiliary_tasks=()).auxiliary_tasks == ()

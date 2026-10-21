@@ -1,0 +1,31 @@
+{
+  "creators": [
+    {
+      "name": "Trinh Ngoc Minh, Nhat",
+      "orcid": "0009-0006-9477-9642",
+      "affiliation": "Faculty of Information Technology, Van Lang School of Technology, Van Lang University",
+      "type": "ProjectMember"
+    },
+    {
+      "name": "Nguyen Thi My, Linh",
+      "orcid": "0000-0003-3990-312X",
+      "affiliation": "Faculty of Information Technology, Van Lang School of Technology, Van Lang University",
+      "type": "ProjectLeader"
+    }
+  ],
+  "title": "VietHerb-MTL: split-dependent transfer benchmark and locked plant-bag extension",
+  "version": "0.1.0",
+  "description": "Reproducible code, frozen configurations, audits, predictions, and evidence for a ChEMBL 37 multi-target activity benchmark, together with a prospectively locked multiple-instance learning protocol for plant-level auxiliary supervision.",
+  "access_right": "open",
+  "keywords": [
+    "cheminformatics",
+    "ChEMBL",
+    "multi-task learning",
+    "multiple-instance learning",
+    "natural products",
+    "virtual screening"
+  ],
+  "license": "mit",
+  "upload_type": "software",
+  "language": "eng"
+}

@@ -1,0 +1,10 @@
+{
+  "generated_at": "2026-10-21T04:58:47.258191+00:00",
+  "source": "data\\interim\\chembl\\37_np\\activities.parquet",
+  "source_sha256": "006ceb90a3174417b0bf52ea983ac54a190b30477c0d69f1785924bc5cc7dd51",
+  "rows": 14458,
+  "natural_products": 657,
+  "rejected_unique_smiles": 0,
+  "output_sha256": "035e54f41bb043831d8ee5b138988cba5e1b6d974f38804f1ce51a7a0ab7ae9f",
+  "provenance": "ChEMBL 37 molecule_dictionary.natural_product (COCONUT 2025-07)"
+}

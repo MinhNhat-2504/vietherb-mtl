@@ -23,7 +23,10 @@ from vietherb_mtl import (
     FingerprintEncoder,
     bedroc_score,
     ef1_score,
+    ef5_score,
+    expected_calibration_error,
     pr_auc_score,
+    precision_recall_at_fraction,
 )
 
 
@@ -36,10 +39,18 @@ def safe_metric(name: str, labels: np.ndarray, scores: np.ndarray) -> float:
         return bedroc_score(labels.tolist(), scores.tolist(), alpha=20.0)
     if name == "ef1":
         return ef1_score(labels.tolist(), scores.tolist())
+    if name == "ef5":
+        return ef5_score(labels.tolist(), scores.tolist())
+    if name == "precision_at_1":
+        return precision_recall_at_fraction(labels.tolist(), scores.tolist(), fraction=0.01)[0]
+    if name == "recall_at_1":
+        return precision_recall_at_fraction(labels.tolist(), scores.tolist(), fraction=0.01)[1]
     if name == "roc_auc":
         return float(roc_auc_score(labels, scores))
     if name == "brier":
         return float(brier_score_loss(labels, scores))
+    if name == "ece10":
+        return expected_calibration_error(labels.tolist(), scores.tolist(), n_bins=10)
     raise ValueError(f"unknown metric: {name}")
 
 
@@ -139,6 +150,14 @@ def main() -> None:
         "rows": len(frame),
         "synthetic": bool(dataset_manifest.get("synthetic", False)),
         "confirmatory_eligible": bool(dataset_manifest.get("confirmatory_eligible", False)),
+        "scientific_results": not bool(dataset_manifest.get("synthetic", False)),
+        "dataset_manifest_sha256": hashlib.sha256(
+            (dataset_dir / "manifest.json").read_bytes()
+        ).hexdigest(),
+        "metrics_sha256": hashlib.sha256((args.out / "metrics.csv").read_bytes()).hexdigest(),
+        "predictions_sha256": hashlib.sha256(
+            (args.out / "predictions.parquet").read_bytes()
+        ).hexdigest(),
     }
     (args.out / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(manifest, indent=2))

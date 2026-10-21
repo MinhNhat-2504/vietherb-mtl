@@ -1,0 +1,263 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=2.2cm]{geometry}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage[hidelinks]{hyperref}
+\usepackage{microtype}
+\usepackage{lineno}
+\usepackage{setspace}
+
+\title{Additional file 1: Supplementary methods and results\\
+\large Split-Dependent Transfer in Multi-Target Bioactivity Prediction:\
+A Leakage-Controlled ChEMBL 37 Benchmark and Locked Plant-Bag Extension}
+\author{Nhat Trinh Ngoc Minh and Linh Nguyen Thi My}
+\date{21 October 2026}
+
+\begin{document}
+\onehalfspacing
+\linenumbers
+\maketitle
+
+\section{Reproducibility scope}
+
+This supplement reports only experiments derived from the public, version-pinned
+ChEMBL 37 SQLite release. The VietHerb-dependent multiple-instance learning
+(MIL) arms are implementation-tested but prospectively locked; no synthetic or
+restricted row contributes to a scientific estimate. All five-seed experiments
+used seeds 13, 37, 71, 101, and 137. Each run manifest records dataset, metric,
+prediction, and configuration hashes. The machine-readable tables distributed
+beside this PDF contain the unrounded values underlying the manuscript.
+
+\section{Cohort construction}
+
+The source archive was \texttt{chembl\_37\_sqlite.tar.gz}, DOI
+10.6019/CHEMBL.database.37. Its SHA-256 begins
+\texttt{33c203740555f960}; the extracted SQLite digest begins
+\texttt{4be13df3b68e25dc}. Full digests are stored in the machine-readable
+extraction and evidence manifests.
+Target identity was asserted against single human proteins and UniProt entries
+P22303 (AChE), P35354 (PTGS2), and P27487 (DPP4).
+
+\begin{table}[ht]
+\centering
+\caption{ChEMBL 37 extraction flow before structure aggregation.}
+\begin{tabular}{lrrr}
+\toprule
+Filter & Before & After & Excluded\\
+\midrule
+Activity type IC$_{50}$/K$_i$ & 43,843 & 27,980 & 15,863\\
+Binding assay & 27,980 & 27,634 & 346\\
+Units nM & 27,634 & 23,265 & 4,369\\
+Positive value & 23,265 & 23,210 & 55\\
+Valid pChEMBL & 23,210 & 19,232 & 3,978\\
+Not a potential duplicate & 19,232 & 16,947 & 2,285\\
+Resolved structure & 16,947 & 16,941 & 6\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+All retained relations were equality measurements. Exact standardized
+structure--target replicates were summarized by median pChEMBL. A pair whose
+replicates spanned at least one log unit was contradictory. The primary binary
+cohort excluded 435 contradictory and 3,353 gray-zone pairs; activity was
+pChEMBL $\geq 6$ and inactivity was pChEMBL $\leq 5$. The continuous cohort
+excluded the same 435 contradictory pairs but retained the gray zone.
+
+\begin{table}[ht]
+\centering
+\small
+\caption{Dataset and split audit summary.}
+\begin{tabular}{lrrrc}
+\toprule
+Cohort & Molecules & Pairs & Split counts & Max similarity\\
+\midrule
+Chemical-OOD binary & 10,686 & 10,698 & 7,480/1,603/1,603 & 0.698\\
+Chemical-OOD continuous & 14,029 & 14,051 & 9,820/2,105/2,104 & 0.699\\
+Temporal binary & 10,697 & 10,708 & 7,896/1,734/1,067 & 1.000\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The primary and continuous partitions used connected components at Morgan
+Tanimoto $\geq0.70$ and had zero standardized-structure, InChIKey, Murcko
+scaffold, and component overlap. The temporal cohort used the first source year:
+training through 2017, validation from 2018 through 2021, and test from 2022
+through 2025. It excluded 60 rows without year information and censored 343
+future observations from training or validation aggregation. Chemical overlap
+was allowed by design in this chronological sensitivity.
+
+\section{Models and selection}
+
+All fingerprint models used 2,048-bit chiral radius-2 Morgan fingerprints.
+Neural MLPs used hidden widths 1,024 and 512, dropout 0.25, AdamW at learning
+rate $3\times10^{-4}$ and weight decay $10^{-4}$, batch size 256, and patience
+12. Logistic regression was L2-regularized. Extra Trees and logistic models were
+fit per target. Chemprop 2.2.1 consumed the same split column and masked missing
+labels, with a maximum of 100 epochs and patience 12.
+
+Every tunable candidate was ranked by the mean validation objective over the
+prespecified seeds. The test partition was evaluated only after the selected
+configuration or best validation checkpoint was restored. Chemprop used
+validation loss for deterministic checkpoint selection because exact-seed CUDA
+execution made its online PRC metric incompatible with deterministic algorithms;
+the sealed-test PR-AUC and all secondary metrics were computed independently
+from stored predictions. Chemprop class-balanced sampling was disabled because
+the sampler produced zero batches for sparse multitask rows.
+
+\section{Primary chemical-OOD results}
+
+\begin{table}[ht]
+\centering
+\caption{Per-target PR-AUC, mean $\pm$ standard deviation over five seeds.}
+\begin{tabular}{lccc}
+\toprule
+Model & AChE & DPP4 & PTGS2\\
+\midrule
+Extra Trees & $0.8946\pm0.0019$ & $0.9943\pm0.0006$ & $0.9385\pm0.0019$\\
+Logistic regression & $0.8858\pm0.0000$ & $0.9936\pm0.0000$ & $0.9208\pm0.0000$\\
+Separate MLP & $0.8781\pm0.0096$ & $0.9844\pm0.0035$ & $0.9217\pm0.0030$\\
+Shared MLP & $0.8509\pm0.0104$ & $0.9889\pm0.0013$ & $0.9212\pm0.0042$\\
+Chemprop D-MPNN & $0.8445\pm0.0126$ & $0.9572\pm0.0019$ & $0.8796\pm0.0082$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\caption{Paired shared-minus-separate MLP target contrasts.}
+\begin{tabular}{lrrrr}
+\toprule
+Target & Difference & 95\% CI low & 95\% CI high & BH-adjusted $p$\\
+\midrule
+AChE & -0.0271 & -0.0463 & -0.0110 & $<0.001$\\
+DPP4 & 0.0045 & -0.0015 & 0.0110 & 0.261\\
+PTGS2 & -0.0005 & -0.0063 & 0.0050 & 0.900\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The interval procedure used 1,000 hierarchical bootstrap replicates over model
+seed and chemical component. An empirical two-sided value of zero means no
+bootstrap replicate crossed zero; it is reported as $p<0.001$, not as an exact
+probability of zero. Reliability-bin counts and confidence/accuracy sums are in
+\texttt{table\_reliability\_bins.csv}.
+
+\section{Sensitivity analyses}
+
+\begin{table}[ht]
+\centering
+\caption{Temporal test macro PR-AUC across five seeds.}
+\begin{tabular}{lc}
+\toprule
+Model & Macro PR-AUC\\
+\midrule
+Extra Trees & $0.9432\pm0.0008$\\
+Shared MLP & $0.9425\pm0.0024$\\
+Logistic regression & $0.9257\pm0.0000$\\
+Separate MLP & $0.9247\pm0.0029$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\caption{Continuous pChEMBL test MAE across five seeds; lower is better.}
+\begin{tabular}{lrrrr}
+\toprule
+Model & Macro & AChE & DPP4 & PTGS2\\
+\midrule
+Separate MLP & $0.8083\pm0.0066$ & 0.7990 & 0.7306 & 0.8954\\
+Shared MLP & $0.8181\pm0.0049$ & 0.8153 & 0.7326 & 0.9064\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Natural-product subgroup}
+
+The ChEMBL molecule-dictionary natural-product field was joined after applying
+the same structure standardization as the frozen cohort. The source database
+identified COCONUT 2025-07 as the flagging resource. Of 14,458 mapped molecules,
+657 were flagged; 402 overlapped the primary binary cohort and 79 occurred in
+its test set.
+
+\begin{table}[ht]
+\centering
+\caption{Natural-product-flagged primary test observations.}
+\begin{tabular}{lrrrl}
+\toprule
+Target & Observations & Active & Inactive & Inferentially eligible\\
+\midrule
+AChE & 55 & 11 & 44 & No\\
+DPP4 & 7 & 5 & 2 & No\\
+PTGS2 & 19 & 9 & 10 & No\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Eligibility required at least 30 active and 30 inactive observations per target.
+Because no target passed, \texttt{table\_natural\_product\_descriptive.csv}
+contains descriptive scores only and no hypothesis test.
+
+\section{Computational environment and quality control}
+
+\begin{table}[ht]
+\centering
+\caption{Execution environment for the reported runs.}
+\begin{tabular}{ll}
+\toprule
+Component & Version\\
+\midrule
+Python & 3.11.9\\
+NumPy / pandas / pyarrow & 1.26.4 / 2.3.3 / 24.0.0\\
+scikit-learn / SciPy & 1.8.0 / 1.17.1\\
+RDKit & 2025.09.5\\
+PyTorch / CUDA runtime & 2.5.1+cu121 / 12.1\\
+Chemprop & 2.2.1\\
+GPU & NVIDIA GeForce RTX 4060 Laptop GPU (8 GB)\\
+Operating system & Windows 10, build 26200\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Forty-five unit tests covered configuration validation, masked losses, nnPU
+risk, gated attention, split invariants, temporal chronology, validation-only
+selection, ranking and calibration metrics, and ChEMBL extraction rules. Ruff
+static checks and \texttt{git diff --check} were run before release. Synthetic
+CUDA smoke outputs are explicitly marked
+\texttt{scientific\_results=false} and excluded from all result tables.
+
+\section{Machine-readable evidence inventory}
+
+The evidence directory contains six vector/raster figure pairs and six CSV
+tables. Its manifest hashes the complete input run directories and every
+generated artifact. Table~S8 lists compact digest prefixes; the full 64-character
+SHA-256 values are retained in \texttt{docs/evidence/manifest.json}.
+
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.58\textwidth}p{0.30\textwidth}}
+\toprule
+Input & SHA-256 prefix\\
+\midrule
+Primary neural & \texttt{c571896ebf1f3c92}\\
+Primary classical & \texttt{d31d9e61a3af6ed3}\\
+Chemprop D-MPNN & \texttt{43d5e0b88b79acb2}\\
+Temporal neural & \texttt{e9835378e3954338}\\
+Temporal classical & \texttt{a34e97e426fd5987}\\
+Continuous neural & \texttt{83e7bb6dcf6a34a7}\\
+Natural-product mapping & \texttt{035e54f41bb04383}\\
+\bottomrule
+\end{longtable}
+
+\section{Locked VietHerb experiment}
+
+The implemented plant-bag branch represents each species as a bag of reported
+metabolites, applies gated attention, and optimizes observed plant uses with
+non-negative positive--unlabelled risk. The required real-data comparison is
+activity-only versus naive broadcast versus bag MIL versus shuffled-label and
+random-label controls under chemical and botanical cold starts. It will not be
+unlocked until (i) written terms permit a reproducible VietHerb access route and
+(ii) two domain reviewers complete and adjudicate the therapeutic-use mapping.
+Accordingly, this supplement contains no estimate for the central
+ethnopharmacological effect.
+
+\end{document}

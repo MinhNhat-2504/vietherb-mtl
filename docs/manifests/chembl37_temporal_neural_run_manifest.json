@@ -1,0 +1,18 @@
+{
+  "experiment": "chembl37_temporal_activity_v1",
+  "finished_at": "2026-10-21T04:50:53.613020+00:00",
+  "config_sha256": "9057f78ea52c000fc0aaf0e824fd07c5edee041cdac8cd7ee08b89ad4e175179",
+  "device": "cuda",
+  "python": "3.11.9",
+  "torch": "2.5.1+cu121",
+  "fingerprint_backend": "rdkit",
+  "rows": 10697,
+  "synthetic": false,
+  "confirmatory_eligible": true,
+  "scientific_results": true,
+  "selection_policy": "validation_only_mean_across_prespecified_seeds",
+  "selected_configurations": [],
+  "dataset_manifest_sha256": "e946607ce774ef8806ec26ca125dfeae632a240fa26107cbfecd07b087d721e3",
+  "metrics_sha256": "619a8d906a0aa587d026336535a75c140172488225f62a9f589b19b0bcd698c9",
+  "predictions_sha256": "81484756da95330357dbef61a20824232d91d062f4a6d373e39517fc917d66fe"
+}

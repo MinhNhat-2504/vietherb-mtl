@@ -11,11 +11,12 @@ its reported metabolites without pretending that every metabolite explains the
 plant's use. The repository treats ethnomedical labels as noisy auxiliary
 supervision—not as evidence of efficacy.
 
-> **Project status:** the software pipeline is implemented and validated, and a
-> checksum-locked ChEMBL 37 activity cohort has passed chemical-OOD split audits.
-> No result for the central ethnopharmacology/MIL hypothesis is claimed until an
-> authorized VietHerb export and audited therapeutic-use mappings are available.
-> Generated demo data are only for software smoke tests. See the
+> **Project status:** Gate 4 is complete and all ChEMBL-only Gate 5 experiments
+> are complete. A checksum-locked ChEMBL 37 cohort has passed chemical-OOD and
+> temporal audits; classical, MLP, D-MPNN, and continuous-pChEMBL runs use five
+> fixed seeds. No result for the central ethnopharmacology/MIL hypothesis is
+> claimed until an authorized VietHerb export and audited therapeutic-use
+> mappings are available. Generated demo data are only for software smoke tests. See the
 > [current project status](docs/project_status.md) and
 > [confirmatory cohort](docs/confirmatory_chembl37_cohort.md).
 
@@ -47,6 +48,24 @@ samples additionally enforce plant-species grouping. PR-AUC is the primary
 metric; BEDROC (alpha 20), EF1%, EF5%, fixed-budget precision/recall, ROC-AUC,
 and calibration are secondary.
 Confidence intervals are compound-level stratified bootstrap intervals.
+
+## Frozen ChEMBL 37 results
+
+Chemical-OOD macro PR-AUC across five seeds:
+
+| Model | Mean | SD |
+|---|---:|---:|
+| Extra Trees | 0.9425 | 0.0009 |
+| Logistic regression | 0.9334 | 0.0000 |
+| Separate target MLPs | 0.9281 | 0.0035 |
+| Shared activity MLP | 0.9203 | 0.0024 |
+| Chemprop D-MPNN | 0.8938 | 0.0063 |
+
+Shared-minus-separate MLP was -0.0077 (chemical-component bootstrap 95% CI
+-0.0141 to -0.0021). The conclusion is split dependent: shared MLP improves
+temporal macro PR-AUC (0.9425 versus 0.9247) but worsens continuous-pChEMBL MAE
+(0.8181 versus 0.8083; lower is better). See `docs/evidence` for the hashed
+figures and machine-readable tables.
 
 ## Repository layout
 
@@ -95,8 +114,34 @@ python scripts/extract_chembl_sqlite.py --tarball D:\chembl_dl\chembl_37_sqlite.
 # 3. Build a frozen modelling table.
 python scripts/build_dataset.py --config configs/dataset.yaml
 
-# 4. Run the preregistered matrix.
-python scripts/run_experiments.py --config configs/experiments/morgan_mlp.yaml
+# 4. Run the neural primary matrix.
+python scripts/run_experiments.py --config configs/experiments/chembl37_activity.yaml
+
+# 5. Run classical and D-MPNN baselines, then sensitivity experiments.
+python scripts/run_classical_baselines.py --config configs/experiments/chembl37_activity.yaml `
+  --out outputs/chembl37_classical_v1
+python scripts/prepare_chemprop_input.py --dataset-dir data/processed/frozen_v1 `
+  --out outputs/chemprop_inputs/chembl37_primary.csv
+python scripts/run_chemprop_baseline.py `
+  --input outputs/chemprop_inputs/chembl37_primary.csv `
+  --dataset-dir data/processed/frozen_v1 `
+  --out outputs/chembl37_chemprop_dmpnn_v1
+python scripts/build_sensitivity_datasets.py
+python scripts/run_experiments.py --config configs/experiments/chembl37_temporal.yaml
+python scripts/run_classical_baselines.py --config configs/experiments/chembl37_temporal.yaml `
+  --out outputs/chembl37_temporal_classical_v1
+python scripts/run_continuous_baselines.py --config configs/experiments/chembl37_continuous.yaml
+
+# 6. Regenerate the publication evidence package from manifests.
+python scripts/generate_evidence_package.py `
+  --primary-neural outputs/chembl37_activity_baselines_v1 `
+  --primary-classical outputs/chembl37_classical_v1 `
+  --primary-extra outputs/chembl37_chemprop_dmpnn_v1 `
+  --dataset-dir data/processed/frozen_v1 `
+  --temporal-neural outputs/chembl37_temporal_activity_v1 `
+  --temporal-classical outputs/chembl37_temporal_classical_v1 `
+  --continuous outputs/chembl37_continuous_potency_v1 `
+  --natural-product-mapping data/processed/chembl37_natural_product_mapping.parquet
 ```
 
 Until an authorized VietHerb export is available, a deterministic synthetic

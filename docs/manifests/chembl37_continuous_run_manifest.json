@@ -1,0 +1,16 @@
+{
+  "experiment": "chembl37_continuous_potency_v1",
+  "finished_at": "2026-10-21T04:45:33.005046+00:00",
+  "config_sha256": "6573928d0c92e81e431a9c2b2b7552c8efe7feed8cb55495be1f751ed5f191c5",
+  "dataset_manifest_sha256": "ef6ba3b40ddd5226f32159a3c7c57efbd08141e8026b288e8547e17a410e8fc6",
+  "metrics_sha256": "7a94811d0601cf2bb6ae9e1c9c993a2000e6ec7b412a896b5547a424c4ed4628",
+  "predictions_sha256": "93882c6d8ff2c3d8bb629d36f5726fbbc4490a61c573fc66d4f24f5abc85eeeb",
+  "device": "cuda",
+  "python": "3.11.9",
+  "torch": "2.5.1+cu121",
+  "fingerprint_backend": "rdkit",
+  "rows": 14029,
+  "synthetic": false,
+  "confirmatory_eligible": true,
+  "scientific_results": true
+}

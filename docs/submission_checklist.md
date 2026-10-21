@@ -1,0 +1,73 @@
+# Journal of Cheminformatics submission checklist
+
+Verified against the official Research and general submission guidance on
+2026-10-21.
+
+## Manuscript package
+
+- [x] Research title identifies the study scope and does not claim an empirical
+  VietHerb/MIL result.
+- [x] Structured abstract is below 350 words.
+- [x] Abstract contains a Scientific Contribution subsection of at most three
+  sentences.
+- [x] Seven keywords are provided (required range: 3–10).
+- [x] Full author names, one institutional address, corresponding author, email,
+  and ORCIDs are present.
+- [x] Main text has line and page numbering and double-line spacing.
+- [x] Introduction, Methods, Results, Discussion, and Conclusions are present.
+- [x] A list of abbreviations is present.
+- [x] Figures are numbered in citation order and supplied as editable vector
+  PDFs plus PNG previews; each is below 10 MB.
+- [x] Machine-readable result tables are supplied as CSV rather than only PDF.
+- [x] Additional file 1 is described and cited in the main text.
+- [x] Declarations contain data availability, competing interests, funding,
+  contributions, acknowledgements, ethics, and consent headings.
+- [x] Generative-AI assistance is disclosed; authors retain responsibility.
+- [ ] Both authors confirm CRediT roles, funding, competing interests, and final
+  approval language.
+- [ ] Optional: create a 920 × 300 px, white-background graphical abstract under
+  150 KB.
+
+## Reproducibility and archive
+
+- [x] ChEMBL 37 archive, SQLite, extraction, dataset, run, prediction, table,
+  and figure hashes are recorded.
+- [x] Five fixed seeds and validation-only checkpoint/model-selection policy are
+  documented.
+- [x] Source code is MIT-licensed and ChEMBL source licensing is stated.
+- [x] No restricted VietHerb row supports a reported conclusion.
+- [x] `CITATION.cff` and `.zenodo.json` contain both authors and ORCIDs.
+- [x] Copy every reported run manifest, metrics file, and prediction file into
+  the release bundle.
+- [ ] Verify the evidence and release manifests from a clean clone.
+- [ ] Enable the GitHub repository in Zenodo, create a GitHub release, verify
+  archive processing, and insert the version DOI into the manuscript.
+- [ ] Re-run the complete workflow in a clean Python 3.11 environment or CI
+  runner; record wall time and platform.
+- [x] Confirm that all files needed to reproduce each current manuscript
+  conclusion are distributable in the release bundle or accessible in public
+  ChEMBL 37 under CC BY-SA 3.0. No VietHerb result is claimed.
+
+## Submission system
+
+- [x] Cover-letter draft explains journal fit, policy boundary, originality,
+  competing interests, and author approval.
+- [ ] Both authors approve and sign off the cover letter.
+- [ ] Upload editable TeX/Bib sources and all figure source files; do not upload
+  only the compiled PDF.
+- [ ] Upload Additional file 1 and six evidence CSV tables in citation order.
+- [ ] Add the final Zenodo DOI as a data/software reference and in Availability
+  of data and materials.
+- [ ] Confirm the manuscript is not published or under consideration elsewhere.
+- [ ] Confirm APC/funding arrangements before submission.
+
+## Scientific blockers for the later VietHerb/MIL paper
+
+- Written VietHerb redistribution/reproducible-access terms.
+- Frozen therapeutic-use mappings with two independent domain reviewers.
+- Five-seed botanical cold-start MIL, shuffled-label, random-label, broadcast,
+  and importance-weighted runs.
+- A matched independent external dataset or prospective biochemical validation.
+
+These blockers do not invalidate the ChEMBL-only benchmark results, but they
+prevent an empirical claim that VietHerb supervision improves target ranking.

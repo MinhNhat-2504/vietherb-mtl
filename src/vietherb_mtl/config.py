@@ -63,8 +63,8 @@ class ModelConfig:
                     "use either auxiliary_tasks or the legacy auxiliary_task alias, not both"
                 )
             object.__setattr__(self, "auxiliary_tasks", (self.auxiliary_task,))
-        if not self.auxiliary_tasks or any(not task for task in self.auxiliary_tasks):
-            raise ValueError("at least one non-empty auxiliary task is required")
+        if any(not task for task in self.auxiliary_tasks):
+            raise ValueError("auxiliary task names must be non-empty")
         if len(set(self.auxiliary_tasks)) != len(self.auxiliary_tasks):
             raise ValueError("auxiliary task names must be unique")
         overlap = set(self.primary_tasks) & set(self.auxiliary_tasks)

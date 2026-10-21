@@ -67,6 +67,11 @@ def main() -> None:
     if observed_splits != expected_splits:
         raise RuntimeError(f"expected splits {expected_splits}, got {observed_splits}")
 
+    manifest_path = args.dataset_dir / "manifest.json"
+    dataset_manifest = json.loads(manifest_path.read_text()) if manifest_path.exists() else {}
+    split_policy = dataset_manifest.get("split_policy", {})
+    temporal = split_policy.get("method") == "first_document_year_temporal_holdout"
+
     split_sets = {}
     for column in ("molecule_id", "inchikey", "murcko_scaffold", "component_id"):
         split_sets[column] = {
@@ -74,13 +79,37 @@ def main() -> None:
             for split in sorted(expected_splits)
         }
     overlaps = {column: pairwise_overlaps(values) for column, values in split_sets.items()}
-    if any(value for column in overlaps.values() for value in column.values()):
-        raise RuntimeError(f"split leakage detected: {overlaps}")
+    enforced_columns = ("molecule_id", "inchikey") if temporal else tuple(split_sets)
+    enforced_overlaps = {
+        column: overlaps[column] for column in enforced_columns
+    }
+    if any(value for column in enforced_overlaps.values() for value in column.values()):
+        raise RuntimeError(f"split leakage detected: {enforced_overlaps}")
+
+    temporal_ranges = None
+    if temporal:
+        if "first_document_year" not in frame:
+            raise RuntimeError("temporal dataset lacks first_document_year")
+        train_end = int(split_policy["train_end_year"])
+        validation_end = int(split_policy["validation_end_year"])
+        years = frame.groupby("split")["first_document_year"].agg(["min", "max"])
+        if not (
+            years.loc["train", "max"] <= train_end
+            and years.loc["validation", "min"] > train_end
+            and years.loc["validation", "max"] <= validation_end
+            and years.loc["test", "min"] > validation_end
+        ):
+            raise RuntimeError(f"temporal ordering violation: {years.to_dict()}")
+        temporal_ranges = {
+            split: {
+                "minimum_first_document_year": int(row["min"]),
+                "maximum_first_document_year": int(row["max"]),
+            }
+            for split, row in years.iterrows()
+        }
 
     similarity = nearest_train_similarity(frame)
-    manifest_path = args.dataset_dir / "manifest.json"
-    dataset_manifest = json.loads(manifest_path.read_text()) if manifest_path.exists() else {}
-    threshold = dataset_manifest.get("split_policy", {}).get("chemical_cluster_tanimoto")
+    threshold = split_policy.get("chemical_cluster_tanimoto")
     if threshold is not None and similarity["maximum"] >= float(threshold) - 1e-12:
         raise RuntimeError(
             f"chemical-cluster leakage: maximum test-to-train similarity "
@@ -129,6 +158,8 @@ def main() -> None:
         "unique_scaffolds": int(frame["murcko_scaffold"].nunique()),
         "test_to_train_tanimoto": similarity,
         "overlaps": overlaps,
+        "enforced_disjoint_columns": list(enforced_columns),
+        "temporal_ranges": temporal_ranges,
         "targets": target_counts,
         "bags": bag_summary,
         "passed": True,

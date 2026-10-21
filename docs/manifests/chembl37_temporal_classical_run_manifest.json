@@ -1,0 +1,15 @@
+{
+  "experiment": "chembl37_temporal_activity_v1_classical",
+  "finished_at": "2026-10-21T04:36:41.100471+00:00",
+  "config_sha256": "9057f78ea52c000fc0aaf0e824fd07c5edee041cdac8cd7ee08b89ad4e175179",
+  "python": "3.11.9",
+  "sklearn": "1.8.0",
+  "fingerprint_backend": "rdkit",
+  "rows": 10697,
+  "synthetic": false,
+  "confirmatory_eligible": true,
+  "scientific_results": true,
+  "dataset_manifest_sha256": "e946607ce774ef8806ec26ca125dfeae632a240fa26107cbfecd07b087d721e3",
+  "metrics_sha256": "b6eb929fbe6b0f7cac562760febe9d8bc6dfdad1ee822d6ac2082390c479a47b",
+  "predictions_sha256": "dd94a8ea0d67e6c618a225958325453034631706155037f0acd02115fcfe5bda"
+}

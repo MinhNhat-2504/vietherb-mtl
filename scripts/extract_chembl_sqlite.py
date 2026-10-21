@@ -113,6 +113,7 @@ def load_candidate_activities(
                seq.accession AS target_uniprot,
                seq.sequence AS target_sequence,
                md.chembl_id AS molecule_chembl_id,
+               md.natural_product,
                cs.canonical_smiles,
                cs.standard_inchi,
                cs.standard_inchi_key,

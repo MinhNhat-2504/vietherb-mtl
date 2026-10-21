@@ -1,5 +1,5 @@
 {
-  "audited_at": "2026-10-20T20:46:09.364994+00:00",
+  "audited_at": "2026-10-21T10:55:47.156454+00:00",
   "dataset": "data\\processed\\frozen_v1",
   "rows": 10686,
   "split_counts": {
@@ -36,6 +36,13 @@
       "train__validation": 0
     }
   },
+  "enforced_disjoint_columns": [
+    "molecule_id",
+    "inchikey",
+    "murcko_scaffold",
+    "component_id"
+  ],
+  "temporal_ranges": null,
   "targets": {
     "test": {
       "activity_ACHE": {

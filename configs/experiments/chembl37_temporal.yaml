@@ -1,0 +1,33 @@
+experiment_name: chembl37_temporal_activity_v1
+dataset_dir: data/processed/temporal_v1
+output_dir: outputs/chembl37_temporal_activity_v1
+seeds: [13, 37, 71, 101, 137]
+model:
+  input_dim: 2048
+  hidden_dims: [1024, 512]
+  dropout: 0.25
+  attention_dim: 128
+tasks:
+  primary: [activity_DPP4, activity_ACHE, activity_PTGS2]
+  auxiliary: [ethno_diabetes, ethno_neuro, ethno_inflammation]
+  pu_priors:
+    ethno_diabetes: 0.10
+    ethno_neuro: 0.10
+    ethno_inflammation: 0.15
+training:
+  epochs: 100
+  batch_size: 256
+  learning_rate: 0.0003
+  weight_decay: 0.0001
+  early_stopping_patience: 12
+  monitor: val_macro_pr_auc
+  aux_loss_weights: [0.0]
+  importance_weighting: [false]
+  model_families: [single_task, shared_primary]
+  pu_batch_size: 256
+evaluation:
+  primary_metric: pr_auc
+  metrics: [pr_auc, bedroc20, ef1, ef5, precision_at_1, recall_at_1, roc_auc, brier, ece10]
+  bootstrap_replicates: 1000
+  bootstrap_seed: 20261020
+  report_per_target: true

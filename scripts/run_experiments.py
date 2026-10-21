@@ -39,6 +39,7 @@ from vietherb_mtl import (
     nnpu_loss,
     pr_auc_score,
     precision_recall_at_fraction,
+    select_validation_configuration,
 )
 
 
@@ -174,6 +175,7 @@ def train_one(
     seed: int,
     config: dict,
     device: torch.device,
+    evaluation_split: str = "test",
 ) -> tuple[list[dict], pd.DataFrame, int]:
     set_seed(seed)
     active_primary = primary_tasks
@@ -378,10 +380,13 @@ def train_one(
     if mil is not None and best_state["mil"] is not None:
         mil.load_state_dict(best_state["mil"])
     metric_names = list(config["evaluation"]["metrics"])
-    test_rows, predictions = evaluate(
-        model, features, labels_np, test_indices, active_primary, metric_names, device
+    if evaluation_split not in {"validation", "test"}:
+        raise ValueError("evaluation_split must be validation or test")
+    evaluation_indices = validation_indices if evaluation_split == "validation" else test_indices
+    evaluation_rows, predictions = evaluate(
+        model, features, labels_np, evaluation_indices, active_primary, metric_names, device
     )
-    for row in test_rows:
+    for row in evaluation_rows:
         row.update(
             {
                 "family": family,
@@ -390,14 +395,15 @@ def train_one(
                 "importance_weighting": use_importance,
                 "best_epoch": best_epoch,
                 "validation_macro_pr_auc": best_score,
+                "evaluation_split": evaluation_split,
             }
         )
     prediction_rows = []
     for task, scores in predictions.items():
-        subset = frame.iloc[test_indices]
+        subset = frame.iloc[evaluation_indices]
         for molecule_id, truth, score, is_np, component_id, scaffold in zip(
             subset["molecule_id"],
-            labels_np[task][test_indices],
+            labels_np[task][evaluation_indices],
             scores,
             subset["is_natural_product"],
             subset["component_id"],
@@ -417,9 +423,10 @@ def train_one(
                     "seed": seed,
                     "aux_weight": aux_weight,
                     "importance_weighting": use_importance,
+                    "evaluation_split": evaluation_split,
                 }
             )
-    return test_rows, pd.DataFrame(prediction_rows), best_epoch
+    return evaluation_rows, pd.DataFrame(prediction_rows), best_epoch
 
 
 def main() -> None:
@@ -469,20 +476,73 @@ def main() -> None:
             expanded_families.extend(f"single_task:{task}" for task in primary_tasks)
         else:
             expanded_families.append(family)
-    for seed in config["seeds"]:
-        for family in expanded_families:
-            aux_weights = (
-                [value for value in config["training"]["aux_loss_weights"] if value > 0]
-                if family in {"naive_broadcast", "mil_aux", "permuted_mil"}
-                else [0.0]
-            )
-            importance_options = (
-                config["training"]["importance_weighting"] if family != "permuted_mil" else [False]
-            )
-            for aux_weight in aux_weights:
-                for use_importance in importance_options:
+    selection_rows: list[dict] = []
+    selections: list[dict] = []
+    for family in expanded_families:
+        aux_weights = (
+            [value for value in config["training"]["aux_loss_weights"] if value > 0]
+            if family in {"naive_broadcast", "mil_aux", "permuted_mil"}
+            else [0.0]
+        )
+        importance_options = (
+            config["training"]["importance_weighting"] if family != "permuted_mil" else [False]
+        )
+        for use_importance in importance_options:
+            selected_weights = list(aux_weights)
+            if len(aux_weights) > 1:
+                candidate_records = []
+                for aux_weight in aux_weights:
+                    for seed in config["seeds"]:
+                        print(
+                            f"select family={family} seed={seed} aux={aux_weight} "
+                            f"iw={use_importance}",
+                            flush=True,
+                        )
+                        rows, _, _ = train_one(
+                            features_np=features_np,
+                            labels_np=labels_np,
+                            frame=frame,
+                            primary_tasks=primary_tasks,
+                            auxiliary_tasks=auxiliary_tasks,
+                            pu_priors=dict(config["tasks"]["pu_priors"]),
+                            bags=bags,
+                            bag_membership=bag_membership,
+                            family=family,
+                            aux_weight=float(aux_weight),
+                            use_importance=bool(use_importance),
+                            seed=int(seed),
+                            config=config,
+                            device=device,
+                            evaluation_split="validation",
+                        )
+                        macro = float(np.mean([row["pr_auc"] for row in rows]))
+                        candidate_records.append(
+                            {
+                                "family": family,
+                                "seed": int(seed),
+                                "aux_weight": float(aux_weight),
+                                "importance_weighting": bool(use_importance),
+                                "validation_macro_pr_auc": macro,
+                            }
+                        )
+                selected = select_validation_configuration(
+                    candidate_records,
+                    parameter_names=["aux_weight"],
+                )
+                selected_weights = [float(selected["aux_weight"])]
+                selection_rows.extend(candidate_records)
+                selections.append(
+                    {
+                        "family": family,
+                        "importance_weighting": bool(use_importance),
+                        **selected,
+                    }
+                )
+            for aux_weight in selected_weights:
+                for seed in config["seeds"]:
                     print(
-                        f"run family={family} seed={seed} aux={aux_weight} iw={use_importance}",
+                        f"test family={family} seed={seed} aux={aux_weight} "
+                        f"iw={use_importance}",
                         flush=True,
                     )
                     results, predictions, _ = train_one(
@@ -500,6 +560,7 @@ def main() -> None:
                         seed=int(seed),
                         config=config,
                         device=device,
+                        evaluation_split="test",
                     )
                     all_results.extend(results)
                     all_predictions.append(predictions)
@@ -507,6 +568,10 @@ def main() -> None:
                     pd.concat(all_predictions, ignore_index=True).to_parquet(
                         output_dir / "predictions.parquet", index=False
                     )
+    if selection_rows:
+        pd.DataFrame(selection_rows).to_csv(
+            output_dir / "validation_selection.csv", index=False
+        )
     dataset_manifest = json.loads((dataset_dir / "manifest.json").read_text())
     manifest = {
         "experiment": config["experiment_name"],
@@ -520,6 +585,15 @@ def main() -> None:
         "synthetic": bool(dataset_manifest.get("synthetic", False)),
         "confirmatory_eligible": bool(dataset_manifest.get("confirmatory_eligible", False)),
         "scientific_results": not bool(dataset_manifest.get("synthetic", False)),
+        "selection_policy": "validation_only_mean_across_prespecified_seeds",
+        "selected_configurations": selections,
+        "dataset_manifest_sha256": hashlib.sha256(
+            (dataset_dir / "manifest.json").read_bytes()
+        ).hexdigest(),
+        "metrics_sha256": hashlib.sha256((output_dir / "metrics.csv").read_bytes()).hexdigest(),
+        "predictions_sha256": hashlib.sha256(
+            (output_dir / "predictions.parquet").read_bytes()
+        ).hexdigest(),
     }
     (output_dir / "manifest.json").write_text(
         json.dumps(manifest, indent=2) + "\n", encoding="utf-8"

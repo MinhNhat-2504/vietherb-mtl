@@ -1,0 +1,25 @@
+{
+  "experiment": "chembl37_chemprop_dmpnn_v1",
+  "finished_at": "2026-10-21T05:20:13.745561+00:00",
+  "chemprop": "2.2.1",
+  "python": "3.11.9",
+  "seeds": [
+    13,
+    37,
+    71,
+    101,
+    137
+  ],
+  "epochs": 100,
+  "patience": 12,
+  "early_stopping_metric": "validation_loss",
+  "test_evaluated_after_best_validation_checkpoint": true,
+  "rows": 10686,
+  "synthetic": false,
+  "confirmatory_eligible": true,
+  "scientific_results": true,
+  "input_sha256": "52173a3c0e29736f992e7d823fcf8a7a7604ee7c38751b8c010b635647577174",
+  "dataset_manifest_sha256": "d65d8c71465cf34664057ff87b3ef23e72db001dd54ee60828d12c46a6ea40d6",
+  "metrics_sha256": "60a7e00581d2a03fe99884917cf5f400bec7444e1da5db9f4fed9bc9ffe265c0",
+  "predictions_sha256": "34fd4d0852fdcd3230df1200c1caa174caa8d65047f30372974ac165e1bf8b80"
+}

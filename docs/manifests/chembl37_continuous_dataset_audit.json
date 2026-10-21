@@ -1,0 +1,57 @@
+{
+  "audited_at": "2026-10-21T10:55:55.782771+00:00",
+  "dataset": "data\\processed\\continuous_v1",
+  "rows": 14029,
+  "split_counts": {
+    "train": 9820,
+    "validation": 2105,
+    "test": 2104
+  },
+  "unique_scaffolds": 5433,
+  "test_to_train_tanimoto": {
+    "n_test": 2104,
+    "median": 0.5217391304347826,
+    "p95": 0.6779661016949152,
+    "maximum": 0.6987951807228916
+  },
+  "overlaps": {
+    "molecule_id": {
+      "test__train": 0,
+      "test__validation": 0,
+      "train__validation": 0
+    },
+    "inchikey": {
+      "test__train": 0,
+      "test__validation": 0,
+      "train__validation": 0
+    },
+    "murcko_scaffold": {
+      "test__train": 0,
+      "test__validation": 0,
+      "train__validation": 0
+    },
+    "component_id": {
+      "test__train": 0,
+      "test__validation": 0,
+      "train__validation": 0
+    }
+  },
+  "enforced_disjoint_columns": [
+    "molecule_id",
+    "inchikey",
+    "murcko_scaffold",
+    "component_id"
+  ],
+  "temporal_ranges": null,
+  "targets": {
+    "test": {},
+    "train": {},
+    "validation": {}
+  },
+  "bags": {
+    "bags": 0,
+    "membership_edges": 0,
+    "cross_split_bags": 0
+  },
+  "passed": true
+}

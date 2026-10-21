@@ -2,102 +2,130 @@
 
 Updated: 2026-10-21 (Asia/Saigon)
 
-This file is the ordered release gate for the empirical manuscript. A later
-stage may be prepared while an external response is pending, but no stage may
-be declared complete until its acceptance criteria pass.
+This is the ordered release gate. “Complete” means that its acceptance checks
+pass; a prepared draft is not equivalent to an external approval or DOI.
 
-## Gate 1 — VietHerb permission and export
+## 1 — VietHerb permission and export
 
-Status: **ACTION REQUIRED FROM AUTHOR / MAINTAINER**
+Status: **ACTION REQUIRED FROM AUTHORS / MAINTAINER**
 
-- [x] Verify the corresponding-author contact from the live site and paper.
-- [x] Prepare bilingual permission/export request.
-- [ ] Author confirms role, institution, and ORCID in the email.
-- [ ] Send request to `ly.le@hcmiu.edu.vn`.
-- [ ] Archive the response privately.
-- [ ] Record snapshot identity, licence, attribution, redistribution scope, and
-      permission identifier in a non-sensitive manifest.
-- [ ] Receive the four required relational tables or permission to create a
-      frozen, rate-limited snapshot.
-- [ ] Confirm that a third party can access enough data to reproduce every
-      conclusion intended for Journal of Cheminformatics.
+- [x] Verify the maintainer contact and prepare a bilingual request.
+- [x] Add author order, affiliation, institutional emails, ORCIDs, and
+  corresponding-author designation.
+- [ ] Both authors confirm CRediT, funding, and competing-interest statements.
+- [ ] Send the request to `ly.le@hcmiu.edu.vn` and archive the response privately.
+- [ ] Receive an export/access route whose terms permit third-party
+  reproducibility for every intended VietHerb conclusion.
 
-Exit criterion: written terms and an export/access route support a reproducible
-public benchmark. Internal-use-only permission does not pass this gate for the
-current target journal.
+Exit criterion: written terms and a frozen export/access route support a public,
+reproducible benchmark. Internal-use-only permission does not pass this gate for
+Journal of Cheminformatics.
 
-## Gate 2 — Therapeutic-use normalization
+## 2 — Therapeutic-use normalization
 
-Status: **BLOCKED BY GATE 1 AND DOMAIN REVIEWERS**
+Status: **BLOCKED BY 1 AND DOMAIN REVIEWERS**
 
-- Freeze MeSH/Mondo versions and synonym sources.
-- Preserve all raw text and map the three target use families.
+- Freeze MeSH/Mondo versions and preserve every source span.
 - Obtain two independent pharmacy/pharmacognosy reviews and adjudication.
 - Report coverage, abstention, confusion modes, agreement, and Cohen's kappa.
-- Freeze PU priors using training data only and prespecify sensitivity values.
+- Freeze training-only PU priors and sensitivity values.
 
-Exit criterion: a versioned mapping table with reviewer fields complete and no
-test-split information used during label construction.
+Exit criterion: a versioned mapping table with complete reviewer fields and no
+test information used in label construction.
 
-## Gate 3 — Confirmatory ChEMBL 37 cohort
+## 3 — Freeze ChEMBL 37 and acceptance checks
 
 Status: **COMPLETE (2026-10-21)**
 
-- [x] Locate the existing versioned ChEMBL 37 SQLite archive and verify the
-  provider checksum without downloading a duplicate.
-- [x] Verify release metadata and compute local SHA-256 checksums.
-- [x] Complete relation, censoring, component/UniProt, organism, assay, duplicate,
-  validity, and document-provenance assertions.
-- [x] Freeze active/inactive/gray-zone policy before confirmatory model training.
-- [x] Produce exclusion-flow and target-level audit tables.
+- [x] Reuse and verify the local official ChEMBL 37 archive; no duplicate
+  download was made.
+- [x] Bind archive, SQLite, extract, cohort, and split artifacts by SHA-256.
+- [x] Validate target/UniProt identity, organism, assay, relation, duplicate,
+  validity, document provenance, contradiction, and gray-zone policies.
+- [x] Freeze 10,698 labelled pairs, 10,686 molecules, and 7,480/1,603/1,603
+  primary partitions.
+- [x] Pass identity, InChIKey, scaffold, connected-component, and nearest-neighbour
+  leakage audits; maximum test-to-train Tanimoto is 0.698.
 
-Exit criterion: pinned extract and manifest pass all acceptance checks.
+## 4 — Split, metrics, and model selection
 
-## Gate 4 — Split and evaluation hardening
+Status: **COMPLETE (2026-10-21)**
 
-Status: **IN PROGRESS**
+- [x] Primary 0.70 Tanimoto connected-component chemical-OOD split.
+- [x] First-publication-year temporal split with future-label censoring.
+- [x] Continuous-pChEMBL chemical-OOD sensitivity cohort.
+- [x] EF1%, EF5%, fixed-budget precision/recall, AUROC, Brier, ECE, reliability
+  bins, MAE, RMSE, Spearman, per-target bootstrap, and BH correction.
+- [x] Validation-only configuration selection; the selector rejects test-metric
+  columns and evaluates test only after selection/checkpoint restoration.
+- [x] 45 unit tests cover the new invariants.
 
-- [x] Add the primary fingerprint-cluster chemical-OOD regime.
-- [ ] Add a temporal holdout sensitivity regime.
-- Retain strict scaffold/species connected components as a secondary regime.
-- [x] Add nearest-neighbour Tanimoto and component-size diagnostics.
-- Make auxiliary-weight and PU-prior selection validation-only; evaluate the
-  sealed test set once per selected configuration.
-- [x] Add EF5%, precision/recall at budget, and ECE metrics.
-- [ ] Add reliability figures, continuous-potency sensitivity, per-target
-  intervals, and multiplicity correction.
+## 5 — Confirmatory five-seed matrix
 
-Exit criterion: unit-tested split/selection/metric code and a frozen analysis
-plan exist before confirmatory training.
+Status: **CHEMBL-ONLY ARMS COMPLETE; VIETHERB ARMS BLOCKED BY 1–2**
 
-## Gate 5 — Confirmatory experiment matrix
+- [x] Five fixed seeds: 13, 37, 71, 101, 137.
+- [x] Chemical-OOD logistic regression and Extra Trees.
+- [x] Chemical-OOD separate and shared fingerprint MLPs.
+- [x] Chemical-OOD official Chemprop 2.2.1 D-MPNN.
+- [x] Temporal classical and neural baselines.
+- [x] Continuous-pChEMBL separate/shared neural sensitivity.
+- [x] Natural-product-flag subgroup; prespecified power threshold failed, so
+  results are descriptive only.
+- [ ] Real naive-broadcast, MIL, shuffled-MIL, random-label, importance-weighted,
+  botanical cold-start, and attention-stability arms.
 
-Status: **ACTIVITY-ONLY BASELINE COMPLETE; MIL BLOCKED BY GATES 1–2 AND 4**
+Principal chemical-OOD macro PR-AUC: Extra Trees 0.9425, logistic regression
+0.9334, separate MLP 0.9281, shared MLP 0.9203, D-MPNN 0.8938. Every completed
+run has `scientific_results=true`; synthetic smoke runs remain excluded.
 
-Run five fixed seeds for classical, single-task, shared activity-only,
-naive-broadcast, MIL, shuffled-MIL, random-label, importance-weighted, and
-Chemprop/D-MPNN baselines. Report both chemical-OOD and botanical cold-start;
-add temporal and natural-product-subset analyses where sample sizes permit.
+## 6 — Chemprop and temporal/external validation
 
-Completed subset: five-seed single-task and shared-activity MLPs on the frozen
-chemical-OOD cohort, with predictions and run manifest archived. Classical,
-Chemprop, temporal, natural-product, and all VietHerb-dependent arms remain.
+Status: **PARTIAL — CHEMPROP AND TEMPORAL COMPLETE; TRUE EXTERNAL OPEN**
 
-Exit criterion: all real-data manifests are complete, synthetic flags are
-false, leakage audits pass, and the primary paired comparison is computed from
-sealed test predictions.
+- [x] Chemprop D-MPNN on the exact frozen split and five seeds.
+- [x] Temporal holdout (train through 2017, validation 2018–2021, test
+  2022–2025).
+- [x] Assess MoleculeACE suitability. It lacks the three target IDs and is
+  ChEMBL-derived, so it was not mislabelled as independent external validation.
+- [ ] Identify a license-compatible, independently generated matched-target
+  source or conduct prospective biochemical validation.
 
-## Gate 6 — Evidence package and manuscript
+The manuscript calls the completed analysis “temporal validation,” not
+“external validation.”
 
-Status: **BLOCKED BY GATE 5**
+## 7 — Figures, tables, supplement, and manuscript
 
-- Generate the data-flow, chemical-space, main-result, ablation, calibration,
-  enrichment, cold-start, and interpretation figures from manifests.
-- Expand Results and Discussion without duplicating supplementary audits.
-- Add the required Scientific Contribution abstract subsection, keywords,
-  affiliations, abbreviations, line numbering, and journal declarations.
-- Archive code, processed data, predictions, splits, and environment with
-  persistent releases/DOIs; prepare cover letter and optional graphical abstract.
+Status: **COMPLETE (2026-10-21)**
 
-Exit criterion: every claim maps to an archived artifact and the journal's
-submission checklist passes.
+- [x] Six main figures as PDF and PNG.
+- [x] Six machine-readable evidence tables.
+- [x] SHA-256 evidence manifest generated directly from run artifacts.
+- [x] Main paper expanded with all real results, uncertainty, calibration,
+  sensitivity analyses, limitations, and locked MIL boundary.
+- [x] Additional file 1 drafted with cohort flow, selection policy, per-target
+  results, environment, and provenance.
+- [x] Journal-required Scientific Contribution, keywords, line/page numbering,
+  and Declarations added.
+- [x] Compile final PDFs and complete visual/warning inspection: main manuscript
+  17 pages, Additional file 1 four pages, with no unresolved reference,
+  citation, or overfull-box warnings.
+
+## 8 — Zenodo, Springer submission package, and cover letter
+
+Status: **PREPARED LOCALLY; DOI AND SUBMISSION REQUIRE AUTHOR ACCOUNT ACTION**
+
+- [x] `CITATION.cff` and `.zenodo.json` metadata prepared.
+- [x] Environment manifest, release procedure, submission checklist, and cover
+  letter drafted.
+- [x] Manuscript uses accepted TeX/LaTeX source with double spacing and line/page
+  numbering; vector figures and editable sources are retained.
+- [ ] Both authors approve declarations and cover letter.
+- [ ] Create `v0.1.0` GitHub release after final verification.
+- [ ] Enable the repository in Zenodo, archive the release, verify it from a
+  clean download, and insert the version DOI into manuscript/CITATION files.
+- [ ] Upload through the journal account and confirm APC/funding arrangements.
+
+Exit criterion: clean-clone reproduction succeeds, the DOI resolves to the exact
+artifact set, all author declarations are approved, and the journal checklist
+has no open mandatory item.

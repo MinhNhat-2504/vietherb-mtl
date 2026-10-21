@@ -7,59 +7,76 @@
 \usepackage{natbib}
 \usepackage[hidelinks]{hyperref}
 \usepackage{enumitem}
+\usepackage{lineno}
+\usepackage{setspace}
 
 \newcommand{\methodname}{VietHerb-MIL}
 
-\title{From Plant-Level Traditional Use to Compound-Level Target Activity:\
-Leakage-Controlled Multiple-Instance Learning for Vietnamese Medicinal Plants}
-\author{Minh Nhat\\
-\small Corresponding author: \texttt{minhnhatpro2504@gmail.com}}
+\title{Split-Dependent Transfer in Multi-Target Bioactivity Prediction:\
+A Leakage-Controlled ChEMBL 37 Benchmark and Locked Plant-Bag Extension}
+\author{Nhat Trinh Ngoc Minh$^{1}$ and Linh Nguyen Thi My$^{1,*}$\\[2pt]
+\small $^{1}$Faculty of Information Technology, Van Lang School of Technology,\\
+\small Van Lang University, 69/68 Dang Thuy Tram Street,\\
+\small Binh Loi Trung Ward, Ho Chi Minh City, Vietnam\\
+\small $^{*}$Corresponding author: \texttt{linh.ntm@vlu.edu.vn}\\
+\small ORCID: N.T.N.M. 0009-0006-9477-9642; L.N.T.M. 0000-0003-3990-312X}
 \date{21 October 2026}
 
 \begin{document}
+\doublespacing
+\linenumbers
 \maketitle
 
 \begin{abstract}
 \textbf{Background:}
-Traditional-medicine databases connect plants to reported uses and plants to
-constituent metabolites, whereas modern bioactivity databases measure activity
-at the compound--target level. Naively assigning every plant-level use to every
-reported metabolite creates false labels and obscures which chemical evidence,
-if any, supports the use. We study whether Vietnamese ethnopharmacological
-annotations can improve molecular-target ranking without making this
-cross-granularity assumption.
+Traditional-medicine databases record uses at plant level, whereas bioactivity
+databases measure compound--target relations. We establish a leakage-controlled
+activity benchmark and a prospectively locked multiple-instance learning (MIL)
+protocol for testing plant-level supervision without broadcasting a use label
+to every reported constituent.
 
 \textbf{Methods:}
-We specify a confirmatory workflow linking a maintainer-authorized, versioned
-VietHerb snapshot to ChEMBL 37 activities for human DPP4,
-acetylcholinesterase, and COX-2. Each plant is represented as a bag of
-standardized metabolites, with gated-attention multiple-instance learning and
-positive--unlabelled treatment of absent use annotations. Before restricted
-VietHerb data were available, we validated the activity branch on frozen
-ChEMBL 37 using a 0.70 Tanimoto connected-component split, five seeds, separate
-and shared fingerprint MLPs, and dependence-aware paired bootstrap intervals.
+We curated ChEMBL 37 measurements for human DPP4, acetylcholinesterase, and
+COX-2. A 0.70 Morgan-Tanimoto connected-component split defined the primary
+chemical out-of-distribution (OOD) test; a first-publication-year split and a
+continuous-pChEMBL endpoint were sensitivities. Logistic regression, Extra
+Trees, separate and shared fingerprint multilayer perceptrons (MLPs), and an
+official Chemprop D-MPNN were run with five fixed seeds. Selection and early
+stopping used validation data only; ranking, enrichment, discrimination, and
+calibration were computed on the sealed test set.
 
 \textbf{Results:}
-The frozen ChEMBL 37 extraction contained 43,843 candidate records and 16,941
-eligible records, yielding 10,698 labelled compound--target pairs and 10,686
-unique molecules after replicate, contradiction, and gray-zone handling. No
-molecule, InChIKey, Murcko scaffold, or Tanimoto-connected component crossed
-train, validation, and test partitions; maximum test-to-train Tanimoto was
-0.698 under the locked 0.70 threshold. Separate target MLPs achieved macro
-PR-AUC $0.9281\pm0.0035$, versus $0.9203\pm0.0024$ for shared activity-only
-learning. The paired shared-minus-separate difference was $-0.0077$
-(hierarchical bootstrap 95\% CI, $-0.0141$ to $-0.0021$), although the shared
-model improved BEDROC20. These results reveal metric- and target-dependent
-negative transfer but do not test the ethnopharmacological MIL hypothesis.
+Among 43,843 candidates, 16,941 records yielded 10,698 labelled pairs and
+10,686 molecules after curation. No identity, Murcko scaffold, or chemical
+component crossed primary partitions; maximum test-to-train Tanimoto was
+0.698. Extra Trees achieved the highest chemical-OOD macro PR-AUC
+($0.9425\pm0.0009$), followed by logistic regression
+($0.9334\pm0.0000$), separate MLPs ($0.9281\pm0.0035$), shared MLP
+($0.9203\pm0.0024$), and D-MPNN ($0.8938\pm0.0063$). The shared-minus-separate
+MLP difference was $-0.0077$ (cluster bootstrap 95\% CI $-0.0141$ to
+$-0.0021$), driven by acetylcholinesterase after multiplicity correction.
+Conversely, the shared MLP improved temporal macro PR-AUC
+($0.9425\pm0.0024$ versus $0.9247\pm0.0029$), but worsened continuous-pChEMBL
+MAE ($0.8181\pm0.0049$ versus $0.8083\pm0.0066$).
 
 \textbf{Conclusions:}
-The implemented workflow provides a leakage-audited basis for testing whether
-plant-level knowledge adds compound-level ranking value. Frozen ChEMBL 37
-results validate the activity branch and motivate explicit negative-transfer
-controls, while the
-central MIL comparison remains prospectively locked pending authorized
+Model ordering was endpoint-, split-, target-, and metric-dependent; simple
+fingerprint ensembles remained strong controls. The benchmark validates the
+activity branch and quantifies negative transfer, but does not test the
+ethnopharmacological MIL hypothesis, which remains locked pending redistributable
 VietHerb data and expert-audited therapeutic-use mappings.
+
+\textbf{Scientific Contribution:}
+We provide a version-pinned, leakage-audited, five-seed benchmark that evaluates
+multi-target sharing under chemical-OOD, temporal, and continuous endpoints.
+Unlike naive herb-to-compound label propagation, the accompanying protocol
+formalizes plant knowledge as positive--unlabelled bag supervision and requires
+falsification controls before any ethnopharmacological claim.
 \end{abstract}
+
+\noindent\textbf{Keywords:} chemical out-of-distribution evaluation; ChEMBL;
+multi-task learning; negative transfer; multiple-instance learning; natural
+products; virtual screening
 
 \section{Introduction}
 
@@ -95,15 +112,16 @@ plant--use edges also cannot automatically be interpreted as negatives, making
 positive--unlabelled (PU) learning a relevant sensitivity analysis
 \citep{kiryo2017nnpu,wang2026prodti}.
 
-We therefore make four contributions. First, we define an auditable data model
-that preserves compound, plant, therapeutic-concept, assay, and provenance
-relations. Second, we formulate cross-granularity supervision with attention
-MIL instead of label broadcasting. Third, we introduce split manifests that
-keep identical structures, related chemistry, and plant components disjoint.
-Fourth, we isolate the value of ethnopharmacological information with matched
-architectures and falsification controls. The preregistered primary question is
-whether plant-bag supervision improves compound-level out-of-distribution
-PR-AUC beyond activity-only multi-task learning.
+We make three empirical and one prospective contribution. First, we release an
+auditable ChEMBL 37 cohort with connected-component chemical-OOD and temporal
+partitions. Second, we compare linear, tree-ensemble, fingerprint-neural, and
+message-passing baselines across ranking, early enrichment, discrimination, and
+calibration. Third, we test whether the sign of multi-target transfer persists
+under temporal classification and continuous potency prediction. Finally, we
+specify cross-granularity plant supervision as attention MIL with
+positive--unlabelled labels and explicit shuffled-label controls. This last
+hypothesis is deliberately not evaluated without a legally redistributable
+VietHerb snapshot and expert-audited mappings.
 
 \section{Materials and methods}
 
@@ -182,6 +200,22 @@ to B and B occurs with C in one species, all three remain in one partition. No
 feature transformation, loss weight, class prior, or hyperparameter is fitted
 using test data.
 
+The primary activity benchmark joined standardized molecules when their
+radius-2 Morgan fingerprint Tanimoto similarity was at least 0.70. Whole
+connected components were allocated 70:15:15 with a fixed split seed. An audit
+then required zero overlap in standardized structure, InChIKey, Murcko scaffold,
+and connected-component identifier. This scaffold-disjoint property is stricter
+than the construction rule and was checked rather than assumed.
+
+The temporal sensitivity used each molecule--target pair's earliest source
+document year. Training contained first reports through 2017, validation
+contained 2018--2021, and test contained 2022--2025. Measurements published
+after the relevant training or validation cutoff were censored before label
+aggregation. Unlike the primary regime, temporal splitting intentionally did
+not enforce scaffold disjointness: it asks how a model trained on historical
+chemistry behaves on later publications, including later measurements of known
+series.
+
 \subsection{Multiple-instance multi-task model}
 
 Let $x_{ij}$ denote metabolite $j$ reported in plant $i$, and let
@@ -212,51 +246,88 @@ sensitivity analyses. The total objective is
 \lambda\mathcal{L}_{\mathrm{plant\text{-}MIL}}.
 \end{equation}
 
-The prespecified compute-feasible confirmatory encoder is a radius-2, 2,048-bit chiral Morgan
-fingerprint followed by a two-layer MLP. This deliberately separates the
-scientific contribution from an expensive foundation model. A D-MPNN/Chemprop
-baseline \citep{yang2019chemprop} and one pretrained molecular encoder are
-secondary comparisons using identical split IDs.
+The compute-feasible encoder is a radius-2, 2,048-bit chiral Morgan fingerprint
+followed by a two-layer MLP. This deliberately separates the prospective MIL
+test from an expensive foundation model. The measured-activity benchmark also
+included an official Chemprop directed message-passing neural network (D-MPNN)
+\citep{yang2019chemprop} using identical split IDs.
 
 \subsection{Baselines and falsification controls}
 
-Prespecified models are: per-target fingerprint logistic regression; random forest
-or gradient boosting; separate neural target models; shared activity-only
-multi-task learning; naive plant-label broadcasting; the proposed MIL model;
-and optional domain importance weighting. Controls shuffle use labels among
-training plants while preserving prevalence, replace uses with equally sized
-random auxiliary labels, compare expert-verified with confidence-weighted
-mappings, and equalize parameter counts and update counts. The primary
-comparison is MIL versus the architecture-matched activity-only model. Naive
-broadcasting is an ablation, not the proposed method.
+Measured-activity baselines were per-target L2-regularized logistic regression,
+per-target Extra Trees, separate target MLPs, a hard-sharing multi-target MLP,
+and a shared Chemprop 2.2.1 D-MPNN. Logistic regression and Extra Trees used the
+same Morgan features and split assignments as the MLPs. The D-MPNN consumed
+SMILES and three masked activity columns; missing compound--target observations
+did not contribute to its loss.
+
+The future VietHerb matrix additionally contains naive plant-label broadcasting,
+bag-level MIL, shuffled-use-label MIL, prevalence-matched random auxiliary
+labels, and optional domain importance weighting. Controls shuffle labels only
+among training plants and equalize parameter and update budgets. The primary
+future comparison is MIL versus the architecture-matched activity-only model;
+naive broadcasting is an ablation, not the proposed method.
 
 \subsection{Training and statistical analysis}
 
-The MLP uses hidden dimensions 1,024 and 512, dropout 0.25, AdamW with learning
+The MLP used hidden dimensions 1,024 and 512, dropout 0.25, AdamW with learning
 rate $3\times10^{-4}$ and weight decay $10^{-4}$, batch size 256, and early
-stopping patience 12 on validation macro PR-AUC. Auxiliary weights
-$\{0.1,0.3,1.0\}$ are selected on validation data. Seeds are 13, 37, 71, 101,
+stopping patience 12 on validation macro PR-AUC. The D-MPNN used the official
+Chemprop 2.2.1 defaults, at most 100 epochs, patience 12, and validation loss
+for deterministic checkpoint selection. Validation PR-AUC was not used for the
+D-MPNN because exact-seed CUDA execution invokes a non-deterministic cumulative
+sum in that metric; all test metrics were instead recomputed after restoring the
+best validation-loss checkpoint. Five fixed seeds were used: 13, 37, 71, 101,
 and 137.
 
-The confirmatory primary endpoint is the paired change in macro test PR-AUC. We additionally
-report target-wise PR-AUC and prevalence, BEDROC ($\alpha=20$), EF1\% and EF5\%,
-precision/recall at fixed experimental budgets, AUROC, Brier score, and
-calibration. PR-AUC is emphasized for imbalanced screening
+Model and hyperparameter selection was validation-only. Each candidate was run
+on the validation partition across the prespecified seeds; the configuration
+with the best mean validation objective was frozen and only then evaluated on
+test. The selector rejects columns whose names indicate test outcomes. The
+future MIL auxiliary weights $\{0.1,0.3,1.0\}$ and PU priors follow this same
+policy.
+
+The primary activity endpoint was macro test PR-AUC. We additionally reported
+target-wise PR-AUC and prevalence, BEDROC ($\alpha=20$), EF1\% and EF5\%,
+precision/recall at fixed experimental budgets, AUROC, Brier score, ten-bin
+expected calibration error (ECE), and reliability curves. PR-AUC was emphasized for imbalanced screening
 \citep{saito2015pr}, while BEDROC measures early recognition
 \citep{truchon2007bedroc}. Paired 95\% intervals use 1,000 bootstrap replicates
 with structure cluster as the resampling unit for compound endpoints and plant
 as the unit for bag endpoints. Target-level secondary tests use
 Benjamini--Hochberg correction.
 
-For the frozen activity-only comparison, target-specific MLPs and an
-architecture-matched shared MLP were trained with five prespecified seeds.
-Within each run, early stopping used validation macro PR-AUC and the test set
-was evaluated only after restoring the best validation checkpoint. The source,
-dataset, run, metric, and prediction artifacts are bound by SHA-256. Runs used
-Python 3.11.9, RDKit 2025.09.5, and PyTorch 2.5.1 with CUDA 12.1 on an NVIDIA
-RTX 4060 Laptop GPU with 8 GB memory.
+The continuous sensitivity retained gray-zone observations and predicted median
+pChEMBL. Mean absolute error (MAE) was the leading regression metric, supplemented
+by root mean squared error and Spearman correlation. The natural-product
+sensitivity joined the ChEMBL 37 molecule-dictionary flag generated from
+COCONUT 2025-07. Subgroup results were declared descriptive unless a target had
+at least 30 positives and 30 negatives.
+
+Within each neural run, the test set was evaluated only after restoring the best
+validation checkpoint. The source, dataset, run, metric, and prediction
+artifacts are bound by SHA-256. Runs used Python 3.11.9, RDKit 2025.09.5,
+scikit-learn 1.8.0, PyTorch 2.5.1 with CUDA 12.1, and Chemprop 2.2.1 on an
+NVIDIA RTX 4060 Laptop GPU with 8 GB memory.
 
 \section{Results}
+
+\subsection{Workflow and locked analysis boundaries}
+
+Figure~\ref{fig:workflow} separates completed measured-activity experiments
+from the prospectively locked VietHerb arm. All numerical results below derive
+from ChEMBL 37 and carry \texttt{scientific\_results=true} in their run
+manifests. No synthetic bag, VietHerb row, or live-API exploratory observation
+contributes to a reported estimate.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{../docs/evidence/figures/fig1_workflow.pdf}
+\caption{Study workflow and release gates. Completed ChEMBL analyses are
+distinguished from VietHerb-dependent experiments that remain prospectively
+locked.}
+\label{fig:workflow}
+\end{figure}
 
 \subsection{Cohort and shift audit}
 
@@ -290,23 +361,25 @@ Plant-use bags & 0 & 0 & --- & 0\\
 \end{tabular}
 \end{table}
 
-The absence of identity, scaffold, and fingerprint-neighbour overlap satisfies
-the implemented chemical leakage gates. Bag-size distributions, plants per
-metabolite, and botanical component sizes cannot be estimated until the
-authorized VietHerb snapshot is frozen; these remain locked diagnostics.
+The absence of identity, scaffold, and fingerprint-neighbour overlap satisfied
+all primary chemical leakage gates. The continuous cohort contained 14,029
+molecules and 14,051 molecule--target pairs, including the binary gray zone,
+with 9,820/2,105/2,104 molecules in train/validation/test. The temporal cohort
+contained 10,697 molecules after excluding 60 rows without a document year and
+censoring 343 post-cutoff training or validation observations; its split was
+7,896/1,734/1,067. Botanical bag sizes and plants per metabolite cannot be
+estimated until an authorized VietHerb snapshot is frozen.
 
-\subsection{Frozen ChEMBL 37 activity-only comparison}
+\subsection{Primary chemical-OOD benchmark}
 
-Separate target MLPs exceeded the shared activity-only MLP on the primary macro
-PR-AUC endpoint (Table~2). The mean paired shared-minus-separate difference was
-$-0.0077$. A hierarchical bootstrap resampling model seed and chemical
-component gave a 95\% interval of $-0.0141$ to $-0.0021$. Target-wise PR-AUC
-differences were $+0.0045$ for DPP4, $-0.0272$ for AChE, and $-0.0005$ for
-COX-2, localizing most negative transfer to AChE. The shared model nevertheless
-improved BEDROC20 and EF1\%, so its earliest-ranked candidates were competitive
-despite worse global precision--recall and calibration. This comparison measures
-activity-only parameter sharing and is not evidence for auxiliary plant
-supervision.
+Extra Trees gave the highest mean macro PR-AUC, followed by logistic regression,
+separate MLPs, the shared MLP, and D-MPNN (Table~2 and
+Figure~\ref{fig:primary}). Thus neither hard parameter sharing nor graph message
+passing improved global ranking over the classical fingerprint baselines in
+this chemical-OOD regime. Model ordering differed for calibration: D-MPNN had
+the lowest macro Brier score (0.1396) and ECE (0.0525), whereas the shared MLP
+had the highest values (0.2253 and 0.2928; Figure~\ref{fig:calibration}). The
+D-MPNN therefore produced better-scaled probabilities despite lower PR-AUC.
 
 \begin{table}[ht]
 \centering
@@ -314,45 +387,164 @@ supervision.
 \caption{Frozen ChEMBL 37 chemical-OOD test performance, reported as mean
 $\pm$ standard deviation across five seeds. EF1\% is an enrichment factor, not
 a percentage.}
-\begin{tabular}{lcccc}
+\begin{tabular}{lccccc}
 \toprule
-Model & Macro PR-AUC & BEDROC20 & EF1\% & Brier\\
+Model & Macro PR-AUC & BEDROC20 & EF1\% & Brier & ECE\\
 \midrule
-Separate target MLPs & $0.9281\pm0.0035$ & $0.9714\pm0.0066$ & $1.2334\pm0.0245$ & $0.1833\pm0.0132$\\
-Shared activity MLP & $0.9203\pm0.0024$ & $0.9803\pm0.0036$ & $1.2527\pm0.0000$ & $0.2253\pm0.0263$\\
+Extra Trees & $0.9425\pm0.0009$ & 0.9888 & 1.2527 & 0.1498 & 0.1943\\
+Logistic regression & $0.9334\pm0.0000$ & 0.9859 & 1.2527 & 0.1715 & 0.1593\\
+Separate target MLPs & $0.9281\pm0.0035$ & 0.9714 & 1.2334 & 0.1833 & 0.2140\\
+Shared activity MLP & $0.9203\pm0.0024$ & 0.9803 & 1.2527 & 0.2253 & 0.2928\\
+Chemprop D-MPNN & $0.8938\pm0.0063$ & 0.9311 & 1.1187 & 0.1396 & 0.0525\\
 \bottomrule
 \end{tabular}
 \end{table}
 
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.88\textwidth]{../docs/evidence/figures/fig2_primary_macro_pr_auc.pdf}
+\caption{Chemical-OOD macro PR-AUC across five seeds. Points denote means and
+horizontal intervals show one standard deviation; the displayed axis spans
+0.82--1.00.}
+\label{fig:primary}
+\end{figure}
+
+\subsection{Target-wise transfer and early recognition}
+
+For the architecture-matched neural comparison, separate target MLPs exceeded
+the shared activity-only MLP by 0.0077 macro PR-AUC. A hierarchical bootstrap
+over seed and chemical component gave a 95\% interval of $-0.0141$ to
+$-0.0021$ for shared minus separate. Target-wise differences were $-0.0271$
+for AChE (95\% CI $-0.0463$ to $-0.0110$, BH-adjusted $p<0.001$), $+0.0045$
+for DPP4 (95\% CI $-0.0015$ to 0.0110, adjusted $p=0.261$), and $-0.0005$
+for PTGS2 (95\% CI $-0.0063$ to 0.0050, adjusted $p=0.900$). Negative transfer
+was therefore localized to AChE rather than uniform across targets
+(Figure~\ref{fig:targets}).
+
+The shared MLP nevertheless increased macro BEDROC20 from 0.9714 to 0.9803 and
+EF1\% from 1.2334 to 1.2527. The earliest-ranked candidates could thus improve
+while global precision--recall and probability calibration deteriorated
+(Figure~\ref{fig:enrichment}). These results make metric choice scientifically
+material rather than cosmetic.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{../docs/evidence/figures/fig3_target_pr_auc.pdf}
+\caption{Target-level chemical-OOD PR-AUC. Error bars summarize five fixed
+seeds; AChE accounts for the corrected shared-model deficit.}
+\label{fig:targets}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{../docs/evidence/figures/fig4_reliability.pdf}
+\caption{Reliability curves on the chemical-OOD test set. The D-MPNN was less
+accurate in ranking but substantially better calibrated.}
+\label{fig:calibration}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{../docs/evidence/figures/fig5_early_enrichment.pdf}
+\caption{Recall as the screening budget increases. Curves average targets and
+seeds and complement the BEDROC20 and enrichment-factor summaries.}
+\label{fig:enrichment}
+\end{figure}
+
+\subsection{Temporal and continuous-endpoint sensitivity}
+
+The temporal experiment changed the conclusion about hard sharing. Extra Trees
+remained highest at $0.9432\pm0.0008$, but the shared MLP was nearly tied at
+$0.9425\pm0.0024$ and exceeded logistic regression
+($0.9257\pm0.0000$) and separate MLPs ($0.9247\pm0.0029$). Shared-model
+target PR-AUC was 0.9035 for AChE, 0.9721 for DPP4, and 0.9518 for PTGS2,
+compared with 0.8993, 0.9792, and 0.8957 for separate models. The largest
+temporal sharing gain was consequently on PTGS2.
+
+Continuous prediction restored the negative-transfer pattern. Across 14,051
+pChEMBL observations, separate MLPs achieved macro MAE
+$0.8083\pm0.0066$, compared with $0.8181\pm0.0049$ for the shared model.
+Per-target mean MAE was 0.7990 versus 0.8153 for AChE, 0.7306 versus 0.7326
+for DPP4, and 0.8954 versus 0.9064 for PTGS2. Figure~\ref{fig:sensitivity}
+summarizes the two sensitivity analyses. Taken together, the transfer direction
+depended on both data split and endpoint definition.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{../docs/evidence/figures/fig6_sensitivity.pdf}
+\caption{Temporal classification and continuous-potency sensitivity. Higher
+PR-AUC is better; lower MAE is better.}
+\label{fig:sensitivity}
+\end{figure}
+
+\subsection{Natural-product subgroup and external-validity boundary}
+
+The ChEMBL 37 molecule dictionary mapped 14,458 extracted molecules to a
+COCONUT 2025-07 natural-product flag; 657 were flagged overall and 402 occurred
+in the primary cohort. Only 79 flagged molecules reached the primary test set.
+The target subsets comprised 55 AChE observations (11 active, 44 inactive),
+seven DPP4 observations (five active, two inactive), and 19 PTGS2 observations
+(nine active, ten inactive). None met the prespecified minimum of 30 positives
+and 30 negatives, so all subgroup scores are descriptive and no natural-product
+superiority claim is made.
+
+We also assessed MoleculeACE \citep{vanTilborg2022moleculeace} as a possible external benchmark. Its 30 ChEMBL
+29 activity-cliff datasets do not include CHEMBL220, CHEMBL230, or CHEMBL284
+and originate from the same database family. It was therefore not relabelled as
+independent external validation. The temporal holdout measures chronological
+transport, but genuinely external matched-target biological validation remains
+open.
+
 \subsection{Implementation and confirmatory readiness}
 
-All 39 unit tests passed, including masked-loss, nnPU-risk, attention-MIL,
-metric, and connected-component leakage invariants. A CUDA smoke run exercised
+All 45 unit tests passed, including masked-loss, nnPU-risk, attention-MIL,
+metric, temporal split, validation-only selection, and connected-component leakage invariants. A CUDA smoke run exercised
 the activity-only, naive-broadcast, MIL, and shuffled-MIL paths end to end on
 deterministic synthetic bags. Its manifest is explicitly marked
 \texttt{scientific\_results=false}; therefore synthetic performance is not
 reported. Botanical cold starts, PU-prior and auxiliary-weight sensitivity,
 and attention stability require real bags and remain locked confirmatory
-analyses.
+analyses. Detailed cohort audits, seed-level metrics, reliability bins, subgroup
+results, and artifact hashes are provided in Additional file~1 and accompanying
+machine-readable CSV files.
 
 \section{Discussion}
 
-The frozen activity results establish that the version-pinned curation,
-chemical-OOD splitting, training, and evaluation stack works on measured
-bioactivity. They also demonstrate negative transfer: hard sharing reduced the
-primary macro PR-AUC, driven mainly by AChE, even while improving early-ranking
-metrics. This metric dependence argues against declaring one architecture
-superior from AUROC or enrichment alone and supports the prespecified reporting
-of ranking, calibration, and target-wise outcomes.
+This benchmark produced three practically important findings. First, the
+strongest chemical-OOD ranking model was Extra Trees on fixed Morgan
+fingerprints, not either neural architecture. This is a useful warning against
+treating representation complexity as a substitute for stringent splitting and
+strong classical controls. The D-MPNN result does not establish that molecular
+graphs are generally inferior; it shows that the tested official implementation
+and training budget did not overcome a well-tuned fixed representation on these
+three endpoints.
 
-The future principal result must be interpreted as incremental predictive value
-under the locked evaluation, not validation of traditional medicine. If MIL improves
-over activity-only learning but not over shuffled labels, the gain is consistent
-with generic regularization rather than semantic ethnopharmacological signal. If
-naive broadcasting performs similarly to MIL, chemical or botanical leakage and
-label granularity require further investigation. If all ethnomedical variants
-underperform, negative transfer is an informative result and should not be
-hidden by selecting favorable targets.
+Second, performance was multidimensional. D-MPNN had the weakest macro PR-AUC
+but the best Brier score and ECE, while the shared MLP had competitive early
+enrichment despite worse global ranking and calibration. Screening programs
+that test only a small top-ranked fraction may reasonably prioritize BEDROC or
+EF, whereas calibrated probabilities matter for risk estimates and decision
+thresholds. Reporting only AUROC or a single aggregate score would have hidden
+these differences.
+
+Third, multi-target transfer was not an invariant property of the targets.
+Hard sharing hurt chemical-OOD binary ranking and continuous potency prediction,
+yet helped under temporal classification. The primary deficit was concentrated
+in AChE; the temporal benefit was largest for PTGS2. A plausible interpretation
+is that shared features regularize chronological extrapolation within recurring
+chemical series but are less useful when all close fingerprint neighbours and
+scaffolds are removed. This is an inference from the observed split contrast,
+not a mechanistic conclusion, and should be tested across more targets.
+
+The future VietHerb result must be interpreted as incremental predictive value,
+not validation of traditional medicine. If MIL improves over activity-only
+learning but not over shuffled labels, the gain is consistent with generic
+regularization rather than semantic ethnopharmacological signal. If naive
+broadcasting performs similarly to MIL, label granularity or leakage requires
+further investigation. If all ethnomedical variants underperform, negative
+transfer is an informative result and should not be hidden by selecting
+favorable targets. The present finding that even measured-activity sharing can
+reverse sign across regimes makes those controls essential.
 
 Docking or short molecular dynamics may provide a later structure-based
 plausibility assessment, but neither constitutes biological validation.
@@ -361,56 +553,97 @@ Docking scores have well-known limitations for affinity ranking
 negative, interference, and purity controls are required to claim target
 inhibition.
 
-Limitations include incomplete or changing plant databases, uncertain
-traditional-use normalization, incomplete chemical inventories for each plant,
-assay heterogeneity, class-prior uncertainty in PU learning, and the possibility
-that attention is not a faithful explanation. Written data permission and a
-domain collaborator are release gates rather than administrative afterthoughts.
+This study has several limitations. Three targets cannot establish broad
+cross-target generality, and ChEMBL measurements retain inter-laboratory and
+assay heterogeneity after curation. The temporal holdout is not independent
+external validation, and the natural-product test subset was underpowered. The
+D-MPNN used one official version and budget rather than an exhaustive graph-model
+search. Bootstrap intervals quantify sampling variation under the chosen
+component structure but do not correct dataset-level selection bias. Finally,
+the central plant-bag experiment is not yet empirical: incomplete plant chemical
+inventories, uncertain traditional-use normalization, PU class-prior
+uncertainty, and non-causal attention remain open risks. Written data permission
+and domain review are scientific release gates, not administrative details.
 
 \section{Conclusion}
 
-We present a reproducible, leakage-controlled formulation for learning from
-plant-level traditional-use labels and compound-level target measurements
-without broadcasting each use label to every constituent. A version-pinned
-ChEMBL 37 activity benchmark of 10,686 compounds passed identity, scaffold, and
-fingerprint-neighbour split audits. Shared activity-only learning reduced macro
-PR-AUC relative to separate target MLPs, providing a concrete negative-transfer
-baseline for the later auxiliary experiment. The central claim---that
-ethnopharmacological bag supervision improves out-of-distribution molecular
-prioritization---is not yet supported or refuted. It will be tested only after
-an authorized VietHerb export and expert-audited mappings pass the remaining
-release gates.
+We provide a version-pinned ChEMBL 37 benchmark in which 10,686 molecules passed
+identity, scaffold, and fingerprint-neighbour leakage audits. Extra Trees was
+the strongest chemical-OOD ranker, D-MPNN was the best-calibrated model, and the
+direction of multi-target transfer changed between chemical-OOD, temporal, and
+continuous endpoints. These findings argue for split-aware, target-wise, and
+multi-metric evaluation with classical baselines. We also provide a tested
+plant-bag MIL implementation and locked analysis plan, but the claim that
+ethnopharmacological supervision improves molecular prioritization remains
+neither supported nor refuted pending redistributable VietHerb data and
+expert-audited mappings.
 
-\section*{Data and code availability}
+\section*{Additional files}
+
+Additional file 1 (.pdf): supplementary methods, cohort audits, seed-level
+results, target-wise intervals, reliability summaries, natural-product subgroup
+counts, computational environment, and artifact provenance. Machine-readable
+tables (.csv) and a SHA-256 evidence manifest accompany the archived release.
+
+\section*{List of abbreviations}
+
+\noindent AChE, acetylcholinesterase; BH, Benjamini--Hochberg; D-MPNN, directed
+message-passing neural network; DPP4, dipeptidyl peptidase 4; ECE, expected
+calibration error; EF, enrichment factor; MAE, mean absolute error; MIL,
+multiple-instance learning; MLP, multilayer perceptron; OOD,
+out-of-distribution; PR-AUC, area under the precision--recall curve; PTGS2,
+prostaglandin G/H synthase 2; PU, positive--unlabelled.
+
+\section*{Declarations}
+
+\subsection*{Availability of data and materials}
 
 Code, configurations, schemas, tests, source locks, and derived manifests are
-available at \url{https://github.com/MinhNhat-2504/vietherb-mtl}. ChEMBL-derived
-artifacts follow CC BY-SA 3.0. VietHerb row-level data will be released only if
-the maintainers provide explicit permission; otherwise the repository will
-publish acquisition instructions, hashes, identifiers, and reproducible
-transformation code without redistributing restricted rows.
+available in the project repository:\\
+\url{https://github.com/MinhNhat-2504/vietherb-mtl}.
+ChEMBL-derived artifacts follow CC BY-SA 3.0 and can be regenerated from the
+public ChEMBL 37 SQLite release
+(\url{https://doi.org/10.6019/CHEMBL.database.37}). A versioned software and
+evidence archive will be cited by Zenodo DOI before submission. No VietHerb row
+supports the conclusions reported here. VietHerb row-level data will be used in
+a later study only if its maintainers authorize a reproducible access route.
 
-\section*{Author contributions, funding, and competing interests}
+\subsection*{Competing interests}
 
-Minh Nhat: conceptualization, methodology, software, investigation, data
-curation, validation, visualization, and writing. No external funding was used
-for the reported exploratory computation. The author declares no competing
-interests. Contributions and declarations must be updated if domain reviewers
-or experimental collaborators join the confirmatory study.
+The authors declare that they have no competing interests.
 
-\section*{Ethics statement}
+\subsection*{Funding}
+
+No external funding was used for the computation reported in this manuscript.
+
+\subsection*{Authors' contributions}
+
+Nhat Trinh Ngoc Minh: conceptualization, methodology, software, investigation,
+data curation, validation, visualization, and writing---original draft. Linh
+Nguyen Thi My: supervision and writing---review and editing. Both authors read
+and approved the final manuscript.
+
+\subsection*{Acknowledgements}
+
+Not applicable.
+
+\subsection*{Ethics approval and consent to participate}
 
 The reported work used public chemical bioactivity records and deterministic
 synthetic bags for software validation; it involved no human participants,
 animals, or clinical intervention. Traditional-use annotations are not treated
 as clinical evidence.
 
-\section*{Generative-AI assistance disclosure}
+\subsection*{Consent for publication}
+
+Not applicable.
+
+\subsection*{Generative-AI assistance disclosure}
 
 A generative-AI coding assistant was used for implementation support, test
-generation, literature-search assistance, and language editing. The author
+generation, literature-search assistance, and language editing. The authors
 reviewed the source code, citations, numerical outputs, and manuscript claims
-and remains responsible for the final work.
+and remain responsible for the final work.
 
 \bibliographystyle{plainnat}
 \bibliography{references}

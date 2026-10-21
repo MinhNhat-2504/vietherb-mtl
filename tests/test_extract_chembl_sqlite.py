@@ -39,7 +39,9 @@ def mock_database(tmp_path: Path) -> Path:
         CREATE TABLE component_sequences (
             component_id INTEGER PRIMARY KEY, accession TEXT, sequence TEXT
         );
-        CREATE TABLE molecule_dictionary (molregno INTEGER PRIMARY KEY, chembl_id TEXT);
+        CREATE TABLE molecule_dictionary (
+            molregno INTEGER PRIMARY KEY, chembl_id TEXT, natural_product INTEGER
+        );
         CREATE TABLE compound_structures (
             molregno INTEGER PRIMARY KEY, canonical_smiles TEXT,
             standard_inchi TEXT, standard_inchi_key TEXT
@@ -73,7 +75,8 @@ def mock_database(tmp_path: Path) -> Path:
     )
     for index in range(1, 6):
         connection.execute(
-            "INSERT INTO molecule_dictionary VALUES (?, ?)", (index, f"CHEMBL{index}")
+            "INSERT INTO molecule_dictionary VALUES (?, ?, ?)",
+            (index, f"CHEMBL{index}", index % 2),
         )
         connection.execute(
             "INSERT INTO compound_structures VALUES (?, 'CCO', 'InChI=1S/x', ?)",

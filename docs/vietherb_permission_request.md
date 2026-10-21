@@ -4,25 +4,30 @@
 **Verified from:** the current VietHerb website and the corresponding-author
 information for DOI `10.1021/acs.jcim.8b00399`<br>
 **Prepared:** 2026-10-21
+**From:** Nhat Trinh Ngoc Minh, `nhat.2474802010280@vanlanguni.vn`<br>
+**CC:** Linh Nguyen Thi My (corresponding author), `linh.ntm@vlu.edu.vn`
 
-Before sending, replace only the bracketed role, institution, and ORCID fields.
-Keep the written reply in private project records and record its date and a
-non-sensitive permission identifier in the dataset manifest. Do not commit
-private correspondence.
+The author metadata is complete. Both authors should approve the final wording
+before this message is sent. Keep the written reply in private project records
+and record its date and a non-sensitive permission identifier in the dataset
+manifest. Do not commit private correspondence.
 
 ## English email (recommended)
 
 **To:** ly.le@hcmiu.edu.vn<br>
+**CC:** linh.ntm@vlu.edu.vn<br>
 **Subject:** Permission and reproducible data export request for academic VietHerb research
 
 Dear Professor Le and the VietHerb team,
 
-My name is Minh Nhat, [role] at [institution]. I am conducting a non-commercial
-academic study provisionally titled “From Plant-Level Traditional Use to
-Compound-Level Target Activity: Leakage-Controlled Multiple-Instance Learning
-for Vietnamese Medicinal Plants.” The study treats VietHerb therapeutic-use
-records as noisy plant-level historical annotations and does not interpret
-them as evidence of clinical efficacy.
+My name is Nhat Trinh Ngoc Minh, first author of a non-commercial academic study
+at the Faculty of Information Technology, Van Lang School of Technology, Van
+Lang University. Linh Nguyen Thi My is the corresponding author. Our study is
+provisionally titled “From Plant-Level Traditional Use to Compound-Level Target
+Activity: Leakage-Controlled Multiple-Instance Learning for Vietnamese
+Medicinal Plants.” The study treats VietHerb therapeutic-use records as noisy
+plant-level historical annotations and does not interpret them as evidence of
+clinical efficacy.
 
 I am writing to request an official, versioned export of the following VietHerb
 relations:
@@ -67,24 +72,32 @@ governance requirements.
 
 Sincerely,
 
-Minh Nhat<br>
-[role and institution]<br>
-[ORCID, if available]<br>
-minhnhatpro2504@gmail.com
+Nhat Trinh Ngoc Minh, first author<br>
+ORCID: 0009-0006-9477-9642<br>
+nhat.2474802010280@vanlanguni.vn<br><br>
+Linh Nguyen Thi My, corresponding author<br>
+ORCID: 0000-0003-3990-312X<br>
+linh.ntm@vlu.edu.vn<br><br>
+Faculty of Information Technology, Van Lang School of Technology<br>
+Van Lang University<br>
+69/68 Dang Thuy Tram Street, Binh Loi Trung Ward<br>
+Ho Chi Minh City, Vietnam
 
 ## Vietnamese email
 
 **Đến:** ly.le@hcmiu.edu.vn<br>
+**CC:** linh.ntm@vlu.edu.vn<br>
 **Tiêu đề:** Xin phép sử dụng và nhận bản xuất dữ liệu VietHerb phục vụ nghiên cứu tái lập
 
 Kính gửi PGS.TS. Lê Thị Lý và nhóm phát triển VietHerb,
 
-Em là Minh Nhật, [vai trò] tại [đơn vị]. Em đang thực hiện một nghiên cứu học
-thuật phi thương mại với tiêu đề dự kiến “From Plant-Level Traditional Use to
-Compound-Level Target Activity: Leakage-Controlled Multiple-Instance Learning
-for Vietnamese Medicinal Plants”. Nghiên cứu xem thông tin công dụng trong
-VietHerb là dữ liệu lịch sử có nhiễu ở cấp loài cây, không xem đây là bằng chứng
-xác nhận hiệu quả lâm sàng.
+Em là Nhat Trinh Ngoc Minh, tác giả thứ nhất của một nghiên cứu học thuật phi
+thương mại tại Khoa Công nghệ Thông tin, Trường Công nghệ, Trường Đại học Văn
+Lang. Linh Nguyen Thi My là tác giả liên hệ. Nghiên cứu có tiêu đề dự kiến “From
+Plant-Level Traditional Use to Compound-Level Target Activity:
+Leakage-Controlled Multiple-Instance Learning for Vietnamese Medicinal Plants”.
+Nghiên cứu xem thông tin công dụng trong VietHerb là dữ liệu lịch sử có nhiễu ở
+cấp loài cây, không xem đây là bằng chứng xác nhận hiệu quả lâm sàng.
 
 Em kính đề nghị nhóm cung cấp một bản xuất dữ liệu chính thức, có ngày hoặc mã
 phiên bản, gồm các quan hệ sau:
@@ -128,10 +141,16 @@ của nhóm VietHerb.
 
 Trân trọng,
 
-Minh Nhật<br>
-[vai trò và đơn vị]<br>
-[ORCID, nếu có]<br>
-minhnhatpro2504@gmail.com
+Nhat Trinh Ngoc Minh, tác giả thứ nhất<br>
+ORCID: 0009-0006-9477-9642<br>
+nhat.2474802010280@vanlanguni.vn<br><br>
+Linh Nguyen Thi My, tác giả liên hệ<br>
+ORCID: 0000-0003-3990-312X<br>
+linh.ntm@vlu.edu.vn<br><br>
+Khoa Công nghệ Thông tin, Trường Công nghệ<br>
+Trường Đại học Văn Lang<br>
+69/68 Đặng Thùy Trâm, Phường Bình Lợi Trung<br>
+Thành phố Hồ Chí Minh, Việt Nam
 
 ## Minimum acceptable written reply
 

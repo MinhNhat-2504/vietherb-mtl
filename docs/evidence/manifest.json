@@ -1,0 +1,33 @@
+{
+  "generated_at": "2026-10-21T05:21:01.796350+00:00",
+  "scientific_results": true,
+  "inputs": {
+    "outputs\\chembl37_activity_baselines_v1": "c571896ebf1f3c924ebbfca1e0f74943fb04367cfb285bc71961e40eae220bd9",
+    "outputs\\chembl37_classical_v1": "d31d9e61a3af6ed37563825f3923a24964460926928c7f9e4efdc0ff7f5781d0",
+    "outputs\\chembl37_chemprop_dmpnn_v1": "43d5e0b88b79acb2d808fd61b67d9a5b9dfe6696ea0c845b449a1c977313b486",
+    "outputs\\chembl37_temporal_activity_v1": "e9835378e3954338ac555c0101e55f83683198af88202830b583423230849e4f",
+    "outputs\\chembl37_temporal_classical_v1": "a34e97e426fd5987939254500e2bc9a731d464fc2d29f9730fda43845371a2d4",
+    "outputs\\chembl37_continuous_potency_v1": "83e7bb6dcf6a34a73f2b6c738011eff0dd46e0caa04b93285b18ee570145b466",
+    "data\\processed\\chembl37_natural_product_mapping.parquet": "035e54f41bb043831d8ee5b138988cba5e1b6d974f38804f1ce51a7a0ab7ae9f"
+  },
+  "artifacts": {
+    "figures\\fig1_workflow.pdf": "99166df4e8f201e91d675e1c8996af05565ea9a110007b29e3b99eb880ff172a",
+    "figures\\fig1_workflow.png": "9df871fb0a455fea3d6ba99a75467346204da609091af57646c7addaf51d7eab",
+    "figures\\fig2_primary_macro_pr_auc.pdf": "969e1c3b40b602364ae1dc58b101a1e8a2a207e9ba881af5f32697a91a689e2e",
+    "figures\\fig2_primary_macro_pr_auc.png": "c0bb3aed55bbfaa77a05d8e7a346187688d72396f7720ca2bf1931e12798b544",
+    "figures\\fig3_target_pr_auc.pdf": "2efbbf8848c29b18922bbe0c2324c1edf0c22a22786dce0515febcae18e3a7f1",
+    "figures\\fig3_target_pr_auc.png": "4e60517dae32571415d087ef422c1d0ebb5d03f123b542ba2f851159087bf8e1",
+    "figures\\fig4_reliability.pdf": "358b7dae85181ceefd2e068f50d8c40c1b3f323697800896766a809722fbcabf",
+    "figures\\fig4_reliability.png": "c74bf7fad5a730602f8def0c1eaef2a6915038858250dbeeca86b3a4bd1ac475",
+    "figures\\fig5_early_enrichment.pdf": "02ed762b8167f14a745aa2c57cfefe91f20ac0f79d727c3d8bdfd755dd2f3860",
+    "figures\\fig5_early_enrichment.png": "64a251ba805ccd5c5a0258d6189b39f664cdeb1939382dabd173014fad4ff96d",
+    "tables\\table_primary_metrics.csv": "7628bb1697b75dc5d008ec690d3bc0528a98c8c6d3e565208af6c0781c60e1fb",
+    "tables\\table_reliability_bins.csv": "58fb08826bc28f4ee878e72c740236b83e2b3edf08d90b420c352c127a3e9992",
+    "tables\\table_target_bootstrap_bh.csv": "459f8cb9fb03bde77ae78f47014fe123fd08ff1801858576575df520a01e3bcb",
+    "tables\\table_natural_product_descriptive.csv": "3d57e40c77c489a0b4126e8b3472c9211ea7a0d4e6a2eab20656f58dba5cd07c",
+    "tables\\table_temporal_metrics.csv": "ce89642cd63ff2bb75cd57a6cac997404e2639bcadabb582292894880eadb788",
+    "tables\\table_continuous_metrics.csv": "239a2b735aa1447baaac235968f4f16832fc77b778d5b0cd31980b0d79db37bf",
+    "figures\\fig6_sensitivity.pdf": "45dc78da68d59b0bde7d42a87dddd41f065813df2c18d353c72abdeef8a5b664",
+    "figures\\fig6_sensitivity.png": "429dde4d47c17d9277dcee3c70bee1ddd6f8bf821690b9eacf6428e706c8046a"
+  }
+}

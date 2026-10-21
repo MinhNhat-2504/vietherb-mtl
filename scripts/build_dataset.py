@@ -232,7 +232,7 @@ def main() -> None:
         raw["canonical_smiles"].map(standardized).apply(pd.Series)
     )
     raw["molecule_id"] = raw["inchikey"].map(stable_id)
-    aggregate = raw.groupby(["molecule_id", "target_chembl_id"], as_index=False).agg(
+    pair_aggregations = dict(
         canonical_smiles=("canonical_smiles_std", "first"),
         inchikey=("inchikey", "first"),
         murcko_scaffold=("murcko_scaffold", "first"),
@@ -240,6 +240,11 @@ def main() -> None:
         pchembl_min=("pchembl_value", "min"),
         pchembl_max=("pchembl_value", "max"),
         replicate_count=("pchembl_value", "size"),
+    )
+    if "natural_product" in raw:
+        pair_aggregations["is_natural_product"] = ("natural_product", "max")
+    aggregate = raw.groupby(["molecule_id", "target_chembl_id"], as_index=False).agg(
+        **pair_aggregations
     )
     aggregate["contradictory"] = (
         aggregate["pchembl_max"] - aggregate["pchembl_min"]
@@ -250,15 +255,21 @@ def main() -> None:
     aggregate, gray_zone_pairs = label_activity_pairs(aggregate, config["activity"])
     active_threshold = float(config["activity"]["active_threshold_pchembl"])
     inactive_threshold = float(config["activity"]["inactive_threshold_pchembl"])
-    identity = aggregate.groupby("molecule_id", as_index=False).agg(
+    identity_aggregations = dict(
         canonical_smiles=("canonical_smiles", "first"),
         inchikey=("inchikey", "first"),
         murcko_scaffold=("murcko_scaffold", "first"),
     )
+    if "is_natural_product" in aggregate:
+        identity_aggregations["is_natural_product"] = ("is_natural_product", "max")
+    identity = aggregate.groupby("molecule_id", as_index=False).agg(**identity_aggregations)
     labels = aggregate.pivot(index="molecule_id", columns="target_chembl_id", values="active")
     labels = labels.rename(columns=PRIMARY_COLUMNS).reset_index()
     molecules = identity.merge(labels, on="molecule_id", how="left")
-    molecules["is_natural_product"] = False
+    if "is_natural_product" not in molecules:
+        molecules["is_natural_product"] = False
+    else:
+        molecules["is_natural_product"] = molecules["is_natural_product"].fillna(0).astype(bool)
     for column in AUXILIARY_COLUMNS:
         molecules[column] = 0.0  # zero means unlabelled for nnPU, never a confirmed negative
 
