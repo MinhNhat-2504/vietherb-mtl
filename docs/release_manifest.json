@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-21T13:19:29.754382+00:00",
+  "generated_at": "2026-10-21T13:30:12.870943+00:00",
   "release": "v0.2.0",
   "artifact_count": 129,
   "artifacts": {
@@ -484,8 +484,8 @@
       "hash_mode": "utf8_lf"
     },
     "scripts/generate_evidence_package.py": {
-      "bytes": 24972,
-      "sha256": "cc462dcc6b36e0f6c3c4280a9b741c9c8fc75b1a3986cc85f5a306a61f899e6e",
+      "bytes": 25143,
+      "sha256": "9fc405570a97e7157751aa517e6bf6f684a80b21d35de840e29657d6766040bb",
       "hash_mode": "utf8_lf"
     },
     "scripts/generate_release_manifest.py": {
