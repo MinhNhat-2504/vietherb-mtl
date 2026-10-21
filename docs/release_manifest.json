@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-10-21T16:05:08.169106+00:00",
+  "generated_at": "2026-10-21T16:11:48.432193+00:00",
   "release": "v0.2.0",
   "artifact_count": 129,
   "artifacts": {
     ".github/workflows/reproducibility.yml": {
-      "bytes": 1053,
-      "sha256": "daec5c356929bdd1723b07ab851c654b21348520a4589258b11fdf90c180d031",
+      "bytes": 1049,
+      "sha256": "57dfb034090a3a9b509f62dbdca552c0f81a9d6026d05f103a60db93c56c895f",
       "hash_mode": "utf8_lf"
     },
     ".zenodo.json": {
@@ -369,8 +369,8 @@
       "hash_mode": "utf8_lf"
     },
     "docs/reproducibility_report.json": {
-      "bytes": 1683,
-      "sha256": "39088bedc8d33c7751092d3fd346925efdc98233f7391bd2d9e9c33a3efa682f",
+      "bytes": 1781,
+      "sha256": "ed41a596850e9df04fbdf623c98c388b1c29de616d887aba4d56742b32933ff5",
       "hash_mode": "utf8_lf"
     },
     "docs/submission_checklist.md": {
@@ -484,8 +484,8 @@
       "hash_mode": "utf8_lf"
     },
     "scripts/generate_evidence_package.py": {
-      "bytes": 25672,
-      "sha256": "71d3efd0ebbed9d8324f4d53a39497a1d7ff82c376baa01c2c91e56b4dd982bf",
+      "bytes": 26190,
+      "sha256": "a6e5913c01ae8db02ed5a036b600596b4eee253d679a78e552e10024e693e7bf",
       "hash_mode": "utf8_lf"
     },
     "scripts/generate_release_manifest.py": {
@@ -544,8 +544,8 @@
       "hash_mode": "utf8_lf"
     },
     "src/vietherb_mtl/evidence.py": {
-      "bytes": 3450,
-      "sha256": "427a564f8340fe82729013eb80d14ac0ca25b1fd2a29d4d38e791c01c736f623",
+      "bytes": 5320,
+      "sha256": "68f02a56db8f907a5bf865b8fd27a8fa0d34aeeabd885846ee532a5c3317d463",
       "hash_mode": "utf8_lf"
     },
     "src/vietherb_mtl/external.py": {
@@ -599,8 +599,8 @@
       "hash_mode": "utf8_lf"
     },
     "tests/test_evidence_package.py": {
-      "bytes": 2280,
-      "sha256": "73d1560360f8223622040cc422072f3d7d4a61b576b17730a66a2bc84105160a",
+      "bytes": 3891,
+      "sha256": "f579f84751867fe74bae5777a8a0883ab6cb150bcf705074d20a4978a3817407",
       "hash_mode": "utf8_lf"
     },
     "tests/test_external_audit.py": {

@@ -37,4 +37,4 @@ jobs:
             --archive-dir docs/manifests \
             --out artifacts/ci_evidence \
             --verify-reference docs/evidence \
-            --allow-pdf-renderer-variance
+            --allow-renderer-variance

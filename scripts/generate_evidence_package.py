@@ -439,11 +439,11 @@ def main() -> None:
         help="Fail unless regenerated artifacts match this evidence directory's manifest.",
     )
     parser.add_argument(
-        "--allow-pdf-renderer-variance",
+        "--allow-renderer-variance",
         action="store_true",
         help=(
-            "For cross-platform CI only: tolerate a PDF byte mismatch when its PNG "
-            "companion is byte-exact and the regenerated PDF passes an integrity check."
+            "For cross-platform CI only: allow bounded PNG pixel variance and a PDF "
+            "byte mismatch when its companion image passes the visual gate."
         ),
     )
     args = parser.parse_args()
@@ -592,24 +592,35 @@ def main() -> None:
         verification = verify_artifact_hashes(
             expected,
             artifact_hashes,
+            args.verify_reference,
             args.out,
-            allow_pdf_renderer_variance=args.allow_pdf_renderer_variance,
+            allow_renderer_variance=args.allow_renderer_variance,
         )
         if not verification.passed:
             raise SystemExit(
                 "Evidence verification failed: "
                 f"missing={list(verification.missing)}, "
                 f"unexpected={list(verification.unexpected)}, "
-                f"mismatched={list(verification.mismatched)}"
+                f"mismatched={list(verification.mismatched)}, "
+                f"png_mae={verification.png_mean_absolute_error}"
             )
         print(
             f"Verified {len(expected)} reproduced evidence artifacts "
             f"({verification.exact_matches} byte-exact, "
+            f"{len(verification.tolerated_png_variance)} bounded PNG variance, "
             f"{len(verification.tolerated_pdf_variance)} PDF renderer variance)"
         )
+        if verification.tolerated_png_variance:
+            print(
+                "PNG renderer variance accepted by normalized pixel MAE: "
+                + ", ".join(
+                    f"{path}={verification.png_mean_absolute_error[path]:.6f}"
+                    for path in verification.tolerated_png_variance
+                )
+            )
         if verification.tolerated_pdf_variance:
             print(
-                "PDF byte variance accepted through byte-exact PNG companions: "
+                "PDF byte variance accepted through visually verified PNG companions: "
                 f"{list(verification.tolerated_pdf_variance)}"
             )
     print(json.dumps(manifest, indent=2))

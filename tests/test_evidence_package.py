@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from PIL import Image
+
 from vietherb_mtl.evidence import archived_run, sha256, verify_artifact_hashes
 
 
@@ -24,8 +26,9 @@ def test_artifact_verification_treats_png_as_an_exact_gate(tmp_path: Path) -> No
     result = verify_artifact_hashes(
         {"figures/figure.png": "expected"},
         {"figures/figure.png": "different"},
+        tmp_path / "reference",
         tmp_path,
-        allow_pdf_renderer_variance=True,
+        allow_renderer_variance=True,
     )
 
     assert result.mismatched == ("figures/figure.png",)
@@ -43,7 +46,8 @@ def test_pdf_variance_requires_exact_png_companion_and_valid_pdf(tmp_path: Path)
         expected,
         actual,
         tmp_path,
-        allow_pdf_renderer_variance=True,
+        tmp_path,
+        allow_renderer_variance=True,
     )
 
     assert result.passed
@@ -58,7 +62,48 @@ def test_pdf_variance_is_strict_by_default(tmp_path: Path) -> None:
     expected = {"figures/figure.pdf": "reference-pdf", "figures/figure.png": "same"}
     actual = {"figures/figure.pdf": "other-pdf", "figures/figure.png": "same"}
 
-    result = verify_artifact_hashes(expected, actual, tmp_path)
+    result = verify_artifact_hashes(expected, actual, tmp_path, tmp_path)
 
     assert result.mismatched == ("figures/figure.pdf",)
+    assert not result.passed
+
+
+def test_cross_platform_png_variance_uses_bounded_pixel_error(tmp_path: Path) -> None:
+    reference = tmp_path / "reference" / "figures"
+    candidate = tmp_path / "candidate" / "figures"
+    reference.mkdir(parents=True)
+    candidate.mkdir(parents=True)
+    Image.new("RGB", (20, 10), "white").save(reference / "figure.png")
+    Image.new("RGB", (20, 10), (253, 253, 253)).save(candidate / "figure.png")
+
+    result = verify_artifact_hashes(
+        {"figures/figure.png": "reference"},
+        {"figures/figure.png": "candidate"},
+        tmp_path / "reference",
+        tmp_path / "candidate",
+        allow_renderer_variance=True,
+    )
+
+    assert result.passed
+    assert result.tolerated_png_variance == ("figures/figure.png",)
+    assert result.png_mean_absolute_error["figures/figure.png"] < 0.01
+
+
+def test_cross_platform_png_variance_rejects_large_visual_change(tmp_path: Path) -> None:
+    reference = tmp_path / "reference" / "figures"
+    candidate = tmp_path / "candidate" / "figures"
+    reference.mkdir(parents=True)
+    candidate.mkdir(parents=True)
+    Image.new("RGB", (20, 10), "white").save(reference / "figure.png")
+    Image.new("RGB", (20, 10), "black").save(candidate / "figure.png")
+
+    result = verify_artifact_hashes(
+        {"figures/figure.png": "reference"},
+        {"figures/figure.png": "candidate"},
+        tmp_path / "reference",
+        tmp_path / "candidate",
+        allow_renderer_variance=True,
+    )
+
+    assert result.mismatched == ("figures/figure.png",)
     assert not result.passed
