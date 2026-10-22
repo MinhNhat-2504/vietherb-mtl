@@ -51,6 +51,14 @@ checkpoint selection is validation-only; report every seed, botanical
 cold-start results, paired intervals, calibration, and attention-stability
 diagnostics.
 
+Before any real export is available, the same code path is exercised only on
+the synthetic demo and checked as non-scientific:
+
+```powershell
+python scripts/run_experiments.py --config configs/experiments/demo.yaml --overwrite
+python scripts/check_mil_smoke.py --output-dir outputs/demo_smoke_v1
+```
+
 ## Gate 4: independent/external validation
 
 The existing BindingDB audit is underpowered for a three-target score and must

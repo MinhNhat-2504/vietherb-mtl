@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-10-22T00:27:36.193927+00:00",
+  "generated_at": "2026-10-22T00:42:35.970404+00:00",
   "release": "v0.2.0",
-  "artifact_count": 133,
+  "artifact_count": 139,
   "artifacts": {
     ".github/workflows/reproducibility.yml": {
       "bytes": 1049,
@@ -488,6 +488,11 @@
       "sha256": "65233c3e5a9d7e959984a8dd11a24ec1c720cf3b82fd7a01431b1e551e8066ab",
       "hash_mode": "utf8_lf"
     },
+    "scripts/check_mil_smoke.py": {
+      "bytes": 1475,
+      "sha256": "d71ca1d6ed114bc5707f2f243ba58b6fd04fc40449b253683df1cab064259e8f",
+      "hash_mode": "utf8_lf"
+    },
     "scripts/extract_chembl_sqlite.py": {
       "bytes": 13308,
       "sha256": "33bfb01f212889cbf89acb13006a0c0238bacb96247c2a078cb774ce3c3dbacd",
@@ -608,6 +613,26 @@
       "sha256": "146a05c9246ecb2023f1b414df0036a1c33c872cbe814f445abc8d462743d26c",
       "hash_mode": "utf8_lf"
     },
+    "tests/fixtures/vietherb_minimal/metabolites.csv": {
+      "bytes": 61,
+      "sha256": "78b7dcfe2bf5d05000f3591a6a67e8c7b8849630abdb707f80eca11ebc0d4002",
+      "hash_mode": "utf8_lf"
+    },
+    "tests/fixtures/vietherb_minimal/species.csv": {
+      "bytes": 48,
+      "sha256": "63c397a31ce1159362e7448219417375a46f361d2b41d25a165fe6be0f44b430",
+      "hash_mode": "utf8_lf"
+    },
+    "tests/fixtures/vietherb_minimal/species_metabolites.csv": {
+      "bytes": 39,
+      "sha256": "6938ec482869ae28fe63368fa6f33620c604ed21d764e5efb050395b86324465",
+      "hash_mode": "utf8_lf"
+    },
+    "tests/fixtures/vietherb_minimal/species_uses.csv": {
+      "bytes": 32,
+      "sha256": "d62016765561b8f6b84aff2c33faf1a2e6e015abc5f88a76d25598aa0d820beb",
+      "hash_mode": "utf8_lf"
+    },
     "tests/test_config.py": {
       "bytes": 690,
       "sha256": "386bb4a5d731e99e13bd5ebc324222aa263a2cb4fab9f868385e47d6a0944c18",
@@ -631,6 +656,11 @@
     "tests/test_features.py": {
       "bytes": 647,
       "sha256": "832960de5f364dfafa6a615c24411111e86d307542dabc1dad9696528c8f9020",
+      "hash_mode": "utf8_lf"
+    },
+    "tests/test_ingest_vietherb.py": {
+      "bytes": 777,
+      "sha256": "a590dc06af7e37308be8ae35a2e7f2007a83e10c5424c8816455ced3a786922a",
       "hash_mode": "utf8_lf"
     },
     "tests/test_mapping_audit.py": {
