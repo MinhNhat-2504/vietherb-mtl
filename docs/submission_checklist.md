@@ -44,9 +44,9 @@ Verified against the official Research and general submission guidance on
   hashes exactly.
 - [x] Record evidence-replay wall time, Python, OS, and package versions in the
   generated evidence and environment manifests.
-- [x] Enable the GitHub repository in Zenodo, create the `v0.2.0` GitHub
+- [x] Enable the GitHub repository in Zenodo, create the `v0.2.1` GitHub
   release, verify archive processing, and insert version DOI
-  `10.5281/zenodo.23537107` into the manuscript.
+  `10.5281/zenodo.23549035` into the manuscript.
 - [x] Download the published Zenodo ZIP, match its MD5, and pass release-hash,
   unit-test, Ruff, and evidence-replay checks from the extracted archive.
 - [x] Pass the GitHub Actions clean-clone replay on Ubuntu for the final

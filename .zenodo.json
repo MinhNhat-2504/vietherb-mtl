@@ -14,7 +14,7 @@
     }
   ],
   "title": "VietHerb-MTL: split-dependent transfer benchmark and locked plant-bag extension",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Reproducible code, frozen configurations, audits, predictions, and evidence for a ChEMBL 37 multi-target activity benchmark, together with a prospectively locked multiple-instance learning protocol for plant-level auxiliary supervision. Repository code is MIT-licensed; ChEMBL-derived data and evidence remain under CC BY-SA 3.0. Provider terms apply to all third-party artifacts.",
   "access_right": "open",
   "keywords": [

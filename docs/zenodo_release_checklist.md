@@ -1,7 +1,7 @@
 # Zenodo release procedure
 
-The `v0.2.0` repository release is published on Zenodo at
-https://doi.org/10.5281/zenodo.23537107. The remaining checks concern
+The `v0.2.1` repository release is published on Zenodo at
+https://doi.org/10.5281/zenodo.23549035. The remaining checks concern
 post-publication verification and manuscript submission.
 
 1. Review `CITATION.cff` and `.zenodo.json`. Because both exist, Zenodo uses
@@ -15,7 +15,7 @@ post-publication verification and manuscript submission.
 3. Run `pytest`, Ruff, `git diff --check`, dataset audits, and both LaTeX builds.
    Then run `python scripts/generate_release_manifest.py` and inspect
    `docs/release_manifest.json`.
-4. Tag the exact commit as `v0.2.0` and create a GitHub release with the same
+4. Tag the exact commit as `v0.2.1` and create a GitHub release with the same
    version.
 5. In Zenodo, link GitHub, enable `MinhNhat-2504/vietherb-mtl`, and archive the
    release. Wait for processing and inspect metadata and Software Heritage
@@ -23,11 +23,11 @@ post-publication verification and manuscript submission.
 6. Add the version DOI—not only the concept DOI—to the manuscript, supplement,
    README, and `CITATION.cff`; rebuild PDFs and create a final patch release
    if metadata changed after archiving. This was completed for
-   `10.5281/zenodo.23537107`.
+   `10.5281/zenodo.23549035`.
 7. [x] Download the deposited archive and verify it in a new directory. The
-   5,098,916-byte ZIP matched Zenodo MD5
-   `cdddc72c70cf104f93d8c3d2b5ae65ff`; all 129 release artifacts, the complete
-   unit-test suite, Ruff, and all 18 evidence artifacts passed locally.
+   `v0.2.1` ZIP matched Zenodo MD5
+   `34141ad744f0c46238b6f3296d185fef`; all release artifacts, the complete
+   unit-test suite, Ruff, and all evidence artifacts passed locally.
 
 The version DOI above resolves to the processed Zenodo archive.
 

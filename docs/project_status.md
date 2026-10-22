@@ -59,8 +59,8 @@ validation.
 
 - Both authors must confirm CRediT, funding, competing-interest, and approval
   statements.
-- GitHub release `v0.2.0` is archived in Zenodo as
-  `10.5281/zenodo.23537107`; the version DOI is inserted into the manuscript
+- GitHub release `v0.2.1` is archived in Zenodo as
+  `10.5281/zenodo.23549035`; the version DOI is inserted into the manuscript
   and citation metadata before submission.
 - The downloaded Zenodo ZIP passed checksum, release-manifest, test, Ruff, and
   evidence-replay verification. Its published record-level rights must still be

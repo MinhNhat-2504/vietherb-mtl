@@ -5,10 +5,10 @@ for multi-target screening of Vietnamese medicinal-plant metabolites**.
 
 ## Archived release
 
-Version `0.2.0` is archived on Zenodo:
-[10.5281/zenodo.23537107](https://doi.org/10.5281/zenodo.23537107).
+Version `0.2.1` is archived on Zenodo:
+[10.5281/zenodo.23549035](https://doi.org/10.5281/zenodo.23549035).
 The archive corresponds to the GitHub release
-[v0.2.0](https://github.com/MinhNhat-2504/vietherb-mtl/releases/tag/v0.2.0).
+[v0.2.1](https://github.com/MinhNhat-2504/vietherb-mtl/releases/tag/v0.2.1).
 
 The central hypothesis is testable: a molecular encoder trained jointly on
 measured target activity and **plant-level** traditional-use bags will rank
