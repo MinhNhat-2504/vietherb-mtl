@@ -57,8 +57,10 @@ validation.
 
 ## Release blockers
 
-- Both authors must confirm CRediT, funding, competing-interest, and approval
-  statements.
+- CRediT roles are confirmed: Minh (conceptualization, methodology, software,
+  investigation, data curation, validation, visualization, original draft,
+  supervision); Linh (review and editing). Funding, competing-interest, and
+  final-approval wording should be reconfirmed at submission.
 - GitHub release `v0.2.1` is archived in Zenodo as
   `10.5281/zenodo.23549035`; the version DOI is inserted into the manuscript
   and citation metadata before submission.

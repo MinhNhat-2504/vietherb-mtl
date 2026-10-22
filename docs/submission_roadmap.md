@@ -12,7 +12,11 @@ Status: **ACTION REQUIRED FROM AUTHORS / MAINTAINER**
 - [x] Verify the maintainer contact and prepare a bilingual request.
 - [x] Add author order, affiliation, institutional emails, ORCIDs, and
   corresponding-author designation.
-- [ ] Both authors confirm CRediT, funding, and competing-interest statements.
+- [x] Both authors confirmed the CRediT roles (Minh: conceptualization,
+  methodology, software, investigation, data curation, validation,
+  visualization, original draft, supervision; Linh: review and editing).
+- [ ] Confirm funding, competing-interest, and final-approval wording at
+  submission.
 - [ ] Send the request to `ly.le@hcmiu.edu.vn` and archive the response privately.
 - [ ] Receive an export/access route whose terms permit third-party
   reproducibility for every intended VietHerb conclusion.

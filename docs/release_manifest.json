@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-22T00:10:51.813095+00:00",
+  "generated_at": "2026-10-22T00:20:02.535009+00:00",
   "release": "v0.2.0",
   "artifact_count": 129,
   "artifacts": {
@@ -364,8 +364,8 @@
       "hash_mode": "utf8_lf"
     },
     "docs/project_status.md": {
-      "bytes": 3709,
-      "sha256": "25a0ea4bd0eeb3b399cb922218394c059436375806d6bd8d22371ea87aa1072b",
+      "bytes": 3908,
+      "sha256": "867ed51ae04ef45a477f8edff3dcdb941c48460a417c1f9655f4667aec7233f0",
       "hash_mode": "utf8_lf"
     },
     "docs/reproducibility_report.json": {
@@ -374,13 +374,13 @@
       "hash_mode": "utf8_lf"
     },
     "docs/submission_checklist.md": {
-      "bytes": 4587,
-      "sha256": "b39694e05446bc10a7ae1a66c8cc13e4d6ab307ff08c050a8d49ada001bd44ce",
+      "bytes": 4785,
+      "sha256": "eed27990a190e0209914948cbd70435c88cc8e7faaf4e0a606ea84e1140137b5",
       "hash_mode": "utf8_lf"
     },
     "docs/submission_roadmap.md": {
-      "bytes": 7095,
-      "sha256": "b1456ac17ea1262322bf1ec690e6fde958c5fd16e13886b72c9b54a770cd0463",
+      "bytes": 7315,
+      "sha256": "b41fc1819726e3265a4438677386deef54ff27a472485033b4b3108be403fa34",
       "hash_mode": "utf8_lf"
     },
     "docs/zenodo_release_checklist.md": {
@@ -399,13 +399,13 @@
       "hash_mode": "raw"
     },
     "paper/main.pdf": {
-      "bytes": 399811,
-      "sha256": "887480049ff9f10946afdd598babf48e545d6ffd8811417871c4ed862bb0898e",
+      "bytes": 399799,
+      "sha256": "95c64dc601c28e30f9f3f62492c5b0bc839508b9f78f437799182de9059fb7f3",
       "hash_mode": "raw"
     },
     "paper/main.tex": {
-      "bytes": 34599,
-      "sha256": "aa8a9116b83ebd8f08493782175805aab04521555a23631fdb01963cfc289dbf",
+      "bytes": 34596,
+      "sha256": "dea054ec74a4dd065b4703104e8ecfcd6b1a16b0a95c72146a4095ac0ae6cf83",
       "hash_mode": "utf8_lf"
     },
     "paper/README.md": {

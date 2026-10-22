@@ -23,8 +23,11 @@ Verified against the official Research and general submission guidance on
 - [x] Declarations contain data availability, competing interests, funding,
   contributions, acknowledgements, ethics, and consent headings.
 - [x] Generative-AI assistance is disclosed; authors retain responsibility.
-- [ ] Both authors confirm CRediT roles, funding, competing interests, and final
-  approval language.
+- [x] Both authors confirmed the CRediT roles: Minh (conceptualization,
+  methodology, software, investigation, data curation, validation,
+  visualization, original draft, supervision); Linh (review and editing).
+- [ ] Confirm funding, competing-interest, and final-approval wording at
+  submission.
 - [x] Optional graphical abstract created at 920 × 300 px on a white background;
   final JPEG is 54,960 bytes (53.67 KB), below the 150 KB limit.
 
