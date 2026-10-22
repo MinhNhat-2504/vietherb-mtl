@@ -26,8 +26,8 @@ Verified against the official Research and general submission guidance on
 - [x] Both authors confirmed the CRediT roles: Minh (conceptualization,
   methodology, software, investigation, data curation, validation,
   visualization, original draft, supervision); Linh (review and editing).
-- [ ] Confirm funding, competing-interest, and final-approval wording at
-  submission.
+- [x] Both authors confirmed: no external funding, no competing interests, and
+  approval of the final manuscript/submission (22 October 2026).
 - [x] Optional graphical abstract created at 920 × 300 px on a white background;
   final JPEG is 54,960 bytes (53.67 KB), below the 150 KB limit.
 
@@ -52,8 +52,8 @@ Verified against the official Research and general submission guidance on
   `10.5281/zenodo.23549035` into the manuscript.
 - [x] Download the published Zenodo ZIP, match its MD5, and pass release-hash,
   unit-test, Ruff, and evidence-replay checks from the extracted archive.
-- [x] Pass the GitHub Actions clean-clone replay on Ubuntu for the final
-  metadata-patched `main` commit (`4b2a80d`; run `39632670928`).
+- [x] Pass the GitHub Actions clean-clone replay on Ubuntu for the current
+  `main` history; the latest successful run is recorded by GitHub Actions.
 - [ ] Correct the published Zenodo record-level rights from MIT-only to mixed
   MIT code and CC BY-SA 3.0 ChEMBL-derived evidence.
 - [ ] Optional before final DOI: re-run full model training, rather than the

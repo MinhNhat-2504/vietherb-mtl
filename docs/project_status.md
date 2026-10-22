@@ -35,8 +35,8 @@ Updated: 2026-10-21 (Asia/Saigon)
 - A clean release bundle passed the complete unit-test suite, Ruff,
   release-hash verification, and exact regeneration of all 18 evidence
   artifacts. Runtime, OS, Python, and package versions are archived, and the
-  same locked sequence passed the clean-checkout GitHub Actions Ubuntu runner
-  for commit `4b2a80d` (run `39632670928`).
+  same locked sequence passed the clean-checkout GitHub Actions Ubuntu runner;
+  the latest successful run is recorded by GitHub Actions.
 - The complete unit-test suite and a synthetic CUDA smoke workflow cover activity,
   broadcast, MIL, shuffled-MIL, selection, temporal split, metric, and leakage
   invariants, plus cross-platform release-manifest hashing. Synthetic metrics
@@ -59,8 +59,9 @@ validation.
 
 - CRediT roles are confirmed: Minh (conceptualization, methodology, software,
   investigation, data curation, validation, visualization, original draft,
-  supervision); Linh (review and editing). Funding, competing-interest, and
-  final-approval wording should be reconfirmed at submission.
+  supervision); Linh (review and editing). Both authors also confirmed no
+  external funding, no competing interests, and approval of the final
+  manuscript/submission on 22 October 2026.
 - GitHub release `v0.2.1` is archived in Zenodo as
   `10.5281/zenodo.23549035`; the version DOI is inserted into the manuscript
   and citation metadata before submission.

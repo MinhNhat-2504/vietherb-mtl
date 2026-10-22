@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-10-22T00:20:02.535009+00:00",
+  "generated_at": "2026-10-22T00:27:36.193927+00:00",
   "release": "v0.2.0",
-  "artifact_count": 129,
+  "artifact_count": 133,
   "artifacts": {
     ".github/workflows/reproducibility.yml": {
       "bytes": 1049,
@@ -26,6 +26,11 @@
     "configs/dataset_exploratory.yaml": {
       "bytes": 649,
       "sha256": "69b47e2b0666343958ba4d355e41cf3bc4abacb1aee00003980c0eab3f47291d",
+      "hash_mode": "utf8_lf"
+    },
+    "configs/dataset_vietherb.yaml": {
+      "bytes": 780,
+      "sha256": "bdf722bbf0e0ab80bf340d662022d8eda3517b5e9b1b2d49e89af482768ed295",
       "hash_mode": "utf8_lf"
     },
     "configs/experiments/chembl37_activity.yaml": {
@@ -56,6 +61,11 @@
     "configs/experiments/morgan_mlp.yaml": {
       "bytes": 1013,
       "sha256": "781c300ec1bcd3e4684c841d83eb0967b37c9262c4b84a8bd689c7926f3fd41d",
+      "hash_mode": "utf8_lf"
+    },
+    "configs/experiments/vietherb_mil_v1.yaml": {
+      "bytes": 986,
+      "sha256": "2f278c570eb8ec695fc409d418b2c9bed17c6c8a8288b4134c42eed5f5aa047f",
       "hash_mode": "utf8_lf"
     },
     "configs/targets.yaml": {
@@ -364,8 +374,8 @@
       "hash_mode": "utf8_lf"
     },
     "docs/project_status.md": {
-      "bytes": 3908,
-      "sha256": "867ed51ae04ef45a477f8edff3dcdb941c48460a417c1f9655f4667aec7233f0",
+      "bytes": 3974,
+      "sha256": "f78331624f9290a78ece22bc27f51be1320ab556ba9851681dfbba696d87ba90",
       "hash_mode": "utf8_lf"
     },
     "docs/reproducibility_report.json": {
@@ -374,13 +384,13 @@
       "hash_mode": "utf8_lf"
     },
     "docs/submission_checklist.md": {
-      "bytes": 4785,
-      "sha256": "eed27990a190e0209914948cbd70435c88cc8e7faaf4e0a606ea84e1140137b5",
+      "bytes": 4854,
+      "sha256": "fb2b4173833cc6bf2f568608ca518ddf0619e709af7fbbadec9a143788642de5",
       "hash_mode": "utf8_lf"
     },
     "docs/submission_roadmap.md": {
-      "bytes": 7315,
-      "sha256": "b41fc1819726e3265a4438677386deef54ff27a472485033b4b3108be403fa34",
+      "bytes": 7480,
+      "sha256": "8754dfb1b18ef12c076e3e5342482b0dd8442110996518a8ba2c05c6dcd1e4c7",
       "hash_mode": "utf8_lf"
     },
     "docs/zenodo_release_checklist.md": {
@@ -456,6 +466,11 @@
     "scripts/audit_dataset.py": {
       "bytes": 7088,
       "sha256": "b4641a02f0d4559b3999fbe286a13bfb064a350e0537429e6500735d1974c8d1",
+      "hash_mode": "utf8_lf"
+    },
+    "scripts/audit_therapeutic_mapping.py": {
+      "bytes": 6393,
+      "sha256": "4dfb77af76304b16bd6d196a6fb78ffd02da00ef646a2078973404fdf1c4dce2",
       "hash_mode": "utf8_lf"
     },
     "scripts/build_dataset.py": {
@@ -616,6 +631,11 @@
     "tests/test_features.py": {
       "bytes": 647,
       "sha256": "832960de5f364dfafa6a615c24411111e86d307542dabc1dad9696528c8f9020",
+      "hash_mode": "utf8_lf"
+    },
+    "tests/test_mapping_audit.py": {
+      "bytes": 1392,
+      "sha256": "8d2d9777a5170f7435d0a4d15a34d3f870cdd21b086ebfd88293eac15f54e51f",
       "hash_mode": "utf8_lf"
     },
     "tests/test_metrics.py": {

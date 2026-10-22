@@ -7,10 +7,13 @@ information for DOI `10.1021/acs.jcim.8b00399`<br>
 **From:** Nhat Trinh Ngoc Minh, `nhat.2474802010280@vanlanguni.vn`<br>
 **CC:** Linh Nguyen Thi My (corresponding author), `linh.ntm@vlu.edu.vn`
 
-The author metadata is complete. Both authors should approve the final wording
-before this message is sent. Keep the written reply in private project records
-and record its date and a non-sensitive permission identifier in the dataset
-manifest. Do not commit private correspondence.
+**Author approval:** Both authors approved this request wording on 2026-10-22.
+Sending the message and preserving any reply remain manual external actions;
+private correspondence must not be committed to the repository.
+
+The author metadata is complete. Keep the written reply in private project
+records and record its date and a non-sensitive permission identifier in the
+dataset manifest. Do not commit private correspondence.
 
 ## English email (recommended)
 

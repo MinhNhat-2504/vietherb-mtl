@@ -72,6 +72,20 @@ table. Two domain reviewers should independently label a prespecified random
 sample of 300 mappings. Report raw agreement and Cohen's kappa with a bootstrap
 confidence interval. Adjudicate disagreements only after computing agreement.
 
+The audit command is deterministic and remains pending until an authorized
+export is supplied:
+
+```powershell
+python scripts/audit_therapeutic_mapping.py `
+  --input data/annotations/therapeutic_use_mapping.csv `
+  --out artifacts/therapeutic_mapping_audit.json `
+  --sample-out artifacts/therapeutic_mapping_review_sample.csv
+```
+
+After the reviewers complete the fixed sample and adjudication, rerun with
+`--require-complete`; a non-zero exit status prevents an unaudited mapping from
+entering a confirmatory run.
+
 Do not infer negative therapeutic labels from missing VietHerb entries. Missing
 is represented as unlabelled and handled by the PU loss.
 

@@ -1,0 +1,30 @@
+schema_version: 1
+seed: 20261020
+inputs:
+  chembl_dir: data/interim/chembl/37
+  vietherb_dir: data/interim/vietherb/authorized/current
+  term_mapping: data/annotations/therapeutic_use_mapping.csv
+output_dir: data/processed/vietherb_v1
+structure:
+  neutralize: true
+  remove_stereochemistry: false
+  largest_fragment: true
+  tautomer_canonicalization: true
+activity:
+  active_threshold_pchembl: 6.0
+  inactive_threshold_pchembl: 5.0
+  exclude_gray_zone: true
+  allowed_relations: ["="]
+  replicate_aggregation: median
+  contradictory_margin: 1.0
+split:
+  method: chemical_cluster_species_components
+  chemical_cluster_tanimoto: 0.70
+  fractions: [0.70, 0.15, 0.15]
+  seed: 20261020
+  stratify_targets: true
+features:
+  kind: morgan
+  radius: 2
+  n_bits: 2048
+  use_chirality: true
